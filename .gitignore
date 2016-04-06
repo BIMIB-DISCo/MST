@@ -1,0 +1,34 @@
+/vignettes/vignette.R
+/cfg.R
+# History files
+.Rhistory
+.Rapp
+*.history
+
+# Example code in package build process
+*-Ex.R
+
+# RStudio files
+*.RData
+.Rproj.user/
+.Rproj
+.Rproj.user
+*.Rdata
+*.Rproj
+
+# TRONCO Output
+*.pdf
+*.tar.gz
+*.tex
+*.mat
+*.zip
+*.png
+
+# Configuration file
+cfg.R
+
+*.log
+
+*.out
+
+*.toc

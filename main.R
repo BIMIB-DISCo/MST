@@ -1,8 +1,24 @@
-# set the working directory
-setwd("./")
+##################################################################################
+#                                                                                #
+# MST                                                                            #
+#                                                                                #
+##################################################################################
+# Copyright (c) 2015, Giulio Caravagna, Luca De Sano, Daniele Ramazzotti         #
+# email: tronco@disco.unimib.it                                                  #
+# All rights reserved. This program and the accompanying materials               #
+# are made available under the terms of the GNU GPL v3.0                         #
+# which accompanies this distribution                                            #
+#                                                                                #
+##################################################################################
+
+# Set SINK to FALSE to avoid creating a log file
+SINK = TRUE
+if(SINK) sink(paste0(getwd(), "/PiCnIc-COADREAD-logfile.txt"), append=FALSE, split=TRUE)
 
 # source the needed script
 library("TRONCO")
+
+
 source('./sample.polyclonal.trees.R')
 source('./perform.polyclonal.tree.experiments.R')
 source('./statistics.R')
