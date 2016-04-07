@@ -32,9 +32,6 @@ my_algorithms = c("capri","caprese","edmonds","chowliu","prim")
 my_regularizators = c("no.reg.res","loglik.res","aic.res","bic.res")
 cores.ratio = 1
 
-# set the seed
-set.seed(seed)
-
 # set the true trees
 low_true_tree = array(0,c(6,6))
 low_true_tree[1,2] = 1
@@ -123,7 +120,7 @@ clusterExport(cl, c('clones_num_sampling_low',
     'low_probs_multiple_biopses',
     'medium_probs_multiple_biopses',
     'high_probs_multiple_biopses'))
-
+clusterSetRNGStream(cl, iseed = seed)
 
 cat('Using', cores, 'cores via "parallel" \n')
 
