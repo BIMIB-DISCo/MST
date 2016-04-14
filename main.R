@@ -20,6 +20,7 @@ dir.create('RData')
 source('sample.polyclonal.trees.R')
 source('perform.polyclonal.tree.experiments.R')
 source('statistics.R')
+source('performance.plot.R')
 
 # setting of the experiments
 seed = 12345
@@ -274,3 +275,15 @@ save(experiments.multiple.biopses.high.stats,file="RData/experiments.multiple.bi
 
 #stop the cluster
 stopCluster(cl)
+
+
+# performance plot
+
+performance.plot(experiments.single.cells.low.stats, 'single', 'low')
+performance.plot(experiments.single.cells.medium.stats, 'single', 'medium')
+performance.plot(experiments.multiple.biopses.high.stats, 'single', 'high')
+performance.plot(experiments.multiple.biopses.low.stats, 'multiple', 'low')
+performance.plot(experiments.multiple.biopses.medium.stats, 'multiple', 'medium')
+performance.plot(experiments.multiple.biopses.high.stats, 'multiple', 'high')
+
+
