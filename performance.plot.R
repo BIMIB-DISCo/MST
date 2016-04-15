@@ -142,7 +142,7 @@ compare.performance.plot <- function(dataset,
         pdf(file=paste0(branching, '/', sample.type, '/', type, '/', 'compare', '.pdf'), width=8.5, height=6.5)
 
         zlim = c(min(results[,'z']) - 0.05, max(results[,'z']) + 0.05)
-        mycolors = brewer.pal(length(ordered.regs), 'Dark2')
+        mycolors = brewer.pal(length(ordered.regs), 'Accent')
         mycolors.trans = add.alpha(mycolors, 0.7)
 
         print(wireframe(z~x*y,
