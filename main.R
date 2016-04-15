@@ -24,7 +24,7 @@ source('performance.plot.R')
 
 # setting of the experiments
 seed = 12345
-number_experiments = 3
+number_experiments = 100
 my_experiments = 1:number_experiments
 names(my_experiments) = paste("Experiment",my_experiments)
 sample_levels = 10
@@ -281,9 +281,23 @@ stopCluster(cl)
 
 performance.plot(experiments.single.cells.low.stats, 'single', 'low')
 performance.plot(experiments.single.cells.medium.stats, 'single', 'medium')
-performance.plot(experiments.multiple.biopses.high.stats, 'single', 'high')
+performance.plot(experiments.single.cells.high.stats, 'single', 'high')
 performance.plot(experiments.multiple.biopses.low.stats, 'multiple', 'low')
 performance.plot(experiments.multiple.biopses.medium.stats, 'multiple', 'medium')
 performance.plot(experiments.multiple.biopses.high.stats, 'multiple', 'high')
+
+compare.performance.plot(experiments.single.cells.low.stats, 'single', 'low')
+compare.performance.plot(experiments.single.cells.medium.stats, 'single', 'medium')
+compare.performance.plot(experiments.single.cells.high.stats, 'single', 'high')
+compare.performance.plot(experiments.multiple.biopses.low.stats, 'multiple', 'low')
+compare.performance.plot(experiments.multiple.biopses.medium.stats, 'multiple', 'medium')
+compare.performance.plot(experiments.multiple.biopses.high.stats, 'multiple', 'high')
+
+compare.performance.plot.2d(experiments.single.cells.low.stats, 'single', 'low')
+compare.performance.plot.2d(experiments.single.cells.medium.stats, 'single', 'medium')
+compare.performance.plot.2d(experiments.single.cells.high.stats, 'single', 'high')
+compare.performance.plot.2d(experiments.multiple.biopses.low.stats, 'multiple', 'low')
+compare.performance.plot.2d(experiments.multiple.biopses.medium.stats, 'multiple', 'medium')
+compare.performance.plot.2d(experiments.multiple.biopses.high.stats, 'multiple', 'high')
 
 
