@@ -32,3 +32,6 @@ cfg.R
 *.out
 
 *.toc
+
+*.csv
+*.sh
