@@ -44,6 +44,7 @@ create.scite.input = function(dataset,
     runif
 
     script = ''
+    count = 1
 
     for (sample in 1:nrow(dataset)) {
     	for (experiment in 1:ncol(dataset)) {
@@ -65,7 +66,9 @@ create.scite.input = function(dataset,
     			nmuts = nrow(genotype)
     			seed_level = round(runif(1) * 10000, 0)
     			write.table(genotype, file = filename, quote = FALSE, sep = ' ', col.names = FALSE, row.names = FALSE)
+    			script = paste0(script, 'printf "EXEC: ', count, '/8000 - sample: ', sample, ' experiment: ', experiment, ' noise lev: ', noise, ' \\n" \n')
     			script = paste0(script, './scite -i ', filename, ' -n ', nmuts, ' -m ', nsample, ' -r 1 -l 100000 -fd ', epos_level, ' -ad ', eneg_level, ' -seed ', seed_level, ' -max_treelist_size 1', ' \n')
+    			count = count + 1
     		}
     	}
     }

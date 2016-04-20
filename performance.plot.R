@@ -114,8 +114,8 @@ compare.performance.plot <- function(dataset,
                 if ((algorithm == 'caprese' && reg == 'no.reg')
                     || (algorithm == 'prim' && reg == 'no.reg')
                     || (algorithm == 'edmonds' && reg == 'no.reg')
-                    || (algorithm == 'chowliu' && reg == 'loglik')) {
-                    #|| (algorithm == 'capri' && reg == 'bic')) {
+                    || (algorithm == 'chowliu' && reg == 'loglik')
+                    || (algorithm == 'scite' && reg == 'no.reg')) {
 
                     cat('\n    ', reg)
                     stats = get(reg, regs)
@@ -223,7 +223,8 @@ compare.performance.plot.2d <- function(dataset,
                     || (algorithm == 'prim' && reg == 'no.reg')
                     || (algorithm == 'edmonds' && reg == 'no.reg')
                     || (algorithm == 'chowliu' && reg == 'loglik')
-                    || (algorithm == 'capri' && reg == 'bic')) {
+                    || (algorithm == 'capri' && reg == 'bic')
+                    || (algorithm == 'scite' && reg == 'no.reg')) {
 
                     cat('\n    ', reg)
                     stats = get(reg, regs)
