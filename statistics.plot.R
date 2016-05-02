@@ -42,7 +42,7 @@ performance.plot <- function(dataset,
 
                 zlim = range(stats)
                 zlim[1] = zlim[1] - 0.05
-                zlim[2] = 1.0
+                zlim[2] = 1.05
 
                 # x row noise
                 # y col sample
@@ -207,10 +207,12 @@ compare.performance.plot.2d <- function(dataset,
         results.c2 = data.frame(x = NULL, stringsAsFactors = FALSE)
         results.c3 = data.frame(x = NULL, stringsAsFactors = FALSE)
         results.c4 = data.frame(x = NULL, stringsAsFactors = FALSE)
+        results.c5 = data.frame(x = NULL, stringsAsFactors = FALSE)
         ordered.regs.c1 = NULL
         ordered.regs.c2 = NULL
         ordered.regs.c3 = NULL
         ordered.regs.c4 = NULL
+        ordered.regs.c5 = NULL
 
         algorithms = get(type, dataset)
         for (algorithm in names(algorithms)) {
@@ -260,7 +262,7 @@ compare.performance.plot.2d <- function(dataset,
                 }
 
                 # cfg 3 - all edmonds
-                if (algorithm == 'edmonds') {
+                if (algorithm == 'edmonds' && !reg %in% c('bic', 'aic', 'or')) {
                     cat('\n    ', reg)
                     stats = get(reg, regs)
                     for (i in 1:nrow(stats)) {
@@ -293,6 +295,25 @@ compare.performance.plot.2d <- function(dataset,
                     ordered.regs.c4 = c(ordered.regs.c4, reg)
                 }
 
+                # cfg 5 - edmonds vs scite
+                if ((algorithm == 'edmonds' && !reg %in% c('bic', 'aic', 'cmi2', 'cmi3', 'or'))
+                    || (algorithm == 'scite' && reg == 'no.reg')) {
+
+                    cat('\n    ', reg)
+                    stats = get(reg, regs)
+                    for (i in 1:nrow(stats)) {
+                        for(j in 1:ncol(stats)) {
+                            if (sample[j] %in% select.sample) {
+                                results.c5 = rbind(results.c5, c(i,
+                                    stats[i,j],
+                                    sample[j],
+                                    paste(algorithm, reg)), stringsAsFactors = FALSE)
+                            }
+                        }
+                    }
+                    ordered.regs.c5 = c(ordered.regs.c5, paste(algorithm, reg))
+                }
+
             }
         }
 
@@ -300,6 +321,7 @@ compare.performance.plot.2d <- function(dataset,
         colnames(results.c2) = c('x', 'y', 'sample', 'algorithm')
         colnames(results.c3) = c('x', 'y', 'sample', 'algorithm')
         colnames(results.c4) = c('x', 'y', 'sample', 'algorithm')
+        colnames(results.c5) = c('x', 'y', 'sample', 'algorithm')
         results.c1$x = as.numeric(results.c1$x)
         results.c1$y = as.numeric(results.c1$y)
         results.c1$sample = as.numeric(results.c1$sample)
@@ -316,6 +338,10 @@ compare.performance.plot.2d <- function(dataset,
         results.c4$y = as.numeric(results.c4$y)
         results.c4$sample = as.numeric(results.c4$sample)
         results.c4$algorithm = as.factor(results.c4$algorithm)
+        results.c5$x = as.numeric(results.c5$x)
+        results.c5$y = as.numeric(results.c5$y)
+        results.c5$sample = as.numeric(results.c5$sample)
+        results.c5$algorithm = as.factor(results.c5$algorithm)
 
 
         for (s in select.sample) {
@@ -401,6 +427,27 @@ compare.performance.plot.2d <- function(dataset,
                 type = c("o"),
                 key = list(text=list(sort(ordered.regs.c4), col = mycolors),
                         lines = list(lty = rep(1, length(ordered.regs.c4)), col = mycolors)),
+                ylim = ylim))
+
+            dev.off()
+
+            # edmonds vs scite 5
+
+            res = results.c5[which(results.c5$sample == s), ]
+            pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'edmods_scite', '.pdf'), width=8.5, height=6.5)
+            ylim = c(min(res[,'y']) - 0.05, max(res[,'y']) + 0.05)
+            mycolors = brewer.pal(length(ordered.regs.c5), 'Set1')
+            print(xyplot(y~x,
+                grid = TRUE,
+                data = res,
+                groups = algorithm,
+                col = mycolors,
+                main = toupper(paste('edmonds vs scite sample:', s, branching, type)),
+                xlab = 'noise',
+                ylab = '',
+                type = c("o"),
+                key = list(text=list(sort(ordered.regs.c5), col = mycolors),
+                        lines = list(lty = rep(1, length(ordered.regs.c5)), col = mycolors)),
                 ylim = ylim))
 
             dev.off()
