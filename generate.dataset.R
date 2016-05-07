@@ -112,3 +112,58 @@ generate.dataset.multiple.biopses <- function(type,
     }
     return(results)
 }
+
+# generate the structure of a random tree
+generate.random.tree.structure <- function ( nodes ) {
+	
+	# if I have n nodes (>=2), I can have at minimum 2 levels (root plus level 2)
+	# and at most an n-levels tree (when I have a path of n nodes)
+	# select the number of levels randomly (uniform probability)
+	if( nodes > 2 ) {
+		all_nodes = 1:nodes
+		levels = sample(2:nodes,size=1)
+		my_tree = list()
+		# put at least 1 element per level
+		for (i in 1:levels) {
+			if(length(all_nodes)>1) {
+				curr_node = sample(all_nodes,size=1)
+			}
+			else {
+				curr_node = all_nodes
+			}
+			my_tree[[i]] = curr_node
+			all_nodes = all_nodes[-which(all_nodes==curr_node)]
+		}
+		# add the remaining edges
+		while(length(all_nodes)>0) {
+			if(length(all_nodes)>1) {
+				curr_node = sample(all_nodes,size=1)
+			}
+			else {
+				curr_node = all_nodes
+			}
+			if(levels==2) {
+				curr_level = 2
+			}
+			else {
+				curr_level = sample(2:levels,size=1)
+			}
+			my_tree[[curr_level]] = c(my_tree[[curr_level]],curr_node)
+			all_nodes = all_nodes[-which(all_nodes==curr_node)]
+		}
+	}
+	# in this case I have the minimum tree
+	else if( nodes == 2 ) {
+		my_tree = list()
+		curr_nodes = sample(1:2,size=2)
+		my_tree[[1]] = curr_nodes[1]
+		my_tree[[2]] = curr_nodes[2]
+	}
+	# I need at least two nodes in my tree
+	else {
+		stop("I need at least 2 nodes in the tree!")
+	}
+	
+	return(my_tree)
+	
+}
