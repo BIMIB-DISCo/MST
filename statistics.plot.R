@@ -106,6 +106,9 @@ compare.performance.plot <- function(dataset,
         results = data.frame(x = NULL, stringsAsFactors = FALSE)
         ordered.regs = NULL
 
+        results.compare = data.frame(x = NULL, stringsAsFactors = FALSE)
+        ordered.regs.compare = NULL        
+
         algorithms = get(type, dataset)
         for (algorithm in names(algorithms)) {
             cat('\n  ', algorithm, ' ')
@@ -114,6 +117,8 @@ compare.performance.plot <- function(dataset,
                 if ((algorithm == 'caprese' && reg == 'no.reg')
                     || (algorithm == 'prim' && reg == 'no.reg')
                     || (algorithm == 'edmonds' && reg == 'no.reg')
+                    || (algorithm == 'capri' && reg == 'aic')
+                    || (algorithm == 'capri' && reg == 'bic')
                     || (algorithm == 'chowliu' && reg == 'loglik')
                     || (algorithm == 'scite' && reg == 'no.reg')) {
 
@@ -124,21 +129,45 @@ compare.performance.plot <- function(dataset,
                             results = rbind(results, c(as.numeric(i),
                                 as.numeric(j),
                                 as.numeric(stats[i,j]),
-                                algorithm), stringsAsFactors = FALSE)
+                                paste(algorithm, reg)), stringsAsFactors = FALSE)
                         }
                     }
-                    ordered.regs = c(ordered.regs, algorithm)
-                    next
+                    ordered.regs = c(ordered.regs, paste(algorithm, reg))
+                }
+
+                if ((algorithm == 'edmonds' && reg == 'no.reg')
+                    || (algorithm == 'scite' && reg == 'no.reg')) {
+
+                    cat('\n    ', reg)
+                    stats = get(reg, regs)
+                    for (i in 1:nrow(stats)) {
+                        for(j in 1:ncol(stats)) {
+                            results.compare = rbind(results.compare, c(as.numeric(i),
+                                as.numeric(j),
+                                as.numeric(stats[i,j]),
+                                paste(algorithm, reg)), stringsAsFactors = FALSE)
+                        }
+                    }
+                    ordered.regs.compare = c(ordered.regs.compare, paste(algorithm, reg))
                 }
             }
         }
 
         colnames(results) = c('x', 'y', 'z', 'algorithm')
+        colnames(results.compare) = c('x', 'y', 'z', 'algorithm')
+
         results$x = as.numeric(results$x)
         results$y = as.numeric(results$y)
         results$z = as.numeric(results$z)
         results$algorithm = as.factor(results$algorithm)
 
+        results.compare$x = as.numeric(results.compare$x)
+        results.compare$y = as.numeric(results.compare$y)
+        results.compare$z = as.numeric(results.compare$z)
+        results.compare$algorithm = as.factor(results.compare$algorithm)
+
+
+        # plot mix
         pdf(file=paste0(branching, '/', sample.type, '/', type, '/', 'compare', '.pdf'), width=8.5, height=6.5)
 
         zlim = c(min(results[,'z']) - 0.05, max(results[,'z']) + 0.05)
@@ -161,6 +190,32 @@ compare.performance.plot <- function(dataset,
             zlim = zlim))
 
         dev.off()
+
+        # plot compare
+
+        pdf(file=paste0(branching, '/', sample.type, '/', type, '/', 'edmonds_scite_compare', '.pdf'), width=8.5, height=6.5)
+
+        zlim = c(min(results.compare[,'z']) - 0.05, max(results.compare[,'z']) + 0.05)
+        mycolors = brewer.pal(length(ordered.regs.compare), 'Accent')[1:length(ordered.regs.compare)]
+        mycolors.trans = add.alpha(mycolors, 0.7)
+
+        print(wireframe(z~x*y,
+            data = results.compare,
+            groups = algorithm,
+            col.groups = mycolors.trans,
+            scales = list(arrows = FALSE,
+                y = list(at = 1:length(sample), labels = as.character(sample))),
+            main = toupper(paste('compare', branching, type)),
+            xlab = 'noise',
+            ylab = 'sample',
+            zlab = '',
+            screen = list(z = -45, x = -60),
+            key = list(text=list(sort(ordered.regs.compare), col = mycolors),
+                    lines = list(lty = rep(1, length(ordered.regs.compare)), col = mycolors)),
+            zlim = zlim))
+
+        dev.off()
+
         cat('\n')
     }
 }
@@ -226,6 +281,7 @@ compare.performance.plot.2d <- function(dataset,
                     || (algorithm == 'edmonds' && reg == 'no.reg')
                     || (algorithm == 'chowliu' && reg == 'loglik')
                     || (algorithm == 'capri' && reg == 'bic')
+                    || (algorithm == 'capri' && reg == 'aic')
                     || (algorithm == 'scite' && reg == 'no.reg')) {
 
                     cat('\n    ', reg)
@@ -236,11 +292,11 @@ compare.performance.plot.2d <- function(dataset,
                                 results.c1 = rbind(results.c1, c(i,
                                     stats[i,j],
                                     sample[j],
-                                    algorithm), stringsAsFactors = FALSE)
+                                    paste(algorithm, reg)), stringsAsFactors = FALSE)
                             }
                         }
                     }
-                    ordered.regs.c1 = c(ordered.regs.c1, algorithm)
+                    ordered.regs.c1 = c(ordered.regs.c1, paste(algorithm, reg))
                 }
 
                 # cfg 2 - all prim
@@ -372,7 +428,7 @@ compare.performance.plot.2d <- function(dataset,
             res = results.c2[which(results.c2$sample == s), ]
             pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'prim', '.pdf'), width=8.5, height=6.5)
             ylim = c(min(res[,'y']) - 0.05, max(res[,'y']) + 0.05)
-            mycolors = brewer.pal(length(ordered.regs.c2), 'Set1')
+            mycolors = brewer.pal(length(ordered.regs.c2), 'Set1')[1:length(ordered.regs.c2)]
             print(xyplot(y~x,
                 grid = TRUE,
                 data = res,
@@ -394,7 +450,7 @@ compare.performance.plot.2d <- function(dataset,
             res = results.c3[which(results.c3$sample == s), ]
             pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'edmonds', '.pdf'), width=8.5, height=6.5)
             ylim = c(min(res[,'y']) - 0.05, max(res[,'y']) + 0.05)
-            mycolors = brewer.pal(length(ordered.regs.c3), 'Set1')
+            mycolors = brewer.pal(length(ordered.regs.c3), 'Set1')[1:length(ordered.regs.c3)]
             print(xyplot(y~x,
                 grid = TRUE,
                 data = res,
@@ -415,7 +471,7 @@ compare.performance.plot.2d <- function(dataset,
             res = results.c4[which(results.c4$sample == s), ]
             pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'chowliu', '.pdf'), width=8.5, height=6.5)
             ylim = c(min(res[,'y']) - 0.05, max(res[,'y']) + 0.05)
-            mycolors = brewer.pal(length(ordered.regs.c4), 'Set1')
+            mycolors = brewer.pal(length(ordered.regs.c4), 'Set1')[1:length(ordered.regs.c4)]
             print(xyplot(y~x,
                 grid = TRUE,
                 data = res,
@@ -436,7 +492,7 @@ compare.performance.plot.2d <- function(dataset,
             res = results.c5[which(results.c5$sample == s), ]
             pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'edmods_scite', '.pdf'), width=8.5, height=6.5)
             ylim = c(min(res[,'y']) - 0.05, max(res[,'y']) + 0.05)
-            mycolors = brewer.pal(length(ordered.regs.c5), 'Set1')
+            mycolors = brewer.pal(length(ordered.regs.c5), 'Set1')[1:length(ordered.regs.c5)]
             print(xyplot(y~x,
                 grid = TRUE,
                 data = res,

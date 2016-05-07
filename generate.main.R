@@ -31,7 +31,7 @@ names(my_experiments) = paste("Experiment",my_experiments)
 sample_levels = 10
 noise_levels = 8
 cores.ratio = 1
-scite.sd = 0.15
+scite.sd = 0
 
 # set the true trees
 low_true_tree = array(0,c(6,6))

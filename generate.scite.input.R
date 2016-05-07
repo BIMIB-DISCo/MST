@@ -82,6 +82,9 @@ create.scite.input = function(dataset,
 }
 
 generate.beta <- function(mean, sd, min = 0, max = 1) {
+    if (sd == 0) {
+        return(mean)
+    }
     beta = rnorm(1, mean, sd)
     while (beta <= min || beta >= max) {
         beta = rnorm(1, mean, sd)

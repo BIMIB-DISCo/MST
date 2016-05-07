@@ -9,14 +9,16 @@ run.reconstructions <- function( dataset, true_tree ) {
     
     ## performs the reconstructions with CAPRI loglik, aic and bic
     res = NULL
-    res = tronco.capri(data,regularization=c("loglik","aic","bic"), silent = TRUE)
-    adj.matrix.capri.loglik = as.adj.matrix(res,model="capri_loglik")
-    results.capri.loglik = getStats(true_tree,adj.matrix.capri.loglik[["capri_loglik"]])
+    #res = tronco.capri(data,regularization=c("loglik","aic","bic"), silent = TRUE)
+    res = tronco.capri(data,regularization=c("aic","bic"), silent = TRUE)
+    #adj.matrix.capri.loglik = as.adj.matrix(res,model="capri_loglik")
+    #results.capri.loglik = getStats(true_tree,adj.matrix.capri.loglik[["capri_loglik"]])
     adj.matrix.capri.aic = as.adj.matrix(res,model="capri_aic")
     results.capri.aic = getStats(true_tree,adj.matrix.capri.aic[["capri_aic"]])
     adj.matrix.capri.bic = as.adj.matrix(res,model="capri_bic")
     results.capri.bic = getStats(true_tree,adj.matrix.capri.bic[["capri_bic"]])
-    capri = list(loglik.adj=adj.matrix.capri.loglik,loglik.res=results.capri.loglik,aic.adj=adj.matrix.capri.aic,aic.res=results.capri.aic,bic.adj=adj.matrix.capri.bic,bic.res=results.capri.bic)
+    #capri = list(loglik.adj=adj.matrix.capri.loglik,loglik.res=results.capri.loglik,aic.adj=adj.matrix.capri.aic,aic.res=results.capri.aic,bic.adj=adj.matrix.capri.bic,bic.res=results.capri.bic)
+    capri = list(aic.adj=adj.matrix.capri.aic,aic.res=results.capri.aic,bic.adj=adj.matrix.capri.bic,bic.res=results.capri.bic)
     results[["capri"]] = capri
     
     # performs the reconstructions with CAPRESE
@@ -29,42 +31,46 @@ run.reconstructions <- function( dataset, true_tree ) {
     
     # performs the reconstructions with Edmonds no_reg, loglik, aic and bic
     res = NULL
-    res = tronco.mst.edmonds(data,regularization=c("no_reg","loglik","aic","bic"))
+    #res = tronco.mst.edmonds(data,regularization=c("no_reg","loglik","aic","bic"))
+    res = tronco.mst.edmonds(data,regularization=c("no_reg"))
     adj.matrix.edmonds.no.reg = as.adj.matrix(res,model="edmonds_no_reg")
     results.edmonds.no.reg = getStats(true_tree,adj.matrix.edmonds.no.reg[["edmonds_no_reg"]])  
-    adj.matrix.edmonds.loglik = as.adj.matrix(res,model="edmonds_loglik")
-    results.edmonds.loglik = getStats(true_tree,adj.matrix.edmonds.loglik[["edmonds_loglik"]])
-    adj.matrix.edmonds.aic = as.adj.matrix(res,model="edmonds_aic")
-    results.edmonds.aic = getStats(true_tree,adj.matrix.edmonds.aic[["edmonds_aic"]])
-    adj.matrix.edmonds.bic = as.adj.matrix(res,model="edmonds_bic")
-    results.edmonds.bic = getStats(true_tree,adj.matrix.edmonds.bic[["edmonds_bic"]])
-    edmonds = list(no.reg.adj=adj.matrix.edmonds.no.reg,no.reg.res=results.edmonds.no.reg,loglik.adj=adj.matrix.edmonds.loglik,loglik.res=results.edmonds.loglik,aic.adj=adj.matrix.edmonds.aic,aic.res=results.edmonds.aic,bic.adj=adj.matrix.edmonds.bic,bic.res=results.edmonds.bic)
+    #adj.matrix.edmonds.loglik = as.adj.matrix(res,model="edmonds_loglik")
+    #results.edmonds.loglik = getStats(true_tree,adj.matrix.edmonds.loglik[["edmonds_loglik"]])
+    #adj.matrix.edmonds.aic = as.adj.matrix(res,model="edmonds_aic")
+    #results.edmonds.aic = getStats(true_tree,adj.matrix.edmonds.aic[["edmonds_aic"]])
+    #adj.matrix.edmonds.bic = as.adj.matrix(res,model="edmonds_bic")
+    #results.edmonds.bic = getStats(true_tree,adj.matrix.edmonds.bic[["edmonds_bic"]])
+    #edmonds = list(no.reg.adj=adj.matrix.edmonds.no.reg,no.reg.res=results.edmonds.no.reg,loglik.adj=adj.matrix.edmonds.loglik,loglik.res=results.edmonds.loglik,aic.adj=adj.matrix.edmonds.aic,aic.res=results.edmonds.aic,bic.adj=adj.matrix.edmonds.bic,bic.res=results.edmonds.bic)
+    edmonds = list(no.reg.adj=adj.matrix.edmonds.no.reg,no.reg.res=results.edmonds.no.reg)
     results[["edmonds"]] = edmonds
     
     # performs the reconstructions with Chow Liu loglik, aic and bic
     res = NULL
-    res = tronco.mst.chowliu(data,regularization=c("loglik","aic","bic"))   
+    #res = tronco.mst.chowliu(data,regularization=c("loglik","aic","bic"))   
+    res = tronco.mst.chowliu(data,regularization=c("loglik"))   
     adj.matrix.chowliu.loglik = as.adj.matrix(res,model="chow_liu_loglik")
     results.chowliu.loglik = getStats(true_tree,adj.matrix.chowliu.loglik[["chow_liu_loglik"]])
-    adj.matrix.chowliu.aic = as.adj.matrix(res,model="chow_liu_aic")
-    results.chowliu.aic = getStats(true_tree,adj.matrix.chowliu.aic[["chow_liu_aic"]])
-    adj.matrix.chowliu.bic = as.adj.matrix(res,model="chow_liu_bic")
-    results.chowliu.bic = getStats(true_tree,adj.matrix.chowliu.bic[["chow_liu_bic"]])
-    chowliu = list(loglik.adj=adj.matrix.chowliu.loglik,loglik.res=results.chowliu.loglik,aic.adj=adj.matrix.chowliu.aic,aic.res=results.chowliu.aic,bic.adj=adj.matrix.chowliu.bic,bic.res=results.chowliu.bic)
+    #adj.matrix.chowliu.aic = as.adj.matrix(res,model="chow_liu_aic")
+    #results.chowliu.aic = getStats(true_tree,adj.matrix.chowliu.aic[["chow_liu_aic"]])
+    #adj.matrix.chowliu.bic = as.adj.matrix(res,model="chow_liu_bic")
+    #results.chowliu.bic = getStats(true_tree,adj.matrix.chowliu.bic[["chow_liu_bic"]])
+    chowliu = list(loglik.adj=adj.matrix.chowliu.loglik,loglik.res=results.chowliu.loglik)
     results[["chowliu"]] = chowliu
     
     # performs the reconstructions with Prim no_reg, loglik, aic and bic
     res = NULL
-    res = tronco.mst.prim(data,regularization=c("no_reg","loglik","aic","bic"))
+    #res = tronco.mst.prim(data,regularization=c("no_reg","loglik","aic","bic"))
+    res = tronco.mst.prim(data,regularization=c("no_reg"))
     adj.matrix.prim.no.reg = as.adj.matrix(res,model="prim_no_reg")
     results.prim.no.reg = getStats(true_tree,adj.matrix.prim.no.reg[["prim_no_reg"]])
-    adj.matrix.prim.loglik = as.adj.matrix(res,model="prim_loglik")
-    results.prim.loglik = getStats(true_tree,adj.matrix.prim.loglik[["prim_loglik"]])
-    adj.matrix.prim.aic = as.adj.matrix(res,model="prim_aic")
-    results.prim.aic = getStats(true_tree,adj.matrix.prim.aic[["prim_aic"]])
-    adj.matrix.prim.bic = as.adj.matrix(res,model="prim_bic")
-    results.prim.bic = getStats(true_tree,adj.matrix.prim.bic[["prim_bic"]])
-    prim = list(no.reg.adj=adj.matrix.prim.no.reg,no.reg.res=results.prim.no.reg,loglik.adj=adj.matrix.prim.loglik,loglik.res=results.prim.loglik,aic.adj=adj.matrix.prim.aic,aic.res=results.prim.aic,bic.adj=adj.matrix.prim.bic,bic.res=results.prim.bic)
+    #adj.matrix.prim.loglik = as.adj.matrix(res,model="prim_loglik")
+    #results.prim.loglik = getStats(true_tree,adj.matrix.prim.loglik[["prim_loglik"]])
+    #adj.matrix.prim.aic = as.adj.matrix(res,model="prim_aic")
+    #results.prim.aic = getStats(true_tree,adj.matrix.prim.aic[["prim_aic"]])
+    #adj.matrix.prim.bic = as.adj.matrix(res,model="prim_bic")
+    #results.prim.bic = getStats(true_tree,adj.matrix.prim.bic[["prim_bic"]])
+    prim = list(no.reg.adj=adj.matrix.prim.no.reg,no.reg.res=results.prim.no.reg)
     results[["prim"]] = prim
     
     return(results)
@@ -111,7 +117,7 @@ getStats <- function(true_matrix,
 
 expand.input <- function(datasets, true_tree, seed, cores) {
     cat('Using', cores, 'cores via "parallel" \n')
-    cl = makeCluster(3)
+    cl = makeCluster(cores, outfile='')
     clusterEvalQ(cl, library(TRONCO))
     clusterExport(cl, 'run.reconstructions')
     clusterExport(cl, 'getStats')
@@ -119,7 +125,7 @@ expand.input <- function(datasets, true_tree, seed, cores) {
 
     for(i in 1:nrow(datasets)) {
         for (j in 1:ncol(datasets)) {
-            cat((((i - 1) * nrow(dataset)) + j) , '/', nrow(dataset) * ncol(dataset), '\n')
+            cat((((i - 1) * ncol(datasets)) + j) , '/', nrow(datasets) * ncol(datasets), '\n')
             single.experiment = datasets[[i,j]]       
             results = parLapply(cl, single.experiment, function(x, true_tree){
                 run.reconstructions(x$dataset, true_tree)
