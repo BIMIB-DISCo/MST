@@ -18,7 +18,10 @@ generate.dataset.single.cells <- function (type,
     samples_num,
     nodes_probabilities = NA,
     e_pos,
-    e_neg) {
+    e_neg,
+    nodes = NA,
+    significance = 0.10,
+    samples_significance = 0.001) {
     
     # structure to save the results
     results = NULL
@@ -48,6 +51,14 @@ generate.dataset.single.cells <- function (type,
                 #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }
+    } else if (type == "random") {
+        for (i in samples_num) {
+            for (j in 1:length(e_pos)) {
+                random_dataset = sample.random.single.cells(i,e_pos[j],e_neg[j],nodes,significance,samples_significance)
+                results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
+            }
+        }
     }
     
     return(results)
@@ -63,7 +74,10 @@ generate.dataset.multiple.biopses <- function(type,
     nodes_probabilities = NA,
     e_pos,
     e_neg,
-    wild_type) {
+    wild_type,
+    nodes = NA,
+    significance = 0.10,
+    samples_significance = 0.001) {
     
     
     # structure to save the results
@@ -109,7 +123,16 @@ generate.dataset.multiple.biopses <- function(type,
                 #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }
+    } else if (type == "random") {
+        for (i in samples_num) {
+            for (j in 1:length(e_pos)) {
+                random_dataset = sample.random.multiple.biopses(i,e_pos[j],e_neg[j],nodes,significance,samples_significance,wild_type)
+                results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
+            }
+        }
     }
+    
     return(results)
 }
 
@@ -129,6 +152,7 @@ generate.random.single.cell.dataset <- function ( nodes, significance = 0.10 ) {
 	
 	# build the dataset
 	random_dataset = c(rep(0, nodes),(1-my_tree$root_prob))
+	unique_random_dataset = c(rep(0, nodes),0.0)
 	for (i in 1:length(my_paths)) {
 		curr_path = my_paths[[i]]
 		for (j in 1:length(curr_path)) {
@@ -148,11 +172,26 @@ generate.random.single.cell.dataset <- function ( nodes, significance = 0.10 ) {
 				new_valid_sample[curr_valid_sample[l]] = 1
 			}
 			random_dataset = rbind(random_dataset,c(new_valid_sample,curr_sample_probability))
+			unique_random_dataset = rbind(unique_random_dataset,c(new_valid_sample,0.0))
 		}
 	}
-	random_dataset = unique(random_dataset)
-	colnames(random_dataset) = c(paste0("node_",1:(ncol(random_dataset)-1)),"Probs")
-	rownames(random_dataset) = paste0("sample_",1:nrow(random_dataset))
+	unique_random_dataset = unique(unique_random_dataset)
+	colnames(unique_random_dataset) = c(paste0("node_",1:(ncol(unique_random_dataset)-1)),"Probs")
+	rownames(unique_random_dataset) = paste0("sample_",1:nrow(unique_random_dataset))
+	
+	# compute the probabilities for the unique random dataset
+	for (i in 1:nrow(unique_random_dataset)) {
+		curr_row = as.vector(unique_random_dataset[i,1:(ncol(unique_random_dataset)-1)])
+		curr_prob = 0.0
+		for (j in 1:nrow(random_dataset)) {
+			curr_row_check = as.vector(random_dataset[j,1:(ncol(random_dataset)-1)])
+			if(identical(curr_row,curr_row_check)) {
+				curr_prob = curr_prob + random_dataset[j,ncol(random_dataset)]
+			}
+		}
+		unique_random_dataset[i,ncol(unique_random_dataset)] = curr_prob
+	}
+	random_dataset = unique_random_dataset
 	random_dataset[,"Probs"] = random_dataset[,"Probs"] / sum(random_dataset[,"Probs"])
 	
 	# set the names for the adjacency matrices
@@ -162,7 +201,8 @@ generate.random.single.cell.dataset <- function ( nodes, significance = 0.10 ) {
 	rownames(my_tree$probabilities) = paste0("node_",1:ncol(my_tree$probabilities))
 	
 	# save the results
-	my_random_dataset = list(structure = my_tree$structure, probabilities = my_tree$probabilities, root_prob = my_tree$root_prob, dataset_samples = random_dataset)
+	my_random_dataset = list(structure = my_tree$structure, probabilities = my_tree$probabilities, 
+	                            root_prob = my_tree$root_prob, dataset_samples = random_dataset)
 	
 	return(my_random_dataset)
 	
@@ -210,7 +250,8 @@ generate.random.tree <- function ( nodes, significance = 0.10 ) {
 	}
 	
 	# save the results
-	my_tree = list(structure = adj.matrix.structure, probabilities = adj.matrix.probabilities, root = my_tree_root, leaves = leaves, root_prob = root_prob)
+	my_tree = list(structure = adj.matrix.structure, probabilities = adj.matrix.probabilities, 
+	                root = my_tree_root, leaves = leaves, root_prob = root_prob)
 	
 	return(my_tree)
 	
