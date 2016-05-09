@@ -27,7 +27,7 @@ source('generate.scite.input.R')
 
 # setting of the experiments
 seed = 12345
-number_experiments = 1#100
+number_experiments = 100
 my_experiments = 1:number_experiments
 names(my_experiments) = paste("Experiment",my_experiments)
 sample_levels = 10
@@ -72,7 +72,7 @@ dataset.random.single.cells.5.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.single.cells(type="random",
         true_tree = NULL,
         samples_num = sample_sizes_single_cells,
-        low_probs_single_cells,
+        NULL,
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 5,
@@ -87,7 +87,7 @@ dataset.random.single.cells.10.nodes = parSapply(cl, my_experiments, function(x)
     generate.dataset.single.cells(type="random",
         true_tree = NULL,
         samples_num = sample_sizes_single_cells,
-        low_probs_single_cells,
+        NULL,
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 10,
@@ -102,7 +102,7 @@ dataset.random.single.cells.15.nodes = parSapply(cl, my_experiments, function(x)
     generate.dataset.single.cells(type="random",
         true_tree = NULL,
         samples_num = sample_sizes_single_cells,
-        low_probs_single_cells,
+        NULL,
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 15,
@@ -117,8 +117,8 @@ dataset.multiple.biopses.5.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
         true_tree = NULL,
         samples_num = sample_sizes_multiple_biopses,
-        clones_num_sampling_low,
-        low_probs_multiple_biopses,
+        NULL,
+        NULL,
         e_pos = e_pos_multiple_biopses,
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,
@@ -134,8 +134,8 @@ dataset.multiple.biopses.10.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
         true_tree = NULL,
         samples_num = sample_sizes_multiple_biopses,
-        clones_num_sampling_low,
-        low_probs_multiple_biopses,
+        NULL,
+        NULL,
         e_pos = e_pos_multiple_biopses,
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,
@@ -151,8 +151,8 @@ dataset.multiple.biopses.15.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
         true_tree = NULL,
         samples_num = sample_sizes_multiple_biopses,
-        clones_num_sampling_low,
-        low_probs_multiple_biopses,
+        NULL,
+        NULL,
         e_pos = e_pos_multiple_biopses,
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,

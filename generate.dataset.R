@@ -59,6 +59,7 @@ generate.dataset.single.cells <- function (type,
             for (j in 1:length(e_pos)) {
                 random_dataset = sample.random.single.cells(i,e_pos[j],e_neg[j],nodes,significance,samples_significance)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                results[[as.character(i)]][[as.character(j)]][["random_dataset"]] = random_dataset
                 #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }
@@ -131,6 +132,7 @@ generate.dataset.multiple.biopses <- function(type,
             for (j in 1:length(e_pos)) {
                 random_dataset = sample.random.multiple.biopses(i,e_pos[j],e_neg[j],nodes,significance,samples_significance,wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                results[[as.character(i)]][[as.character(j)]][["random_dataset"]] = random_dataset
                 #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }

@@ -511,6 +511,7 @@ sample.random.multiple.biopses <- function (samples_num,
     # generate a random single cell tree
     random_tree = sample.random.single.cells.significant.tree(nodes,significance,samples_significance)
     
+    # as an heuristics, one bulk sample is the mix of nodes/2 single cells samples
     clones_per_sample = round(nodes/2)
     
     res.matrix = matrix(NA, ncol=nodes, nrow=(samples_num - wild_type_samples))
