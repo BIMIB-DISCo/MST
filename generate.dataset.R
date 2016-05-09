@@ -22,6 +22,9 @@ generate.dataset.single.cells <- function (type,
     nodes = NA,
     significance = 0.10,
     samples_significance = 0.001) {
+    	
+    
+    library(igraph)
     
     # structure to save the results
     results = NULL

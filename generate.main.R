@@ -15,8 +15,6 @@
 library(TRONCO)
 library(parallel)
 
-library(igraph)
-
 if (!dir.exists('RData')) {
     dir.create('RData')
 }

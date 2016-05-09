@@ -338,6 +338,51 @@ sample.random.single.cells <- function ( samples_num, e_pos, e_neg, nodes, signi
 	
 }
 
+# generate a significant random tree
+sample.random.single.cells.significant.tree <- function ( nodes, significance = 0.10, sample_significance = 0.005 ) {
+	
+	# generate a random tree with minimum significance per samples
+	random_tree = NULL
+	while(is.null(random_tree) || 
+	        min(random_tree$dataset_samples[,"Probs"])<=sample_significance || 
+	        max(random_tree$dataset_samples[,"Probs"])>=(1-sample_significance)) {
+	        	
+		# keep generating random trees until I get a valid one
+		random_tree = generate.random.single.cell.dataset(nodes,significance)
+		
+	}
+    
+    return(random_tree)
+	
+}
+
+# generate a dataset of random single cell given the generating tree
+sample.random.single.cells.given.tree <- function ( samples_num, nodes, e_pos, e_neg, random_tree ) {
+	
+	dataset = random_tree$dataset_samples[,1:nodes]
+	samples_probabilities = random_tree$dataset_samples[,nodes+1]
+	
+	# sample the dataset
+    sampled_dataset = dataset[sample(1:nrow(dataset),
+        size = samples_num,
+        replace = TRUE,
+        prob = samples_probabilities),]
+    
+    # apply the noise
+    for(i in 1:nrow(sampled_dataset)) {
+        sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
+    }
+    rownames(sampled_dataset) = paste0("sample_",1:samples_num)
+    
+    sampled_dataset = colSums(sampled_dataset) / samples_num
+    
+    # if a mutation is observed at least in 1 sample, it is observed (OR of the samples)
+    sampled_dataset[which(sampled_dataset > 0)] = 1
+    
+    return(sampled_dataset)
+	
+}
+
 # sample one observation of multiple biospes from a given single cell model
 sample.multiple.biospes.from.single.cells <- function (clones_num,
     single_cell_type,
@@ -462,24 +507,31 @@ sample.random.multiple.biopses <- function (samples_num,
     if (wild_type > 0 && wild_type_samples == 0) {
         wild_type_samples = 1
     }
+    
+    # generate a random single cell tree
+    random_tree = sample.random.single.cells.significant.tree(nodes,significance,samples_significance)
+    
+    clones_per_sample = round(nodes/2)
+    
     res.matrix = matrix(NA, ncol=nodes, nrow=(samples_num - wild_type_samples))
-    res = sapply(res.matrix[,1], function(x){
-    	#### TO FIX
-        sample.multiple.biospes.from.random.single.cells(clones_probabilities,
-            "random",
-            nodes_probabilities,
-            e_pos,
-            e_neg)
-        #### TO FIX
+    res = sapply(res.matrix[,1], function(x) {
+    	sample.random.single.cells.given.tree(clones_per_sample,
+    	                            nodes,
+    	                            e_pos,
+    	                            e_neg,
+    	                            random_tree)
     })
-    sampled_dataset = t(res$sampled_dataset)
+    
+    sampled_dataset = t(res)
     
     if (wild_type_samples > 0) {
-        sampled_dataset = rbind(matrix(0, wild_type_samples,6), sampled_dataset)
+        sampled_dataset = rbind(matrix(0, wild_type_samples,nodes), sampled_dataset)
     }
-    res$sampled_dataset = sampled_dataset
     
-    return(sampled_dataset)
+    # save the results
+    res = list( random_tree = random_tree, sampled_dataset = sampled_dataset )
+    
+    return(res)
     
 }
 
