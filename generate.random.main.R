@@ -53,6 +53,7 @@ if (cores < 1) {
 }
 
 cl = makeCluster(cores)
+clusterEvalQ(cl, library(igraph))
 clusterEvalQ(cl, source('generate.dataset.R'))
 clusterEvalQ(cl, source('generate.sample.polyclonal.trees.R'))
 clusterExport(cl, c('sample_sizes_single_cells',
@@ -105,6 +106,19 @@ dataset.random.single.cells.15.nodes = parSapply(cl, my_experiments, function(x)
 })
 save(dataset.random.single.cells.15.nodes, file="RData/dataset.random.single.cells.15.nodes.RData")
 
+# generate dataset for random single cells of 20 nodes
+cat('dataset random single cells of 20 nodes\n')
+dataset.random.single.cells.20.nodes = parSapply(cl, my_experiments, function(x){
+    generate.dataset.single.cells(type="random",
+        samples_num = sample_sizes_single_cells,
+        e_pos = e_pos_single_cells,
+        e_neg = e_neg_single_cells,
+        nodes = 20,
+        significance = 0.10,
+        samples_significance = 0.001)
+})
+save(dataset.random.single.cells.20.nodes, file="RData/dataset.random.single.cells.20.nodes.RData")
+
 # generate dataset for multiple biopses of 5 nodes
 cat('dataset multiple biopses of 5 nodes\n')
 dataset.multiple.biopses.5.nodes = parSapply(cl, my_experiments, function(x){
@@ -148,6 +162,20 @@ dataset.multiple.biopses.15.nodes = parSapply(cl, my_experiments, function(x){
 })
 save(dataset.multiple.biopses.15.nodes,file="RData/dataset.multiple.biopses.15.nodes.RData")
 
+# generate dataset for multiple biopses of 20 nodes
+cat('dataset multiple biopses of 20 nodes\n')
+dataset.multiple.biopses.20.nodes = parSapply(cl, my_experiments, function(x){
+    generate.dataset.multiple.biopses("random",
+        samples_num = sample_sizes_multiple_biopses,
+        e_pos = e_pos_multiple_biopses,
+        e_neg = e_neg_multiple_biopses,
+        wild_type = wild_type_rate,
+        nodes = 20,
+        significance = 0.10,
+        samples_significance = 0.001)
+})
+save(dataset.multiple.biopses.20.nodes,file="RData/dataset.multiple.biopses.20.nodes.RData")
+
 
 stopCluster(cl)
 
@@ -160,6 +188,9 @@ stopCluster(cl)
 create.scite.input(dataset.random.single.cells.5.nodes, 'single', 'random_5', scite.sd)
 create.scite.input(dataset.random.single.cells.10.nodes, 'single', 'random_10', scite.sd)
 create.scite.input(dataset.random.single.cells.15.nodes, 'single', 'random_15', scite.sd)
+create.scite.input(dataset.random.single.cells.20.nodes, 'single', 'random_20', scite.sd)
+
 create.scite.input(dataset.random.multiple.biopses.5.nodes, 'multiple', 'random_5', scite.sd)
 create.scite.input(dataset.random.multiple.biopses.10.nodes, 'multiple', 'random_10', scite.sd)
 create.scite.input(dataset.random.multiple.biopses.15.nodes, 'multiple', 'random_15', scite.sd)
+create.scite.input(dataset.random.multiple.biopses.20.nodes, 'multiple', 'random_20', scite.sd)
