@@ -14,7 +14,7 @@
 
 # simulate a dataset from single cells at given sample sizes and noise levels
 generate.dataset.single.cells <- function (type,
-    true_tree,
+    true_tree = NULL,
     samples_num,
     nodes_probabilities = NA,
     e_pos,
@@ -35,7 +35,6 @@ generate.dataset.single.cells <- function (type,
             for (j in 1:length(e_pos)) {
                 curr_dataset = sample.single.cells.polyclonal.low(i,nodes_probabilities,e_pos[j],e_neg[j])
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
-                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }
     } else if (type == "medium") {
@@ -43,7 +42,6 @@ generate.dataset.single.cells <- function (type,
             for (j in 1:length(e_pos)) {
                 curr_dataset = sample.single.cells.polyclonal.medium(i,nodes_probabilities,e_pos[j],e_neg[j])
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
-                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }
     } else if (type == "high") {
@@ -51,7 +49,6 @@ generate.dataset.single.cells <- function (type,
             for (j in 1:length(e_pos)) {
                 curr_dataset = sample.single.cells.polyclonal.high(i,nodes_probabilities,e_pos[j],e_neg[j])
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
-                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }
     } else if (type == "random") {
@@ -59,8 +56,7 @@ generate.dataset.single.cells <- function (type,
             for (j in 1:length(e_pos)) {
                 random_dataset = sample.random.single.cells(i,e_pos[j],e_neg[j],nodes,significance,samples_significance)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
-                results[[as.character(i)]][[as.character(j)]][["random_dataset"]] = random_dataset
-                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree
             }
         }
     }
@@ -72,7 +68,7 @@ generate.dataset.single.cells <- function (type,
 
 # simulate a dataset from multiple biopses at given sample sizes and noise levels
 generate.dataset.multiple.biopses <- function(type,
-    true_tree,
+    true_tree = NULL,
     samples_num,
     clones_probabilities,
     nodes_probabilities = NA,
@@ -98,7 +94,6 @@ generate.dataset.multiple.biopses <- function(type,
                     e_neg[j],
                     wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
-                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }
     } else if (type == "medium") {
@@ -111,7 +106,6 @@ generate.dataset.multiple.biopses <- function(type,
                     e_neg[j],
                     wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
-                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }
     } else if (type == "high") {
@@ -124,7 +118,6 @@ generate.dataset.multiple.biopses <- function(type,
                     e_neg[j],
                     wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
-                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
             }
         }
     } else if (type == "random") {
@@ -132,8 +125,7 @@ generate.dataset.multiple.biopses <- function(type,
             for (j in 1:length(e_pos)) {
                 random_dataset = sample.random.multiple.biopses(i,e_pos[j],e_neg[j],nodes,significance,samples_significance,wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
-                results[[as.character(i)]][[as.character(j)]][["random_dataset"]] = random_dataset
-                #results[[as.character(i)]][[as.character(j)]][["reconstructions"]] = run.reconstructions(curr_dataset,true_tree)
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree
             }
         }
     }

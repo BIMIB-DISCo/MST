@@ -70,9 +70,7 @@ cat('Using', cores, 'cores via "parallel" \n')
 cat('dataset random single cells of 5 nodes\n')
 dataset.random.single.cells.5.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.single.cells(type="random",
-        true_tree = NULL,
         samples_num = sample_sizes_single_cells,
-        NULL,
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 5,
@@ -85,9 +83,7 @@ save(dataset.random.single.cells.5.nodes, file="RData/dataset.random.single.cell
 cat('dataset random single cells of 10 nodes\n')
 dataset.random.single.cells.10.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.single.cells(type="random",
-        true_tree = NULL,
         samples_num = sample_sizes_single_cells,
-        NULL,
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 10,
@@ -100,9 +96,7 @@ save(dataset.random.single.cells.10.nodes, file="RData/dataset.random.single.cel
 cat('dataset random single cells of 15 nodes\n')
 dataset.random.single.cells.15.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.single.cells(type="random",
-        true_tree = NULL,
         samples_num = sample_sizes_single_cells,
-        NULL,
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 15,
@@ -117,8 +111,6 @@ dataset.multiple.biopses.5.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
         true_tree = NULL,
         samples_num = sample_sizes_multiple_biopses,
-        NULL,
-        NULL,
         e_pos = e_pos_multiple_biopses,
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,
@@ -132,10 +124,7 @@ save(dataset.multiple.biopses.5.nodes,file="RData/dataset.multiple.biopses.5.nod
 cat('dataset multiple biopses of 10 nodes\n')
 dataset.multiple.biopses.10.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
-        true_tree = NULL,
         samples_num = sample_sizes_multiple_biopses,
-        NULL,
-        NULL,
         e_pos = e_pos_multiple_biopses,
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,
@@ -149,10 +138,7 @@ save(dataset.multiple.biopses.10.nodes,file="RData/dataset.multiple.biopses.10.n
 cat('dataset multiple biopses of 15 nodes\n')
 dataset.multiple.biopses.15.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
-        true_tree = NULL,
         samples_num = sample_sizes_multiple_biopses,
-        NULL,
-        NULL,
         e_pos = e_pos_multiple_biopses,
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,
@@ -166,10 +152,10 @@ save(dataset.multiple.biopses.15.nodes,file="RData/dataset.multiple.biopses.15.n
 stopCluster(cl)
 
 #generate scite dataset
-if (dir.exists('scite_input')) {
-    unlink('scite_input', recursive = TRUE)
-    unlink('scite.script.*')
-}
+#if (dir.exists('scite_input')) {
+#    unlink('scite_input', recursive = TRUE)
+#    unlink('scite.script.*')
+#}
 
 create.scite.input(dataset.random.single.cells.5.nodes, 'single', 'random_5', scite.sd)
 create.scite.input(dataset.random.single.cells.10.nodes, 'single', 'random_10', scite.sd)
