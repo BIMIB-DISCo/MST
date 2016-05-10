@@ -163,6 +163,11 @@ generate.random.single.cell.dataset <- function ( nodes, significance = 0.10 ) {
 				else {
 					curr_sample_probability = curr_sample_probability * my_tree$probabilities[curr_path[k-1],curr_path[k]]
 				}
+				# if I'm not in a leave, multiply for the probability of not occurane of any later event
+				if(k<j) {
+					curr_sample_probability = curr_sample_probability * (1 - my_tree$probabilities[curr_path[k],curr_path[k+1]])
+				}
+				
 			}
 			new_valid_sample = rep(0,nodes)
 			for(l in 1:length(curr_valid_sample)) {
