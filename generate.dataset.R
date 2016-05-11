@@ -150,25 +150,49 @@ generate.random.single.cell.dataset <- function ( nodes, significance = 0.10 ) {
 	# build the dataset
 	random_dataset = c(rep(0, nodes),(1-my_tree$root_prob))
 	unique_random_dataset = c(rep(0, nodes),0.0)
+	# consider all the possible clones described by the tree
 	for (i in 1:length(my_paths)) {
 		curr_path = my_paths[[i]]
+		# go through all the possible samples in this clonal path
 		for (j in 1:length(curr_path)) {
 			curr_valid_sample = NULL
 			curr_sample_probability = 1
+			# visit any subset of the current clonal path
 			for (k in 1:j) {
 				curr_valid_sample = c(curr_valid_sample,curr_path[k])
+				# I start by setting to the sample the probability of the root
 				if(k==1) {
 					curr_sample_probability = my_tree$root_prob
 				}
+				# if I move from the root, the probability of the sample is 
+				# P(Root) * P(Sample) * (1 - P(alternative_paths)), where
+				# alternative_paths are alternatives to the chosen clone
 				else {
+					# this is P(Root) * P(Sample)
 					curr_sample_probability = curr_sample_probability * my_tree$probabilities[curr_path[k-1],curr_path[k]]
+					# then I add (1 - P(alternative_paths))
+					# find the children of (k-1) node different from k if any
+					curr_alternative_paths = which(my_tree$structure[curr_path[(k-1)],]==1)
+					curr_alternative_paths = curr_alternative_paths[which(curr_alternative_paths!=curr_path[k])]
+					# consider any alternative path
+					if(length(curr_alternative_paths)>0) {
+						for (alternate in curr_alternative_paths) {
+							curr_sample_probability = curr_sample_probability * 
+							                (1 - my_tree$probabilities[curr_path[k-1],curr_alternative_paths[alternate]])
+						}
+					}
 				}
-				# if I'm not in a leave, multiply for the probability of not occurane of any later event
-				if(k<j) {
-					curr_sample_probability = curr_sample_probability * (1 - my_tree$probabilities[curr_path[k],curr_path[k+1]])
-				}
-				
 			}
+			
+			# if I'm not in a leave node, multiply for the probability of not occurane of any later event
+			if(j < length(curr_path)) {
+				# consider any child of the current node
+				curr_later_paths = which(my_tree$structure[curr_path[j],]==1)
+				for (later_paths in curr_later_paths) {
+					curr_sample_probability = curr_sample_probability * (1 - my_tree$probabilities[curr_path[j],later_paths])
+				}
+			}
+				
 			new_valid_sample = rep(0,nodes)
 			for(l in 1:length(curr_valid_sample)) {
 				new_valid_sample[curr_valid_sample[l]] = 1
