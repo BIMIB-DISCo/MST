@@ -149,7 +149,6 @@ generate.random.single.cell.dataset <- function ( nodes, significance = 0.10 ) {
 	
 	# build the dataset
 	random_dataset = c(rep(0, nodes),(1-my_tree$root_prob))
-	unique_random_dataset = c(rep(0, nodes),0.0)
 	# consider all the possible clones described by the tree
 	for (i in 1:length(my_paths)) {
 		curr_path = my_paths[[i]]
@@ -178,7 +177,7 @@ generate.random.single.cell.dataset <- function ( nodes, significance = 0.10 ) {
 					if(length(curr_alternative_paths)>0) {
 						for (alternate in curr_alternative_paths) {
 							curr_sample_probability = curr_sample_probability * 
-							                (1 - my_tree$probabilities[curr_path[k-1],curr_alternative_paths[alternate]])
+							                (1 - my_tree$probabilities[curr_path[(k-1)],alternate])
 						}
 					}
 				}
@@ -198,26 +197,13 @@ generate.random.single.cell.dataset <- function ( nodes, significance = 0.10 ) {
 				new_valid_sample[curr_valid_sample[l]] = 1
 			}
 			random_dataset = rbind(random_dataset,c(new_valid_sample,curr_sample_probability))
-			unique_random_dataset = rbind(unique_random_dataset,c(new_valid_sample,0.0))
 		}
 	}
-	unique_random_dataset = unique(unique_random_dataset)
-	colnames(unique_random_dataset) = c(paste0("node_",1:(ncol(unique_random_dataset)-1)),"Probs")
-	rownames(unique_random_dataset) = paste0("sample_",1:nrow(unique_random_dataset))
+	random_dataset = unique(random_dataset)
+	colnames(random_dataset) = c(paste0("node_",1:(ncol(random_dataset)-1)),"Probs")
+	rownames(random_dataset) = paste0("sample_",1:nrow(random_dataset))
 	
-	# compute the probabilities for the unique random dataset
-	for (i in 1:nrow(unique_random_dataset)) {
-		curr_row = as.vector(unique_random_dataset[i,1:(ncol(unique_random_dataset)-1)])
-		curr_prob = 0.0
-		for (j in 1:nrow(random_dataset)) {
-			curr_row_check = as.vector(random_dataset[j,1:(ncol(random_dataset)-1)])
-			if(identical(curr_row,curr_row_check)) {
-				curr_prob = curr_prob + random_dataset[j,ncol(random_dataset)]
-			}
-		}
-		unique_random_dataset[i,ncol(unique_random_dataset)] = curr_prob
-	}
-	random_dataset = unique_random_dataset
+	# normaliza the probabilities to sum to 1
 	random_dataset[,"Probs"] = random_dataset[,"Probs"] / sum(random_dataset[,"Probs"])
 	
 	# set the names for the adjacency matrices
