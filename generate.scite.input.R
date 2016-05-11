@@ -62,13 +62,16 @@ create.scite.input = function(dataset,
                 }
                 eneg_level = eneg[noise_level]
                 eneg_level = generate.beta(eneg_level, betasd)
+                if (eneg_level == 0) {
+                    eneg_level = '0.00000000000001'
+                }
                 sample_size_level = sample.size[sample]
-                filename = paste0('scite_input/datasets/', branching,  '/', sample.type, '/', sample_size_level, '_', experiment, '_', noise, '.csv')
+                filename = paste0('datasets/', branching,  '/', sample.type, '/', sample_size_level, '_', experiment, '_', noise, '.csv')
                 genotype = t(execution[[noise]]$dataset)
                 nsample = ncol(genotype)
                 nmuts = nrow(genotype)
                 seed_level = round(runif(1) * 10000, 0)
-                write.table(genotype, file = filename, quote = FALSE, sep = ' ', col.names = FALSE, row.names = FALSE)
+                write.table(genotype, file = paste0('scite_input/', filename), quote = FALSE, sep = ' ', col.names = FALSE, row.names = FALSE)
                 script = paste0(script, 'printf "EXEC: ', count, '/800 - sample: ', sample, ' experiment: ', experiment, ' noise lev: ', noise, ' \\n" \n')
                 script = paste0(script, '../scite -i ', filename, ' -n ', nmuts, ' -m ', nsample, ' -r 1 -l 100000 -fd ', epos_level, ' -ad ', eneg_level, ' -seed ', seed_level, ' -max_treelist_size 1', ' \n')
                 count = count + 1

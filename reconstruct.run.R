@@ -141,4 +141,30 @@ expand.input <- function(datasets, true_tree, seed, cores) {
 
 }
 
+expand.random.input <- function(datasets, seed, cores) {
+    cat('Using', cores, 'cores via "parallel" \n')
+    cl = makeCluster(cores)
+    clusterEvalQ(cl, library(TRONCO))
+    clusterExport(cl, 'run.reconstructions')
+    clusterExport(cl, 'getStats')
+    clusterSetRNGStream(cl, iseed = seed)
+
+    for(i in 1:nrow(datasets)) {
+        for (j in 1:ncol(datasets)) {
+            cat((((i - 1) * ncol(datasets)) + j) , '/', nrow(datasets) * ncol(datasets), '\n')
+            single.experiment = datasets[[i,j]]       
+            results = parLapply(cl, single.experiment, function(x){
+                run.reconstructions(x$dataset, x$true_tree$structure)
+            })
+
+            for (k in 1:length(results)) {
+                datasets[[i,j]][[k]]$reconstructions = results[[k]]
+            }
+        }
+    }
+    stopCluster(cl)
+    return(datasets)
+
+}
+
 

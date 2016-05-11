@@ -121,7 +121,7 @@ save(dataset.random.single.cells.20.nodes, file="RData/dataset.random.single.cel
 
 # generate dataset for multiple biopses of 5 nodes
 cat('dataset multiple biopses of 5 nodes\n')
-dataset.multiple.biopses.5.nodes = parSapply(cl, my_experiments, function(x){
+dataset.random.multiple.biopses.5.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
         true_tree = NULL,
         samples_num = sample_sizes_multiple_biopses,
@@ -136,7 +136,7 @@ save(dataset.multiple.biopses.5.nodes,file="RData/dataset.multiple.biopses.5.nod
 
 # generate dataset for multiple biopses of 10 nodes
 cat('dataset multiple biopses of 10 nodes\n')
-dataset.multiple.biopses.10.nodes = parSapply(cl, my_experiments, function(x){
+dataset.random.multiple.biopses.10.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
         samples_num = sample_sizes_multiple_biopses,
         e_pos = e_pos_multiple_biopses,
@@ -150,7 +150,7 @@ save(dataset.multiple.biopses.10.nodes,file="RData/dataset.multiple.biopses.10.n
 
 # generate dataset for multiple biopses of 15 nodes
 cat('dataset multiple biopses of 15 nodes\n')
-dataset.multiple.biopses.15.nodes = parSapply(cl, my_experiments, function(x){
+dataset.random.multiple.biopses.15.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
         samples_num = sample_sizes_multiple_biopses,
         e_pos = e_pos_multiple_biopses,
@@ -164,7 +164,7 @@ save(dataset.multiple.biopses.15.nodes,file="RData/dataset.multiple.biopses.15.n
 
 # generate dataset for multiple biopses of 20 nodes
 cat('dataset multiple biopses of 20 nodes\n')
-dataset.multiple.biopses.20.nodes = parSapply(cl, my_experiments, function(x){
+dataset.random.multiple.biopses.20.nodes = parSapply(cl, my_experiments, function(x){
     generate.dataset.multiple.biopses("random",
         samples_num = sample_sizes_multiple_biopses,
         e_pos = e_pos_multiple_biopses,
