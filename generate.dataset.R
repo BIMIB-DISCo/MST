@@ -20,9 +20,10 @@ generate.dataset.single.cells <- function (type,
     e_pos,
     e_neg,
     nodes = NA,
-    significance = 0.10,
+    min_significance = 0.6,
+    max_significance = 0.9,
     samples_significance = 0.001) {
-    	
+        
     
     library(igraph)
     
@@ -54,7 +55,7 @@ generate.dataset.single.cells <- function (type,
     } else if (type == "random") {
         for (i in samples_num) {
             for (j in 1:length(e_pos)) {
-                random_dataset = sample.random.single.cells(i,e_pos[j],e_neg[j],nodes,significance,samples_significance)
+                random_dataset = sample.random.single.cells(i,e_pos[j],e_neg[j],nodes,min_significance,max_significance,samples_significance)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
                 results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree
             }
@@ -76,7 +77,8 @@ generate.dataset.multiple.biopses <- function(type,
     e_neg,
     wild_type,
     nodes = NA,
-    significance = 0.10,
+    min_significance = 0.60,
+    max_significance = 0.90,
     samples_significance = 0.001) {
     
     
@@ -123,7 +125,7 @@ generate.dataset.multiple.biopses <- function(type,
     } else if (type == "random") {
         for (i in samples_num) {
             for (j in 1:length(e_pos)) {
-                random_dataset = sample.random.multiple.biopses(i,e_pos[j],e_neg[j],nodes,significance,samples_significance,wild_type)
+                random_dataset = sample.random.multiple.biopses(i,e_pos[j],e_neg[j],nodes,min_significance,max_significance,samples_significance,wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
                 results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree
             }
@@ -134,195 +136,230 @@ generate.dataset.multiple.biopses <- function(type,
 }
 
 # generate a random tree and the probabilities of the associated single cell samples
-generate.random.single.cell.dataset <- function ( nodes, significance = 0.10 ) {
-	
-	# generate a random tree
-	my_tree = generate.random.tree(nodes = nodes, significance = significance)
-	
-	# make an igraph object from the tree
-	curr.igraph = graph.adjacency(my_tree$structure, mode = "directed")
-	all_paths = get.all.shortest.paths(curr.igraph,my_tree$root,my_tree$leaves)$res
-	my_paths = NULL
-	for (i in 1:length(all_paths)) {
-		my_paths[[i]] = as.vector(all_paths[[i]])
-	}
-	
-	# build the dataset
-	random_dataset = c(rep(0, nodes),(1-my_tree$root_prob))
-	# consider all the possible clones described by the tree
-	for (i in 1:length(my_paths)) {
-		curr_path = my_paths[[i]]
-		# go through all the possible samples in this clonal path
-		for (j in 1:length(curr_path)) {
-			curr_valid_sample = NULL
-			curr_sample_probability = 1
-			# visit any subset of the current clonal path
-			for (k in 1:j) {
-				curr_valid_sample = c(curr_valid_sample,curr_path[k])
-				# I start by setting to the sample the probability of the root
-				if(k==1) {
-					curr_sample_probability = my_tree$root_prob
-				}
-				# if I move from the root, the probability of the sample is 
-				# P(Root) * P(Sample) * (1 - P(alternative_paths)), where
-				# alternative_paths are alternatives to the chosen clone
-				else {
-					# this is P(Root) * P(Sample)
-					curr_sample_probability = curr_sample_probability * my_tree$probabilities[curr_path[k-1],curr_path[k]]
-					# then I add (1 - P(alternative_paths))
-					# find the children of (k-1) node different from k if any
-					curr_alternative_paths = which(my_tree$structure[curr_path[(k-1)],]==1)
-					curr_alternative_paths = curr_alternative_paths[which(curr_alternative_paths!=curr_path[k])]
-					# consider any alternative path
-					if(length(curr_alternative_paths)>0) {
-						for (alternate in curr_alternative_paths) {
-							curr_sample_probability = curr_sample_probability * 
-							                (1 - my_tree$probabilities[curr_path[(k-1)],alternate])
-						}
-					}
-				}
-			}
-			
-			# if I'm not in a leave node, multiply for the probability of not occurane of any later event
-			if(j < length(curr_path)) {
-				# consider any child of the current node
-				curr_later_paths = which(my_tree$structure[curr_path[j],]==1)
-				for (later_paths in curr_later_paths) {
-					curr_sample_probability = curr_sample_probability * (1 - my_tree$probabilities[curr_path[j],later_paths])
-				}
-			}
-				
-			new_valid_sample = rep(0,nodes)
-			for(l in 1:length(curr_valid_sample)) {
-				new_valid_sample[curr_valid_sample[l]] = 1
-			}
-			random_dataset = rbind(random_dataset,c(new_valid_sample,curr_sample_probability))
-		}
-	}
-	random_dataset = unique(random_dataset)
-	colnames(random_dataset) = c(paste0("node_",1:(ncol(random_dataset)-1)),"Probs")
-	rownames(random_dataset) = paste0("sample_",1:nrow(random_dataset))
-	
-	# normaliza the probabilities to sum to 1
-	random_dataset[,"Probs"] = random_dataset[,"Probs"] / sum(random_dataset[,"Probs"])
-	
-	# set the names for the adjacency matrices
-	colnames(my_tree$structure) = paste0("node_",1:ncol(my_tree$structure))
-	rownames(my_tree$structure) = paste0("node_",1:ncol(my_tree$structure))
-	colnames(my_tree$probabilities) = paste0("node_",1:ncol(my_tree$probabilities))
-	rownames(my_tree$probabilities) = paste0("node_",1:ncol(my_tree$probabilities))
-	
-	# save the results
-	my_random_dataset = list(structure = my_tree$structure, probabilities = my_tree$probabilities, 
-	                            root_prob = my_tree$root_prob, dataset_samples = random_dataset)
-	
-	return(my_random_dataset)
-	
+generate.random.single.cell.dataset <- function ( nodes, min_significance = 0.6, max_significance = 0.90 ) {
+    
+    # generate a random tree
+    my_tree = generate.random.tree(nodes = nodes, min_significance = min_significance, max_significance = max_significance)
+    
+    # get adj.matrix
+    adj.matrix = my_tree$structure
+    root = which(colSums(adj.matrix) == 0)
+    leaves = which(rowSums(adj.matrix) == 0)
+    
+    # make an igraph object from the tree
+    graph = graph.adjacency(my_tree$structure, mode = "directed")   
+    paths = lapply(get.all.shortest.paths(graph,root,leaves)$res, as.vector)
+    
+    # get probabilities
+    probabilities = my_tree$probabilities
+    root.prob = my_tree$root_prob
+
+    # evaluate the probability of not having children
+    not.having.children <- function(node) {
+        children = which(adj.matrix[node,] == 1)
+        children.prob  = 1
+        for (child in children) {
+            children.prob = children.prob * (1 - probabilities[node, child])
+        }
+        return(children.prob)
+    }
+
+    # evaluate the probability of not having brothers
+    not.having.brothers <- function(node, parent) {
+        brothers = which(adj.matrix[parent,] == 1)
+        brothers = brothers[brothers != node]
+        brothers.prob  = 1
+        for (brother in brothers) {
+            brothers.prob = brothers.prob * (1 - probabilities[parent, brother])
+        }
+        return(brothers.prob)
+    }
+
+    # if I move from the root, the probability of the sample is 
+    # P(Root) * P(Sample) * (1 - P(alternative_paths)), where
+    # alternative_paths are alternatives to the chosen clone
+
+    # Build first row of sample  datasera (1 - p(root))
+    random_dataset = c(rep(0, nodes),(1-my_tree$root_prob))
+    
+    # consider all the possible clones described by the tree
+    for (path in paths) {
+        # go through all the possible samples in this clonal path
+        for (j in 1:length(path)) {
+            sample = NULL
+            sample_probability = 1
+            # visit any subset of the current clonal path
+            for (k in 1:j) {
+                sample = c(sample, path[k])
+                # Now check every possible configuration
+
+                # If this node is the root ... 
+                if(path[k] == root) {
+                    # If there is only this node...
+                    if (k == j) {
+                        # compute the probabilities of not having
+                        # children event
+                        children.prob = not.having.children(path[k])
+                        sample_probability = root.prob * children.prob
+                    } else {
+                        # ...else this is the first step of a progression
+                        sample_probability = root.prob
+                    }
+
+                # ...else if this node is a leaf...
+                } else if (path[k] %in% leaves) {
+                    # compute the probabilities of not having
+                    # brother event
+                    brothers.prob = not.having.brothers(path[k], path[k-1])
+                    sample_probability = sample_probability * probabilities[path[k-1], path[k]] * brothers.prob
+                
+                # ...else this node is in the middle of a progression
+                } else {
+                    # If this is the last node of a subprogression
+                    if (k == j) {
+                        #print('this path terminate here')
+                        brothers.prob = not.having.brothers(path[k], path[k-1])
+                        children.prob = not.having.children(path[k])
+                        sample_probability = sample_probability * probabilities[path[k-1], path[k]] * brothers.prob * children.prob
+                    } else {
+                        #print('we are in the middle of a path')
+                        brothers.prob = not.having.brothers(path[k], path[k-1])
+                        sample_probability = sample_probability * probabilities[path[k-1], path[k]] * brothers.prob
+                    }
+                }
+            }
+                            
+            valid_sample = rep(0,nodes)
+            for(l in 1:length(sample)) {
+                valid_sample[sample[l]] = 1
+            }
+            random_dataset = rbind(random_dataset, c(valid_sample,sample_probability))
+        }
+    }
+    random_dataset = unique(random_dataset)
+    colnames(random_dataset) = c(paste0("node_",1:(ncol(random_dataset)-1)),"Probs")
+    rownames(random_dataset) = paste0("sample_",1:nrow(random_dataset))
+
+    # normalize a la eros
+    random_dataset[2:nrow(random_dataset),"Probs"] = random_dataset[2:nrow(random_dataset),"Probs"] / sum(random_dataset[2:nrow(random_dataset),"Probs"]) * my_tree$root_prob
+
+    # set the names for the adjacency matrices
+    colnames(my_tree$structure) = paste0("node_",1:ncol(my_tree$structure))
+    rownames(my_tree$structure) = paste0("node_",1:ncol(my_tree$structure))
+    colnames(my_tree$probabilities) = paste0("node_",1:ncol(my_tree$probabilities))
+    rownames(my_tree$probabilities) = paste0("node_",1:ncol(my_tree$probabilities))
+
+    # save the results
+    my_random_dataset = list(structure = my_tree$structure, probabilities = my_tree$probabilities, 
+                                root_prob = my_tree$root_prob, dataset_samples = random_dataset)
+    
+    return(my_random_dataset)
+    
 }
 
 # generate a random tree (both structure and conditional probabilities)
-generate.random.tree <- function ( nodes, significance = 0.10 ) {
-	
-	# create the adjacency matrices to encode tree structure and probabilities
-	adj.matrix.structure = array(0,c(nodes,nodes))
-	adj.matrix.probabilities = array(0,c(nodes,nodes))
-	
-	# generate the tree structure randomly
-	my_tree = generate.random.tree.structure(nodes)
-	my_tree_structure = my_tree$structure
-	my_tree_root = my_tree$root
-	
-	# create the actual structure of the tree
-	root_prob = runif(1, min = significance, max = 1-significance)
-	for (i in 2:length(my_tree_structure)) {
-		curr_parents_nodes = my_tree_structure[[i-1]]
-		curr_children_nodes = my_tree_structure[[i]]
-		for (j in 1:length(curr_children_nodes)) {
-			curr_node = curr_children_nodes[j]
-			if(length(curr_parents_nodes)==1) {
-				curr_parent = curr_parents_nodes[1]
-			}
-			else {
-				curr_parent = sample(curr_parents_nodes,size=1)
-			}
-			curr_conditional_prob = runif(1, min = significance, max = 1-significance)
-			# set the values in the adjacency matrices
-			adj.matrix.structure[curr_parent,curr_node] = 1
-			adj.matrix.probabilities[curr_parent,curr_node] = curr_conditional_prob
-		}
-	}
-	
-	# get the leaves in the tree
-	leaves = NULL
-	for (i in 1:nrow(adj.matrix.structure)) {
-		nodes_children = which(adj.matrix.structure[i,]==1)
-		if(length(nodes_children)==0) {
-			leaves = c(leaves,i)
-		}
-	}
-	
-	# save the results
-	my_tree = list(structure = adj.matrix.structure, probabilities = adj.matrix.probabilities, 
-	                root = my_tree_root, leaves = leaves, root_prob = root_prob)
-	
-	return(my_tree)
-	
+generate.random.tree <- function ( nodes, min_significance = 0.60, max_significance = 0.90 ) {
+    
+    # create the adjacency matrices to encode tree structure and probabilities
+    adj.matrix.structure = array(0,c(nodes,nodes))
+    adj.matrix.probabilities = array(0,c(nodes,nodes))
+    
+    # generate the tree structure randomly
+    my_tree = generate.random.tree.structure(nodes)
+    my_tree_structure = my_tree$structure
+    my_tree_root = my_tree$root
+    
+    # create the actual structure of the tree
+    root_prob = runif(1, min = min_significance, max = max_significance)
+    for (i in 2:length(my_tree_structure)) {
+        curr_parents_nodes = my_tree_structure[[i-1]]
+        curr_children_nodes = my_tree_structure[[i]]
+        for (j in 1:length(curr_children_nodes)) {
+            curr_node = curr_children_nodes[j]
+            if(length(curr_parents_nodes)==1) {
+                curr_parent = curr_parents_nodes[1]
+            }
+            else {
+                curr_parent = sample(curr_parents_nodes,size=1)
+            }
+            curr_conditional_prob = runif(1, min = min_significance, max = max_significance)
+            # set the values in the adjacency matrices
+            adj.matrix.structure[curr_parent,curr_node] = 1
+            adj.matrix.probabilities[curr_parent,curr_node] = curr_conditional_prob
+        }
+    }
+    
+    # get the leaves in the tree
+    leaves = NULL
+    for (i in 1:nrow(adj.matrix.structure)) {
+        nodes_children = which(adj.matrix.structure[i,]==1)
+        if(length(nodes_children)==0) {
+            leaves = c(leaves,i)
+        }
+    }
+    
+    # save the results
+    my_tree = list(structure = adj.matrix.structure, probabilities = adj.matrix.probabilities, 
+                    root = my_tree_root, leaves = leaves, root_prob = root_prob)
+    
+    return(my_tree)
+    
 }
 
 # generate the structure of a random tree
 generate.random.tree.structure <- function ( nodes ) {
-	
-	# if I have n nodes (>=2), I can have at minimum 2 levels (root plus level 2)
-	# and at most an n-levels tree (when I have a path of n nodes)
-	# select the number of levels randomly (uniform probability)
-	if( nodes > 2 ) {
-		all_nodes = 1:nodes
-		levels = sample(2:nodes,size=1)
-		my_tree = list()
-		# put at least 1 element per level
-		for (i in 1:levels) {
-			if(length(all_nodes)>1) {
-				curr_node = sample(all_nodes,size=1)
-			}
-			else {
-				curr_node = all_nodes
-			}
-			my_tree[[i]] = curr_node
-			all_nodes = all_nodes[-which(all_nodes==curr_node)]
-		}
-		# add the remaining edges
-		while(length(all_nodes)>0) {
-			if(length(all_nodes)>1) {
-				curr_node = sample(all_nodes,size=1)
-			}
-			else {
-				curr_node = all_nodes
-			}
-			if(levels==2) {
-				curr_level = 2
-			}
-			else {
-				curr_level = sample(2:levels,size=1)
-			}
-			my_tree[[curr_level]] = c(my_tree[[curr_level]],curr_node)
-			all_nodes = all_nodes[-which(all_nodes==curr_node)]
-		}
-	}
-	# in this case I have the minimum tree
-	else if( nodes == 2 ) {
-		my_tree = list()
-		curr_nodes = sample(1:2,size=2)
-		my_tree[[1]] = curr_nodes[1]
-		my_tree[[2]] = curr_nodes[2]
-	}
-	# I need at least two nodes in my tree
-	else {
-		stop("I need at least 2 nodes in the tree!")
-	}
-	
-	# save the results
-	my_tree = list(structure = my_tree, root = my_tree[[1]])
-	
-	return(my_tree)
-	
+    
+    # if I have n nodes (>=2), I can have at minimum 2 levels (root plus level 2)
+    # and at most an n-levels tree (when I have a path of n nodes)
+    # select the number of levels randomly (uniform probability)
+    if( nodes > 2 ) {
+        all_nodes = 1:nodes
+        levels = sample(2:nodes,size=1)
+        my_tree = list()
+        # put at least 1 element per level
+        for (i in 1:levels) {
+            if(length(all_nodes)>1) {
+                curr_node = sample(all_nodes,size=1)
+            }
+            else {
+                curr_node = all_nodes
+            }
+            my_tree[[i]] = curr_node
+            all_nodes = all_nodes[-which(all_nodes==curr_node)]
+        }
+        # add the remaining edges
+        while(length(all_nodes)>0) {
+            if(length(all_nodes)>1) {
+                curr_node = sample(all_nodes,size=1)
+            }
+            else {
+                curr_node = all_nodes
+            }
+            if(levels==2) {
+                curr_level = 2
+            }
+            else {
+                curr_level = sample(2:levels,size=1)
+            }
+            my_tree[[curr_level]] = c(my_tree[[curr_level]],curr_node)
+            all_nodes = all_nodes[-which(all_nodes==curr_node)]
+        }
+    }
+    # in this case I have the minimum tree
+    else if( nodes == 2 ) {
+        my_tree = list()
+        curr_nodes = sample(1:2,size=2)
+        my_tree[[1]] = curr_nodes[1]
+        my_tree[[2]] = curr_nodes[2]
+    }
+    # I need at least two nodes in my tree
+    else {
+        stop("I need at least 2 nodes in the tree!")
+    }
+    
+    # save the results
+    my_tree = list(structure = my_tree, root = my_tree[[1]])
+    
+    return(my_tree)
+    
 }

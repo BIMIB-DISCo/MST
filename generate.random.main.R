@@ -75,7 +75,8 @@ dataset.random.single.cells.5.nodes = parSapply(cl, my_experiments, function(x){
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 5,
-        significance = 0.10,
+        min_significance = 0.60,
+        max_significance = 0.90,
         samples_significance = 0.001)
 })
 save(dataset.random.single.cells.5.nodes, file="RData/dataset.random.single.cells.5.nodes.RData")
@@ -88,7 +89,8 @@ dataset.random.single.cells.10.nodes = parSapply(cl, my_experiments, function(x)
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 10,
-        significance = 0.10,
+        min_significance = 0.60,
+        max_significance = 0.90,
         samples_significance = 0.001)
 })
 save(dataset.random.single.cells.10.nodes, file="RData/dataset.random.single.cells.10.nodes.RData")
@@ -101,7 +103,8 @@ dataset.random.single.cells.15.nodes = parSapply(cl, my_experiments, function(x)
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 15,
-        significance = 0.10,
+        min_significance = 0.60,
+        max_significance = 0.90,
         samples_significance = 0.001)
 })
 save(dataset.random.single.cells.15.nodes, file="RData/dataset.random.single.cells.15.nodes.RData")
@@ -114,7 +117,8 @@ dataset.random.single.cells.20.nodes = parSapply(cl, my_experiments, function(x)
         e_pos = e_pos_single_cells,
         e_neg = e_neg_single_cells,
         nodes = 20,
-        significance = 0.10,
+        min_significance = 0.60,
+        max_significance = 0.90,
         samples_significance = 0.001)
 })
 save(dataset.random.single.cells.20.nodes, file="RData/dataset.random.single.cells.20.nodes.RData")
@@ -129,7 +133,8 @@ dataset.random.multiple.biopses.5.nodes = parSapply(cl, my_experiments, function
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,
         nodes = 5,
-        significance = 0.10,
+        min_significance = 0.60,
+        max_significance = 0.90,
         samples_significance = 0.001)
 })
 save(dataset.multiple.biopses.5.nodes,file="RData/dataset.multiple.biopses.5.nodes.RData")
@@ -143,7 +148,8 @@ dataset.random.multiple.biopses.10.nodes = parSapply(cl, my_experiments, functio
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,
         nodes = 10,
-        significance = 0.10,
+        min_significance = 0.60,
+        max_significance = 0.90,
         samples_significance = 0.001)
 })
 save(dataset.multiple.biopses.10.nodes,file="RData/dataset.multiple.biopses.10.nodes.RData")
@@ -157,7 +163,8 @@ dataset.random.multiple.biopses.15.nodes = parSapply(cl, my_experiments, functio
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,
         nodes = 15,
-        significance = 0.10,
+        min_significance = 0.60,
+        max_significance = 0.90,
         samples_significance = 0.001)
 })
 save(dataset.multiple.biopses.15.nodes,file="RData/dataset.multiple.biopses.15.nodes.RData")
@@ -171,7 +178,8 @@ dataset.random.multiple.biopses.20.nodes = parSapply(cl, my_experiments, functio
         e_neg = e_neg_multiple_biopses,
         wild_type = wild_type_rate,
         nodes = 20,
-        significance = 0.10,
+        min_significance = 0.60,
+        max_significance = 0.90,
         samples_significance = 0.001)
 })
 save(dataset.multiple.biopses.20.nodes,file="RData/dataset.multiple.biopses.20.nodes.RData")
@@ -179,17 +187,13 @@ save(dataset.multiple.biopses.20.nodes,file="RData/dataset.multiple.biopses.20.n
 
 stopCluster(cl)
 
-#generate scite dataset
-#if (dir.exists('scite_input')) {
-#    unlink('scite_input', recursive = TRUE)
-#    unlink('scite.script.*')
-#}
-
+print('scite single')
 create.scite.input(dataset.random.single.cells.5.nodes, 'single', 'random_5', scite.sd)
 create.scite.input(dataset.random.single.cells.10.nodes, 'single', 'random_10', scite.sd)
 create.scite.input(dataset.random.single.cells.15.nodes, 'single', 'random_15', scite.sd)
 create.scite.input(dataset.random.single.cells.20.nodes, 'single', 'random_20', scite.sd)
 
+print('scite multiple')
 create.scite.input(dataset.random.multiple.biopses.5.nodes, 'multiple', 'random_5', scite.sd)
 create.scite.input(dataset.random.multiple.biopses.10.nodes, 'multiple', 'random_10', scite.sd)
 create.scite.input(dataset.random.multiple.biopses.15.nodes, 'multiple', 'random_15', scite.sd)

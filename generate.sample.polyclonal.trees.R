@@ -303,7 +303,7 @@ sample.single.cells.polyclonal.high <- function (samples_num,
 }
 
 # generate a dataset of random single cell trees
-sample.random.single.cells <- function ( samples_num, e_pos, e_neg, nodes, significance = 0.10, sample_significance = 0.005 ) {
+sample.random.single.cells <- function ( samples_num, e_pos, e_neg, nodes, min_significance = 0.60, max_significance = 0.9, sample_significance = 0.005 ) {
 	
 	# generate a random tree with minimum significance per samples
 	random_tree = NULL
@@ -312,7 +312,7 @@ sample.random.single.cells <- function ( samples_num, e_pos, e_neg, nodes, signi
 	        max(random_tree$dataset_samples[,"Probs"])>=(1-sample_significance)) {
 	        	
 		# keep generating random trees until I get a valid one
-		random_tree = generate.random.single.cell.dataset(nodes,significance)
+		random_tree = generate.random.single.cell.dataset(nodes,min_significance,max_significance)
 		
 	}
 	
@@ -339,7 +339,7 @@ sample.random.single.cells <- function ( samples_num, e_pos, e_neg, nodes, signi
 }
 
 # generate a significant random tree
-sample.random.single.cells.significant.tree <- function ( nodes, significance = 0.10, sample_significance = 0.005 ) {
+sample.random.single.cells.significant.tree <- function ( nodes, min_significance = 0.6, max_significance = 0.90, sample_significance = 0.005 ) {
 	
 	# generate a random tree with minimum significance per samples
 	random_tree = NULL
@@ -348,7 +348,7 @@ sample.random.single.cells.significant.tree <- function ( nodes, significance = 
 	        max(random_tree$dataset_samples[,"Probs"])>=(1-sample_significance)) {
 	        	
 		# keep generating random trees until I get a valid one
-		random_tree = generate.random.single.cell.dataset(nodes,significance)
+		random_tree = generate.random.single.cell.dataset(nodes,min_significance, max_significance)
 		
 	}
     
@@ -499,7 +499,8 @@ sample.random.multiple.biopses <- function (samples_num,
     e_pos,
     e_neg,
     nodes,
-    significance,
+    min_significance,
+    max_significance,
     samples_significance,
     wild_type) {
     
@@ -509,7 +510,7 @@ sample.random.multiple.biopses <- function (samples_num,
     }
     
     # generate a random single cell tree
-    random_tree = sample.random.single.cells.significant.tree(nodes,significance,samples_significance)
+    random_tree = sample.random.single.cells.significant.tree(nodes,min_significance,max_significance,samples_significance)
     
     # as an heuristics, one bulk sample is the mix of nodes/2 single cells samples
     clones_per_sample = round(nodes/2)
