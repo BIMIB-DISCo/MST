@@ -48,16 +48,31 @@ get.stats <- function(results,
 							curr_result_accuracy[l,j] = curr_computed[["accuracy"]]
 							curr_result_sensitivity[l,j] = curr_computed[["sensitivity"]]
 							curr_result_specificity[l,j] = curr_computed[["specificity"]]
+							curr_result_hamming_distance[l,j] = curr_computed[["hamming_distance"]]
 						}
 					}
 					if(i == 1) {
-						my_results[["accuracy"]][[a]][[gsub(".res","",b)]] = curr_result_accuracy
-						my_results[["sensitivity"]][[a]][[gsub(".res","",b)]] = curr_result_sensitivity
-						my_results[["specificity"]][[a]][[gsub(".res","",b)]] = curr_result_specificity
+						
+						res = NULL
+						res[[1]] = list(curr_result_accuracy)
+						my_results[["accuracy"]][[a]][[gsub(".res","",b)]] = res
+						res = NULL
+						res[[1]] = list(curr_result_sensitivity)
+						my_results[["sensitivity"]][[a]][[gsub(".res","",b)]] = res
+						res = NULL
+						res[[1]] = list(curr_result_specificity)
+						my_results[["specificity"]][[a]][[gsub(".res","",b)]] = res
+						res = NULL
+						res[[1]] = list(curr_result_hamming_distance)
+						my_results[["hamming_distance"]][[a]][[gsub(".res","",b)]] = res
+						
 					} else {
-						my_results[["accuracy"]][[a]][[gsub(".res","",b)]] = my_results[["accuracy"]][[a]][[gsub(".res","",b)]] + curr_result_accuracy
-						my_results[["sensitivity"]][[a]][[gsub(".res","",b)]] = my_results[["sensitivity"]][[a]][[gsub(".res","",b)]] + curr_result_sensitivity
-						my_results[["specificity"]][[a]][[gsub(".res","",b)]] = my_results[["specificity"]][[a]][[gsub(".res","",b)]] + curr_result_specificity
+						
+						my_results[["accuracy"]][[a]][[gsub(".res","",b)]][[i]] = list(curr_result_accuracy)
+						my_results[["sensitivity"]][[a]][[gsub(".res","",b)]][[i]] = list(curr_result_sensitivity)
+						my_results[["specificity"]][[a]][[gsub(".res","",b)]][[i]] = list(curr_result_specificity)
+						my_results[["hamming_distance"]][[a]][[gsub(".res","",b)]][[i]] = list(curr_result_hamming_distance)
+						
 					}
 				}
 			}
@@ -79,16 +94,31 @@ get.stats <- function(results,
 						curr_result_accuracy[l,j] = curr_computed[["accuracy"]]
 						curr_result_sensitivity[l,j] = curr_computed[["sensitivity"]]
 						curr_result_specificity[l,j] = curr_computed[["specificity"]]
+						curr_result_hamming_distance[l,j] = curr_computed[["hamming_distance"]]
 					}
 				}
 				if (i == 1) {
-					my_results[["accuracy"]][[a]][["no.reg"]] = curr_result_accuracy
-					my_results[["sensitivity"]][[a]][["no.reg"]] = curr_result_sensitivity
-					my_results[["specificity"]][[a]][["no.reg"]] = curr_result_specificity
+					
+					res = NULL
+					res[[1]] = list(curr_result_accuracy)
+					my_results[["accuracy"]][[a]][["no.reg"]] = res
+					res = NULL
+					res[[1]] = list(curr_result_sensitivity)
+					my_results[["sensitivity"]][[a]][["no.reg"]] = res
+					res = NULL
+					res[[1]] = list(curr_result_specificity)
+					my_results[["specificity"]][[a]][["no.reg"]] = res
+					res = NULL
+					res[[1]] = list(curr_result_hamming_distance)
+					my_results[["hamming_distance"]][[a]][["no.reg"]] = res
+					
 				} else {
-					my_results[["accuracy"]][[a]][["no.reg"]] = my_results[["accuracy"]][[a]][["no.reg"]] + curr_result_accuracy
-					my_results[["sensitivity"]][[a]][["no.reg"]] = my_results[["sensitivity"]][[a]][["no.reg"]] + curr_result_sensitivity
-					my_results[["specificity"]][[a]][["no.reg"]] = my_results[["specificity"]][[a]][["no.reg"]] + curr_result_specificity
+						
+					my_results[["accuracy"]][[a]][["no.reg"]][[i]] = list(curr_result_accuracy)
+					my_results[["sensitivity"]][[a]][["no.reg"]][[i]] = list(curr_result_sensitivity)
+					my_results[["specificity"]][[a]][["no.reg"]][[i]] = list(curr_result_specificity)
+					my_results[["hamming_distance"]][[a]][["no.reg"]][[i]] = list(curr_result_hamming_distance)
+					
 				}
 			}
 		}
@@ -99,12 +129,25 @@ get.stats <- function(results,
 		for (b in names(my_results[[a]])) {
 			for (c in names(my_results[[a]][[b]])) {
 				curr.res = my_results[[a]][[b]][[c]]
-				for (i in 1:nrow(curr.res)) {
-					for(j in 1:ncol(curr.res)) {
-						curr.res[i,j] = curr.res[i,j]/number_experiments
+				curr_my_res = array(list(),c(nrow(curr.res[[1]][[1]]),ncol(curr.res[[1]][[1]])))
+				# consider all the combinations sample size / noise level
+				for (i in 1:nrow(curr.res[[1]][[1]])) {
+					for(j in 1:ncol(curr.res[[1]][[1]])) {
+						
+						# consider all the different experiments
+						curr_vals = NULL
+						for (all_curr_exp in 1:length(curr.res)) {
+							curr_vals = c(curr_vals,curr.res[[all_curr_exp]][[1]][i,j])
+						}
+						
+						# compute the stats
+						curr.res_mean = mean(curr_vals)
+						curr.res_sd = sd(curr_vals)
+						curr_my_res[[i,j]] = list(mean=curr.res_mean,sd=curr.res_sd)
+						
 					}
 				}
-				my_results[[a]][[b]][[c]] = curr.res
+				my_results[[a]][[b]][[c]] = curr_my_res
 			}
 		}
 	}
