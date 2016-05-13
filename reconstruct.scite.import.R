@@ -3,7 +3,7 @@
 import.scite.output = function(dataset,
 	sample.type,
 	branching,
-    true_tree,
+    true_tree = NULL,
 	seed = 12345) {
 
 	e_pos_single_cells = c(0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035)
@@ -25,12 +25,17 @@ import.scite.output = function(dataset,
         stop('sample.type must be "single" or "multiple"\n')
     }
 
-    if (! branching %in% c('low', 'medium', 'high')) {
+    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20')) {
         stop('branching must be "low", "medium" or "high"')
     } 
 
     if (! dir.exists('RData')) {
     	stop('no buono')
+    }
+
+    internal.true.tree = FALSE
+    if (is.null(true_tree)) {
+        internal.true.tree = TRUE
     }
 
     for (sample in 1:nrow(dataset)) {
@@ -59,6 +64,10 @@ import.scite.output = function(dataset,
                             result[i,j] = 1
                         }
                     }
+                }
+
+                if (internal.true.tree) {
+                    true_tree = object$true_tree$structure
                 }
 
                 statistics = getStats(true_tree, result)

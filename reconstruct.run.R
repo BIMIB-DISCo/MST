@@ -81,6 +81,9 @@ run.reconstructions <- function( dataset, true_tree ) {
 getStats <- function(true_matrix,
     inferred_matrix){
     
+    print(true_matrix)
+    print(inferred_matrix)
+
     # compute the statistics
     tp = 0
     tn = 0
@@ -107,6 +110,10 @@ getStats <- function(true_matrix,
     sensitivity = (tp)/(tp+fn)
     specificity = (tn)/(fp+tn)
     
+    print(accuray)
+    print(sensitivity)
+    print(specificity)
+
     # return the results
     results_values = list(accuracy=accuracy,sensitivity=sensitivity,specificity=specificity)
     return(results_values)

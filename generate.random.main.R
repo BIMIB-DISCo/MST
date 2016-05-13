@@ -137,7 +137,7 @@ dataset.random.multiple.biopses.5.nodes = parSapply(cl, my_experiments, function
         max_significance = 0.90,
         samples_significance = 0.001)
 })
-save(dataset.multiple.biopses.5.nodes,file="RData/dataset.multiple.biopses.5.nodes.RData")
+save(dataset.random.multiple.biopses.5.nodes,file="RData/dataset.random.multiple.biopses.5.nodes.RData")
 
 # generate dataset for multiple biopses of 10 nodes
 cat('dataset multiple biopses of 10 nodes\n')
@@ -152,7 +152,7 @@ dataset.random.multiple.biopses.10.nodes = parSapply(cl, my_experiments, functio
         max_significance = 0.90,
         samples_significance = 0.001)
 })
-save(dataset.multiple.biopses.10.nodes,file="RData/dataset.multiple.biopses.10.nodes.RData")
+save(dataset.random.multiple.biopses.10.nodes,file="RData/dataset.random.multiple.biopses.10.nodes.RData")
 
 # generate dataset for multiple biopses of 15 nodes
 cat('dataset multiple biopses of 15 nodes\n')
@@ -167,7 +167,7 @@ dataset.random.multiple.biopses.15.nodes = parSapply(cl, my_experiments, functio
         max_significance = 0.90,
         samples_significance = 0.001)
 })
-save(dataset.multiple.biopses.15.nodes,file="RData/dataset.multiple.biopses.15.nodes.RData")
+save(dataset.random.multiple.biopses.15.nodes,file="RData/dataset.random.multiple.biopses.15.nodes.RData")
 
 # generate dataset for multiple biopses of 20 nodes
 cat('dataset multiple biopses of 20 nodes\n')
@@ -182,7 +182,7 @@ dataset.random.multiple.biopses.20.nodes = parSapply(cl, my_experiments, functio
         max_significance = 0.90,
         samples_significance = 0.001)
 })
-save(dataset.multiple.biopses.20.nodes,file="RData/dataset.multiple.biopses.20.nodes.RData")
+save(dataset.random.multiple.biopses.20.nodes,file="RData/dataset.random.multiple.biopses.20.nodes.RData")
 
 
 stopCluster(cl)
@@ -198,3 +198,4 @@ create.scite.input(dataset.random.multiple.biopses.5.nodes, 'multiple', 'random_
 create.scite.input(dataset.random.multiple.biopses.10.nodes, 'multiple', 'random_10', scite.sd)
 create.scite.input(dataset.random.multiple.biopses.15.nodes, 'multiple', 'random_15', scite.sd)
 create.scite.input(dataset.random.multiple.biopses.20.nodes, 'multiple', 'random_20', scite.sd)
+

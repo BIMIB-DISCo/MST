@@ -5,7 +5,7 @@ performance.plot <- function(dataset,
     sample.type,
     branching) {
 
-    if (! branching %in% c('low', 'medium', 'high')) {
+    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20')) {
         stop('branching must be "low", "medium" or "high"')
     } 
     if (! dir.exists(branching)) {
@@ -40,6 +40,8 @@ performance.plot <- function(dataset,
                 cat('\n    ', reg)
                 stats = get(reg, regs)
 
+                print(stats)
+
                 zlim = range(stats)
                 zlim[1] = zlim[1] - 0.05
                 zlim[2] = 1.05
@@ -72,7 +74,7 @@ compare.performance.plot <- function(dataset,
     sample.type,
     branching) {
 
-    if (! branching %in% c('low', 'medium', 'high')) {
+    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20')) {
         stop('branching must be "low", "medium" or "high"')
     } 
     if (! dir.exists(branching)) {
@@ -225,7 +227,7 @@ compare.performance.plot.2d <- function(dataset,
     sample.type,
     branching) {
 
-    if (! branching %in% c('low', 'medium', 'high')) {
+    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20')) {
         stop('branching must be "low", "medium" or "high"')
     } 
     if (! dir.exists(branching)) {
