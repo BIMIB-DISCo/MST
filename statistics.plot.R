@@ -40,6 +40,19 @@ performance.plot <- function(dataset,
                 cat('\n    ', reg)
                 stats = get(reg, regs)
 
+                m = matrix(0, nrow = nrow(stats), ncol = ncol(stats))
+                median = matrix(0, nrow = nrow(stats), ncol = ncol(stats))
+                sd = matrix(0, nrow = nrow(stats), ncol = ncol(stats))
+
+                for (i in 1:nrow(stats)) {
+                    for (j in 1:ncol(stats)) {
+                        m[i,j] = stats[[i,j]]$mean
+                        median[i,j] = stats[[i,j]]$median
+                        sd[i,j] = stats[[i,j]]$sd
+                    }
+                }
+
+
                 print(stats)
 
                 zlim = range(stats)
@@ -116,6 +129,21 @@ compare.performance.plot <- function(dataset,
             cat('\n  ', algorithm, ' ')
             regs = get(algorithm, algorithms)
             for (reg in names(regs)) {
+
+                stats = get(reg, regs)
+
+                m = matrix(0, nrow = nrow(stats), ncol = ncol(stats))
+                median = matrix(0, nrow = nrow(stats), ncol = ncol(stats))
+                sd = matrix(0, nrow = nrow(stats), ncol = ncol(stats))
+
+                for (i in 1:nrow(stats)) {
+                    for (j in 1:ncol(stats)) {
+                        m[i,j] = stats[[i,j]]$mean
+                        median[i,j] = stats[[i,j]]$median
+                        sd[i,j] = stats[[i,j]]$sd
+                    }
+                }
+
                 if ((algorithm == 'caprese' && reg == 'no.reg')
                     || (algorithm == 'prim' && reg == 'no.reg')
                     || (algorithm == 'edmonds' && reg == 'no.reg')
@@ -125,12 +153,12 @@ compare.performance.plot <- function(dataset,
                     || (algorithm == 'scite' && reg == 'no.reg')) {
 
                     cat('\n    ', reg)
-                    stats = get(reg, regs)
-                    for (i in 1:nrow(stats)) {
-                        for(j in 1:ncol(stats)) {
+                    
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
                             results = rbind(results, c(as.numeric(i),
                                 as.numeric(j),
-                                as.numeric(stats[i,j]),
+                                as.numeric(m[i,j]),
                                 paste(algorithm, reg)), stringsAsFactors = FALSE)
                         }
                     }
@@ -141,12 +169,11 @@ compare.performance.plot <- function(dataset,
                     || (algorithm == 'scite' && reg == 'no.reg')) {
 
                     cat('\n    ', reg)
-                    stats = get(reg, regs)
-                    for (i in 1:nrow(stats)) {
-                        for(j in 1:ncol(stats)) {
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
                             results.compare = rbind(results.compare, c(as.numeric(i),
                                 as.numeric(j),
-                                as.numeric(stats[i,j]),
+                                as.numeric(m[i,j]),
                                 paste(algorithm, reg)), stringsAsFactors = FALSE)
                         }
                     }
@@ -277,6 +304,20 @@ compare.performance.plot.2d <- function(dataset,
             regs = get(algorithm, algorithms)
             for (reg in names(regs)) {
 
+                stats = get(reg, regs)
+
+                m = matrix(0, nrow = nrow(stats), ncol = ncol(stats))
+                median = matrix(0, nrow = nrow(stats), ncol = ncol(stats))
+                sd = matrix(0, nrow = nrow(stats), ncol = ncol(stats))
+
+                for (i in 1:nrow(stats)) {
+                    for (j in 1:ncol(stats)) {
+                        m[i,j] = stats[[i,j]]$mean
+                        median[i,j] = stats[[i,j]]$median
+                        sd[i,j] = stats[[i,j]]$sd
+                    }
+                }
+
                 # cfg 1 - mix
                 if ((algorithm == 'caprese' && reg == 'no.reg')
                     || (algorithm == 'prim' && reg == 'no.reg')
@@ -287,12 +328,12 @@ compare.performance.plot.2d <- function(dataset,
                     || (algorithm == 'scite' && reg == 'no.reg')) {
 
                     cat('\n    ', reg)
-                    stats = get(reg, regs)
-                    for (i in 1:nrow(stats)) {
-                        for(j in 1:ncol(stats)) {
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
                             if (sample[j] %in% select.sample) {
                                 results.c1 = rbind(results.c1, c(i,
-                                    stats[i,j],
+                                    m[i,j],
+                                    sd[i,j],
                                     sample[j],
                                     paste(algorithm, reg)), stringsAsFactors = FALSE)
                             }
@@ -305,12 +346,12 @@ compare.performance.plot.2d <- function(dataset,
                 if (algorithm == 'prim') {
 
                     cat('\n    ', reg)
-                    stats = get(reg, regs)
-                    for (i in 1:nrow(stats)) {
-                        for(j in 1:ncol(stats)) {
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
                             if (sample[j] %in% select.sample) {
                                 results.c2 = rbind(results.c2, c(i,
-                                    stats[i,j],
+                                    m[i,j],
+                                    sd[i,j],
                                     sample[j],
                                     reg), stringsAsFactors = FALSE)
                             }
@@ -322,12 +363,12 @@ compare.performance.plot.2d <- function(dataset,
                 # cfg 3 - all edmonds
                 if (algorithm == 'edmonds' && !reg %in% c('bic', 'aic', 'or')) {
                     cat('\n    ', reg)
-                    stats = get(reg, regs)
-                    for (i in 1:nrow(stats)) {
-                        for(j in 1:ncol(stats)) {
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
                             if (sample[j] %in% select.sample) {
                                 results.c3 = rbind(results.c3, c(i,
-                                    stats[i,j],
+                                    m[i,j],
+                                    sd[i,j],
                                     sample[j],
                                     reg), stringsAsFactors = FALSE)
                             }
@@ -339,12 +380,12 @@ compare.performance.plot.2d <- function(dataset,
                 # cfg 4 - all chowliu
                 if (algorithm == 'chowliu') {
                     cat('\n    ', reg)
-                    stats = get(reg, regs)
-                    for (i in 1:nrow(stats)) {
-                        for(j in 1:ncol(stats)) {
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
                             if (sample[j] %in% select.sample) {
                                 results.c4 = rbind(results.c4, c(i,
-                                    stats[i,j],
+                                    m[i,j],
+                                    sd[i,j],
                                     sample[j],
                                     reg), stringsAsFactors = FALSE)
                             }
@@ -358,12 +399,12 @@ compare.performance.plot.2d <- function(dataset,
                     || (algorithm == 'scite' && reg == 'no.reg')) {
 
                     cat('\n    ', reg)
-                    stats = get(reg, regs)
-                    for (i in 1:nrow(stats)) {
-                        for(j in 1:ncol(stats)) {
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
                             if (sample[j] %in% select.sample) {
                                 results.c5 = rbind(results.c5, c(i,
-                                    stats[i,j],
+                                    m[i,j],
+                                    sd[i,j],
                                     sample[j],
                                     paste(algorithm, reg)), stringsAsFactors = FALSE)
                             }
@@ -375,36 +416,41 @@ compare.performance.plot.2d <- function(dataset,
             }
         }
 
-        colnames(results.c1) = c('x', 'y', 'sample', 'algorithm')
-        colnames(results.c2) = c('x', 'y', 'sample', 'algorithm')
-        colnames(results.c3) = c('x', 'y', 'sample', 'algorithm')
-        colnames(results.c4) = c('x', 'y', 'sample', 'algorithm')
-        colnames(results.c5) = c('x', 'y', 'sample', 'algorithm')
+        colnames(results.c1) = c('x', 'y', 'sd', 'sample', 'algorithm')
+        colnames(results.c2) = c('x', 'y', 'sd', 'sample', 'algorithm')
+        colnames(results.c3) = c('x', 'y', 'sd', 'sample', 'algorithm')
+        colnames(results.c4) = c('x', 'y', 'sd', 'sample', 'algorithm')
+        colnames(results.c5) = c('x', 'y', 'sd', 'sample', 'algorithm')
         results.c1$x = as.numeric(results.c1$x)
         results.c1$y = as.numeric(results.c1$y)
+        results.c1$sd = as.numeric(results.c1$sd)
         results.c1$sample = as.numeric(results.c1$sample)
         results.c1$algorithm = as.factor(results.c1$algorithm)
         results.c2$x = as.numeric(results.c2$x)
         results.c2$y = as.numeric(results.c2$y)
+        results.c2$sd = as.numeric(results.c2$sd)
         results.c2$sample = as.numeric(results.c2$sample)
         results.c2$algorithm = as.factor(results.c2$algorithm)
         results.c3$x = as.numeric(results.c3$x)
         results.c3$y = as.numeric(results.c3$y)
+        results.c3$sd = as.numeric(results.c3$sd)
         results.c3$sample = as.numeric(results.c3$sample)
         results.c3$algorithm = as.factor(results.c3$algorithm)
         results.c4$x = as.numeric(results.c4$x)
         results.c4$y = as.numeric(results.c4$y)
+        results.c4$sd = as.numeric(results.c4$sd)
         results.c4$sample = as.numeric(results.c4$sample)
         results.c4$algorithm = as.factor(results.c4$algorithm)
         results.c5$x = as.numeric(results.c5$x)
         results.c5$y = as.numeric(results.c5$y)
+        results.c5$sd = as.numeric(results.c5$sd)
         results.c5$sample = as.numeric(results.c5$sample)
         results.c5$algorithm = as.factor(results.c5$algorithm)
 
 
         for (s in select.sample) {
 
-            # prim res 1
+            # mix res 1
 
             res = results.c1[which(results.c1$sample == s), ]
             pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'mix', '.pdf'), width=8.5, height=6.5)

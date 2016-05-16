@@ -25,7 +25,7 @@ experiments.single.cells.low.scite.stats = get.stats(experiments.single.cells.lo
     noise_levels,
     number_experiments)
 save(experiments.single.cells.low.scite.stats, file="RData/experiments.single.cells.low.scite.stats.RData")
-performance.plot(experiments.single.cells.low.scite.stats, 'single', 'low')
+#performance.plot(experiments.single.cells.low.scite.stats, 'single', 'low')
 compare.performance.plot(experiments.single.cells.low.scite.stats, 'single', 'low')
 compare.performance.plot.2d(experiments.single.cells.low.scite.stats, 'single', 'low')
 
@@ -37,7 +37,7 @@ experiments.single.cells.medium.scite.stats = get.stats(experiments.single.cells
     noise_levels,
     number_experiments)
 save(experiments.single.cells.medium.scite.stats, file="RData/experiments.single.cells.medium.scite.stats.RData")
-performance.plot(experiments.single.cells.medium.scite.stats, 'single', 'medium')
+#performance.plot(experiments.single.cells.medium.scite.stats, 'single', 'medium')
 compare.performance.plot(experiments.single.cells.medium.scite.stats, 'single', 'medium')
 compare.performance.plot.2d(experiments.single.cells.medium.scite.stats, 'single', 'medium')
 
@@ -61,7 +61,7 @@ experiments.multiple.biopses.low.scite.stats = get.stats(experiments.multiple.bi
     noise_levels,
     number_experiments)
 save(experiments.multiple.biopses.low.scite.stats, file="RData/experiments.multiple.biopses.low.scite.stats.RData")
-performance.plot(experiments.multiple.biopses.low.scite.stats, 'multiple', 'low')
+#performance.plot(experiments.multiple.biopses.low.scite.stats, 'multiple', 'low')
 compare.performance.plot(experiments.multiple.biopses.low.scite.stats, 'multiple', 'low')
 compare.performance.plot.2d(experiments.multiple.biopses.low.scite.stats, 'multiple', 'low')
 
@@ -73,7 +73,7 @@ experiments.multiple.biopses.medium.scite.stats = get.stats(experiments.multiple
     noise_levels,
     number_experiments)
 save(experiments.multiple.biopses.medium.scite.stats, file="RData/experiments.multiple.biopses.medium.scite.stats.RData")
-performance.plot(experiments.multiple.biopses.medium.scite.stats, 'multiple', 'medium')
+#performance.plot(experiments.multiple.biopses.medium.scite.stats, 'multiple', 'medium')
 compare.performance.plot(experiments.multiple.biopses.medium.scite.stats, 'multiple', 'medium')
 compare.performance.plot.2d(experiments.multiple.biopses.medium.scite.stats, 'multiple', 'medium')
 
@@ -85,7 +85,7 @@ experiments.multiple.biopses.high.scite.stats = get.stats(experiments.multiple.b
     noise_levels,
     number_experiments)
 save(experiments.multiple.biopses.high.scite.stats, file="RData/experiments.multiple.biopses.high.scite.stats.RData")
-performance.plot(experiments.multiple.biopses.high.scite.stats, 'multiple', 'high')
+#performance.plot(experiments.multiple.biopses.high.scite.stats, 'multiple', 'high')
 compare.performance.plot(experiments.multiple.biopses.high.scite.stats, 'multiple', 'high')
 compare.performance.plot.2d(experiments.multiple.biopses.high.scite.stats, 'multiple', 'high')
 
@@ -93,7 +93,7 @@ compare.performance.plot.2d(experiments.multiple.biopses.high.scite.stats, 'mult
 
 
 
-
+stop(' ')
 
 
 

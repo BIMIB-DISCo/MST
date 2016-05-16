@@ -42,6 +42,9 @@ get.stats <- function(results,
 					curr_result_specificity = array(0,c(noise_levels,sample_levels))
 					colnames(curr_result_specificity) = my.col.names
 					rownames(curr_result_specificity) = my.row.names
+					curr_result_hamming_distance = array(0,c(noise_levels,sample_levels))
+					colnames(curr_result_hamming_distance) = my.col.names
+					rownames(curr_result_hamming_distance) = my.row.names
 					for (j in 1:sample_levels) {
 						for (l in 1:noise_levels) {
 							curr_computed = results[j,i][[1]][[as.character(l)]][["reconstructions"]][[a]][[b]]
@@ -142,8 +145,9 @@ get.stats <- function(results,
 						
 						# compute the stats
 						curr.res_mean = mean(curr_vals)
+						curr.res_median = median(curr_vals)
 						curr.res_sd = sd(curr_vals)
-						curr_my_res[[i,j]] = list(mean=curr.res_mean,sd=curr.res_sd)
+						curr_my_res[[i,j]] = list(mean=curr.res_mean,sd=curr.res_sd,median=curr.res_median)
 						
 					}
 				}
