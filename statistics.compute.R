@@ -79,6 +79,8 @@ get.stats <- function(results,
 					}
 				}
 			}
+
+
 			if (a == "caprese") {
 				my.col.names = paste("Sample Level",1:sample_levels)
 				my.row.names = paste("Noise Level",1: noise_levels)
@@ -126,34 +128,42 @@ get.stats <- function(results,
 			}
 		}
 	}
-	
-	# mean the results
-	for (a in names(my_results)) {
-		for (b in names(my_results[[a]])) {
-			for (c in names(my_results[[a]][[b]])) {
-				curr.res = my_results[[a]][[b]][[c]]
-				curr_my_res = array(list(),c(nrow(curr.res[[1]][[1]]),ncol(curr.res[[1]][[1]])))
-				# consider all the combinations sample size / noise level
-				for (i in 1:nrow(curr.res[[1]][[1]])) {
-					for(j in 1:ncol(curr.res[[1]][[1]])) {
-						
-						# consider all the different experiments
-						curr_vals = NULL
-						for (all_curr_exp in 1:length(curr.res)) {
-							curr_vals = c(curr_vals,curr.res[[all_curr_exp]][[1]][i,j])
+
+
+	to.return = NULL
+	for(stat.type in names(my_results)) {
+		this.stat = my_results[[stat.type]]
+		for (algorithm in names(this.stat)) {
+			this.algorithm = this.stat[[algorithm]]
+			for (reg in names(this.algorithm)) {
+				this.reg = this.algorithm[[reg]]
+
+				this.result = matrix(list(), nrow=noise_levels, ncol=sample_levels)
+				this.stats = matrix(list(), nrow=noise_levels, ncol=sample_levels)
+
+				for (experiment in 1:length(this.reg)) {
+					this.experiment = this.reg[[experiment]][[1]]
+					for (noise in 1:nrow(this.result)) {
+						for (sample in 1:ncol(this.result)) {
+							this.result[[noise, sample]] = c(this.result[[noise, sample]], this.experiment[[noise,sample]])
 						}
-						
-						# compute the stats
-						curr.res_mean = mean(curr_vals)
-						curr.res_median = median(curr_vals)
-						curr.res_sd = sd(curr_vals)
-						curr_my_res[[i,j]] = list(mean=curr.res_mean,sd=curr.res_sd,median=curr.res_median)
-						
 					}
 				}
-				my_results[[a]][[b]][[c]] = curr_my_res
+
+				for (noise in 1:nrow(this.result)) {
+					for (sample in 1:ncol(this.result)) {
+						values = this.result[[noise, sample]]
+						mean = mean(values)
+						sd = sd(values)
+						median = median(values)
+						this.stats[[noise,sample]] = list(mean=mean, sd=sd, median=median)
+					}
+				}
+
+				to.return[[stat.type]][[algorithm]][[reg]] = this.stats
 			}
 		}
 	}
-	return(my_results)
+
+	return(to.return)
 }

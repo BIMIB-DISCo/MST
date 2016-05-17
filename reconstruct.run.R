@@ -18,7 +18,7 @@ run.reconstructions <- function( dataset, true_tree ) {
     adj.matrix.capri.bic = as.adj.matrix(res,model="capri_bic")
     results.capri.bic = getStats(true_tree,adj.matrix.capri.bic[["capri_bic"]])
     #capri = list(loglik.adj=adj.matrix.capri.loglik,loglik.res=results.capri.loglik,aic.adj=adj.matrix.capri.aic,aic.res=results.capri.aic,bic.adj=adj.matrix.capri.bic,bic.res=results.capri.bic)
-    capri = list(model=res,aic.adj=adj.matrix.capri.aic,aic.res=results.capri.aic,bic.adj=adj.matrix.capri.bic,bic.res=results.capri.bic)
+    capri = list(aic.adj=adj.matrix.capri.aic,aic.res=results.capri.aic,bic.adj=adj.matrix.capri.bic,bic.res=results.capri.bic)
     results[["capri"]] = capri
     
     # performs the reconstructions with CAPRESE
@@ -26,7 +26,7 @@ run.reconstructions <- function( dataset, true_tree ) {
     res = tronco.caprese(data, silent = TRUE)
     adj.matrix.caprese = as.adj.matrix(res,model="caprese")
     results.caprese = getStats(true_tree,adj.matrix.caprese[["caprese"]])
-    caprese = list(model=res,adj.caprese=adj.matrix.caprese,caprese.res=results.caprese)
+    caprese = list(adj.caprese=adj.matrix.caprese,caprese.res=results.caprese)
     results[["caprese"]] = caprese
     
     # performs the reconstructions with Edmonds no_reg, loglik, aic and bic
@@ -42,7 +42,7 @@ run.reconstructions <- function( dataset, true_tree ) {
     #adj.matrix.edmonds.bic = as.adj.matrix(res,model="edmonds_bic")
     #results.edmonds.bic = getStats(true_tree,adj.matrix.edmonds.bic[["edmonds_bic"]])
     #edmonds = list(no.reg.adj=adj.matrix.edmonds.no.reg,no.reg.res=results.edmonds.no.reg,loglik.adj=adj.matrix.edmonds.loglik,loglik.res=results.edmonds.loglik,aic.adj=adj.matrix.edmonds.aic,aic.res=results.edmonds.aic,bic.adj=adj.matrix.edmonds.bic,bic.res=results.edmonds.bic)
-    edmonds = list(model=res,no.reg.adj=adj.matrix.edmonds.no.reg,no.reg.res=results.edmonds.no.reg)
+    edmonds = list(no.reg.adj=adj.matrix.edmonds.no.reg,no.reg.res=results.edmonds.no.reg)
     results[["edmonds"]] = edmonds
     
     # performs the reconstructions with Chow Liu loglik, aic and bic
@@ -55,7 +55,7 @@ run.reconstructions <- function( dataset, true_tree ) {
     #results.chowliu.aic = getStats(true_tree,adj.matrix.chowliu.aic[["chow_liu_aic"]])
     #adj.matrix.chowliu.bic = as.adj.matrix(res,model="chow_liu_bic")
     #results.chowliu.bic = getStats(true_tree,adj.matrix.chowliu.bic[["chow_liu_bic"]])
-    chowliu = list(model=res,loglik.adj=adj.matrix.chowliu.loglik,loglik.res=results.chowliu.loglik)
+    chowliu = list(loglik.adj=adj.matrix.chowliu.loglik,loglik.res=results.chowliu.loglik)
     results[["chowliu"]] = chowliu
     
     # performs the reconstructions with Prim no_reg, loglik, aic and bic
@@ -70,7 +70,7 @@ run.reconstructions <- function( dataset, true_tree ) {
     #results.prim.aic = getStats(true_tree,adj.matrix.prim.aic[["prim_aic"]])
     #adj.matrix.prim.bic = as.adj.matrix(res,model="prim_bic")
     #results.prim.bic = getStats(true_tree,adj.matrix.prim.bic[["prim_bic"]])
-    prim = list(model=res,no.reg.adj=adj.matrix.prim.no.reg,no.reg.res=results.prim.no.reg)
+    prim = list(no.reg.adj=adj.matrix.prim.no.reg,no.reg.res=results.prim.no.reg)
     results[["prim"]] = prim
     
     return(results)
