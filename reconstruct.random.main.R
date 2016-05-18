@@ -66,7 +66,7 @@ load('RData/dataset.random.multiple.biopses.20.nodes.RData')
 # generate dataset for single cells 5
 cat('result single cells 5\n')
 result.random.single.cells.5.nodes = expand.random.input(dataset.random.single.cells.5.nodes, seed, cores)
-save(result.single.cells.low, file="RData/result.random.single.cells.5.nodes.RData")
+save(result.random.single.cells.5.nodes, file="RData/result.random.single.cells.5.nodes.RData")
 
 # generate dataset for single cells low
 cat('result single cells 10\n')
