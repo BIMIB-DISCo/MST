@@ -45,6 +45,22 @@ run.reconstructions <- function( dataset, true_tree ) {
     edmonds = list(no.reg.adj=adj.matrix.edmonds.no.reg,no.reg.res=results.edmonds.no.reg)
     results[["edmonds"]] = edmonds
     
+    # performs the reconstructions with MLE no_reg, loglik, aic and bic
+    res = NULL
+    #res = tronco.mst.mle(data,regularization=c("no_reg","loglik","aic","bic"))
+    res = tronco.mst.mle(data,regularization=c("no_reg"))
+    adj.matrix.mle.no.reg = as.adj.matrix(res,model="mle_no_reg")
+    results.mle.no.reg = getStats(true_tree,adj.matrix.mle.no.reg[["mle_no_reg"]])  
+    #adj.matrix.mle.loglik = as.adj.matrix(res,model="mle_loglik")
+    #results.mle.loglik = getStats(true_tree,adj.matrix.mle.loglik[["mle_loglik"]])
+    #adj.matrix.mle.aic = as.adj.matrix(res,model="mle_aic")
+    #results.mle.aic = getStats(true_tree,adj.matrix.mle.aic[["mle_aic"]])
+    #adj.matrix.mle.bic = as.adj.matrix(res,model="mle_bic")
+    #results.mle.bic = getStats(true_tree,adj.matrix.mle.bic[["mle_bic"]])
+    #mle = list(no.reg.adj=adj.matrix.mle.no.reg,no.reg.res=results.mle.no.reg,loglik.adj=adj.matrix.mle.loglik,loglik.res=results.mle.loglik,aic.adj=adj.matrix.mle.aic,aic.res=results.mle.aic,bic.adj=adj.matrix.mle.bic,bic.res=results.mle.bic)
+    mle = list(no.reg.adj=adj.matrix.mle.no.reg,no.reg.res=results.mle.no.reg)
+    results[["mle"]] = mle
+    
     # performs the reconstructions with Chow Liu loglik, aic and bic
     res = NULL
     #res = tronco.mst.chowliu(data,regularization=c("loglik","aic","bic"))   
