@@ -4,7 +4,7 @@ source('statistics.compute.R')
 number_experiments = 100
 my_experiments = 1:number_experiments
 names(my_experiments) = paste("Experiment",my_experiments)
-my_algorithms = c("capri","caprese","edmonds","chowliu","prim", "scite")
+my_algorithms = c("capri","caprese","edmonds","mle","chowliu","prim", "scite")
 my_regularizators = c("no.reg.res","loglik.res","aic.res","bic.res")
 sample_levels = 10
 noise_levels = 8
@@ -49,7 +49,7 @@ experiments.single.cells.high.scite.stats = get.stats(experiments.single.cells.h
     noise_levels,
     number_experiments)
 save(experiments.single.cells.high.scite.stats, file="RData/experiments.single.cells.high.scite.stats.RData")
-performance.plot(experiments.single.cells.high.scite.stats, 'single', 'high')
+#performance.plot(experiments.single.cells.high.scite.stats, 'single', 'high')
 compare.performance.plot(experiments.single.cells.high.scite.stats, 'single', 'high')
 compare.performance.plot.2d(experiments.single.cells.high.scite.stats, 'single', 'high')
 
