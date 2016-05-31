@@ -52,9 +52,6 @@ performance.plot <- function(dataset,
                     }
                 }
 
-
-                print(stats)
-
                 zlim = range(stats)
                 zlim[1] = zlim[1] - 0.05
                 zlim[2] = 1.05
@@ -122,7 +119,13 @@ compare.performance.plot <- function(dataset,
         ordered.regs = NULL
 
         results.compare = data.frame(x = NULL, stringsAsFactors = FALSE)
-        ordered.regs.compare = NULL        
+        ordered.regs.compare = NULL
+
+        results.compare.mle = data.frame(x = NULL, stringsAsFactors = FALSE)
+        ordered.regs.compare.mle = NULL        
+
+        results.compare.mltree = data.frame(x = NULL, stringsAsFactors = FALSE)
+        ordered.regs.compare.mltree = NULL     
 
         algorithms = get(type, dataset)
         for (algorithm in names(algorithms)) {
@@ -146,9 +149,11 @@ compare.performance.plot <- function(dataset,
 
                 if ((algorithm == 'caprese' && reg == 'no.reg')
                     || (algorithm == 'prim' && reg == 'no.reg')
-                    || (algorithm == 'edmonds' && reg == 'no.reg')
+                    || (algorithm == 'edmonds')
                     || (algorithm == 'capri' && reg == 'aic')
                     || (algorithm == 'capri' && reg == 'bic')
+                    || (algorithm == 'mle' && reg == 'no.reg')
+                    || (algorithm == 'mltree' && reg == 'no.reg')
                     || (algorithm == 'chowliu' && reg == 'loglik')
                     || (algorithm == 'scite' && reg == 'no.reg')) {
 
@@ -167,7 +172,7 @@ compare.performance.plot <- function(dataset,
                     ordered.regs = c(ordered.regs, paste(algorithm, reg))
                 }
 
-                if ((algorithm == 'edmonds' && reg == 'no.reg')
+                if ((algorithm == 'edmonds')
                     || (algorithm == 'scite' && reg == 'no.reg')) {
 
                     cat('\n    ', reg)
@@ -183,14 +188,49 @@ compare.performance.plot <- function(dataset,
                     }
                     ordered.regs.compare = c(ordered.regs.compare, paste(algorithm, reg))
                 }
+
+                if ((algorithm == 'mle' && reg == 'no.reg')
+                    || (algorithm == 'scite' && reg == 'no.reg')) {
+
+                    cat('\n    ', reg)
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
+                            results.compare.mle = rbind(results.compare.mle, c(as.numeric(i),
+                                as.numeric(j),
+                                as.numeric(m[i,j]),
+                                as.numeric(sd[i,j]),
+                                as.numeric(median[i,j]),
+                                paste(algorithm, reg)), stringsAsFactors = FALSE)
+                        }
+                    }
+                    ordered.regs.compare.mle = c(ordered.regs.compare.mle, paste(algorithm, reg))
+                }
+
+                if ((algorithm == 'mltree' && reg == 'no.reg')
+                    || (algorithm == 'scite' && reg == 'no.reg')) {
+
+                    cat('\n    ', reg)
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
+                            results.compare.mltree = rbind(results.compare.mltree, c(as.numeric(i),
+                                as.numeric(j),
+                                as.numeric(m[i,j]),
+                                as.numeric(sd[i,j]),
+                                as.numeric(median[i,j]),
+                                paste(algorithm, reg)), stringsAsFactors = FALSE)
+                        }
+                    }
+                    ordered.regs.compare.mltree = c(ordered.regs.compare.mltree, paste(algorithm, reg))
+                }
             }
         }
 
 
-        print('done!!!')
 
         colnames(results) = c('x', 'y', 'mean', 'sd', 'median', 'algorithm')
         colnames(results.compare) = c('x', 'y', 'mean', 'sd', 'median', 'algorithm')
+        colnames(results.compare.mle) = c('x', 'y', 'mean', 'sd', 'median', 'algorithm')
+        colnames(results.compare.mltree) = c('x', 'y', 'mean', 'sd', 'median', 'algorithm')
 
         results$x = as.numeric(results$x)
         results$y = as.numeric(results$y)
@@ -206,7 +246,21 @@ compare.performance.plot <- function(dataset,
         results.compare$median = as.numeric(results.compare$median)
         results.compare$algorithm = as.factor(results.compare$algorithm)
 
-        print('ok')
+
+        results.compare.mle$x = as.numeric(results.compare.mle$x)
+        results.compare.mle$y = as.numeric(results.compare.mle$y)
+        results.compare.mle$mean = as.numeric(results.compare.mle$mean)
+        results.compare.mle$sd = as.numeric(results.compare.mle$sd)
+        results.compare.mle$median = as.numeric(results.compare.mle$median)
+        results.compare.mle$algorithm = as.factor(results.compare.mle$algorithm)
+
+        results.compare.mltree$x = as.numeric(results.compare.mltree$x)
+        results.compare.mltree$y = as.numeric(results.compare.mltree$y)
+        results.compare.mltree$mean = as.numeric(results.compare.mltree$mean)
+        results.compare.mltree$sd = as.numeric(results.compare.mltree$sd)
+        results.compare.mltree$median = as.numeric(results.compare.mltree$median)
+        results.compare.mltree$algorithm = as.factor(results.compare.mltree$algorithm)
+
 
         # plot mix
         pdf(file=paste0(branching, '/', sample.type, '/', type, '/', 'compare', '.pdf'), width=8.5, height=6.5)
@@ -215,7 +269,6 @@ compare.performance.plot <- function(dataset,
         mycolors = brewer.pal(length(ordered.regs), 'Accent')
         mycolors.trans = add.alpha(mycolors, 0.7)
 
-        print('asd')
 
         print(wireframe(mean~x*y,
             data = results,
@@ -238,7 +291,7 @@ compare.performance.plot <- function(dataset,
 
         pdf(file=paste0(branching, '/', sample.type, '/', type, '/', 'edmonds_scite_compare', '.pdf'), width=8.5, height=6.5)
 
-        zlim = c(min(results.compare[,'mean']) - 0.05, max(results.compare[,'median']) + 0.05)
+        zlim = c(min(results.compare[,'mean']) - 0.05, max(results.compare[,'mean']) + 0.05)
         mycolors = brewer.pal(length(ordered.regs.compare), 'Accent')[1:length(ordered.regs.compare)]
         mycolors.trans = add.alpha(mycolors, 0.7)
 
@@ -255,6 +308,57 @@ compare.performance.plot <- function(dataset,
             screen = list(z = -45, x = -60),
             key = list(text=list(sort(ordered.regs.compare), col = mycolors),
                     lines = list(lty = rep(1, length(ordered.regs.compare)), col = mycolors)),
+            zlim = zlim))
+
+        dev.off()
+
+
+        # plot compare mle
+
+        pdf(file=paste0(branching, '/', sample.type, '/', type, '/', 'mle_scite_compare', '.pdf'), width=8.5, height=6.5)
+
+        zlim = c(min(results.compare.mle[,'mean']) - 0.05, max(results.compare.mle[,'mean']) + 0.05)
+        mycolors = brewer.pal(length(ordered.regs.compare.mle), 'Accent')[1:length(ordered.regs.compare.mle)]
+        mycolors.trans = add.alpha(mycolors, 0.7)
+
+        print(wireframe(mean~x*y,
+            data = results.compare.mle,
+            groups = algorithm,
+            col.groups = mycolors.trans,
+            scales = list(arrows = FALSE,
+                y = list(at = 1:length(sample), labels = as.character(sample))),
+            main = toupper(paste('compare', branching, type)),
+            xlab = 'noise',
+            ylab = 'sample',
+            zlab = '',
+            screen = list(z = -45, x = -60),
+            key = list(text=list(sort(ordered.regs.compare.mle), col = mycolors),
+                    lines = list(lty = rep(1, length(ordered.regs.compare.mle)), col = mycolors)),
+            zlim = zlim))
+
+        dev.off()
+
+        # plot compare mltree
+
+        pdf(file=paste0(branching, '/', sample.type, '/', type, '/', 'mltree_scite_compare', '.pdf'), width=8.5, height=6.5)
+
+        zlim = c(min(results.compare.mltree[,'mean']) - 0.05, max(results.compare.mltree[,'mean']) + 0.05)
+        mycolors = brewer.pal(length(ordered.regs.compare.mltree), 'Accent')[1:length(ordered.regs.compare.mltree)]
+        mycolors.trans = add.alpha(mycolors, 0.7)
+
+        print(wireframe(mean~x*y,
+            data = results.compare.mltree,
+            groups = algorithm,
+            col.groups = mycolors.trans,
+            scales = list(arrows = FALSE,
+                y = list(at = 1:length(sample), labels = as.character(sample))),
+            main = toupper(paste('compare', branching, type)),
+            xlab = 'noise',
+            ylab = 'sample',
+            zlab = '',
+            screen = list(z = -45, x = -60),
+            key = list(text=list(sort(ordered.regs.compare.mltree), col = mycolors),
+                    lines = list(lty = rep(1, length(ordered.regs.compare.mltree)), col = mycolors)),
             zlim = zlim))
 
         dev.off()
@@ -280,6 +384,57 @@ compare.performance.plot <- function(dataset,
             screen = list(z = -45, x = -60),
             key = list(text=list(sort(ordered.regs.compare), col = mycolors),
                     lines = list(lty = rep(1, length(ordered.regs.compare)), col = mycolors)),
+            zlim = zlim))
+
+        dev.off()
+
+
+        # plot compare mle median
+
+        pdf(file=paste0(branching, '/', sample.type, '/', type, '/', 'mle_scite_compare_median', '.pdf'), width=8.5, height=6.5)
+
+        zlim = c(min(results.compare.mle[,'median']) - 0.05, max(results.compare.mle[,'median']) + 0.05)
+        mycolors = brewer.pal(length(ordered.regs.compare.mle), 'Accent')[1:length(ordered.regs.compare.mle)]
+        mycolors.trans = add.alpha(mycolors, 0.7)
+
+        print(wireframe(median~x*y,
+            data = results.compare.mle,
+            groups = algorithm,
+            col.groups = mycolors.trans,
+            scales = list(arrows = FALSE,
+                y = list(at = 1:length(sample), labels = as.character(sample))),
+            main = toupper(paste('compare', branching, type)),
+            xlab = 'noise',
+            ylab = 'sample',
+            zlab = '',
+            screen = list(z = -45, x = -60),
+            key = list(text=list(sort(ordered.regs.compare.mle), col = mycolors),
+                    lines = list(lty = rep(1, length(ordered.regs.compare.mle)), col = mycolors)),
+            zlim = zlim))
+
+        dev.off()
+
+        # plot compare mltree median
+
+        pdf(file=paste0(branching, '/', sample.type, '/', type, '/', 'mltree_scite_compare_median', '.pdf'), width=8.5, height=6.5)
+
+        zlim = c(min(results.compare.mltree[,'median']) - 0.05, max(results.compare.mltree[,'median']) + 0.05)
+        mycolors = brewer.pal(length(ordered.regs.compare.mltree), 'Accent')[1:length(ordered.regs.compare.mltree)]
+        mycolors.trans = add.alpha(mycolors, 0.7)
+
+        print(wireframe(median~x*y,
+            data = results.compare.mltree,
+            groups = algorithm,
+            col.groups = mycolors.trans,
+            scales = list(arrows = FALSE,
+                y = list(at = 1:length(sample), labels = as.character(sample))),
+            main = toupper(paste('compare', branching, type)),
+            xlab = 'noise',
+            ylab = 'sample',
+            zlab = '',
+            screen = list(z = -45, x = -60),
+            key = list(text=list(sort(ordered.regs.compare.mltree), col = mycolors),
+                    lines = list(lty = rep(1, length(ordered.regs.compare.mltree)), col = mycolors)),
             zlim = zlim))
 
         dev.off()
@@ -331,11 +486,13 @@ compare.performance.plot.2d <- function(dataset,
         results.c3 = data.frame(x = NULL, stringsAsFactors = FALSE)
         results.c4 = data.frame(x = NULL, stringsAsFactors = FALSE)
         results.c5 = data.frame(x = NULL, stringsAsFactors = FALSE)
+        results.c6 = data.frame(x = NULL, stringsAsFactors = FALSE)
         ordered.regs.c1 = NULL
         ordered.regs.c2 = NULL
         ordered.regs.c3 = NULL
         ordered.regs.c4 = NULL
         ordered.regs.c5 = NULL
+        ordered.regs.c6 = NULL
 
         algorithms = get(type, dataset)
         for (algorithm in names(algorithms)) {
@@ -360,10 +517,12 @@ compare.performance.plot.2d <- function(dataset,
                 # cfg 1 - mix
                 if ((algorithm == 'caprese' && reg == 'no.reg')
                     || (algorithm == 'prim' && reg == 'no.reg')
-                    || (algorithm == 'edmonds' && reg == 'no.reg')
+                    || (algorithm == 'edmonds')
                     || (algorithm == 'chowliu' && reg == 'loglik')
                     || (algorithm == 'capri' && reg == 'bic')
                     || (algorithm == 'capri' && reg == 'aic')
+                    || (algorithm == 'mle' && reg == 'no.reg')
+                    || (algorithm == 'mltree' && reg == 'no.reg')
                     || (algorithm == 'scite' && reg == 'no.reg')) {
 
                     cat('\n    ', reg)
@@ -457,14 +616,56 @@ compare.performance.plot.2d <- function(dataset,
                     ordered.regs.c5 = c(ordered.regs.c5, paste(algorithm, reg))
                 }
 
+
+                # cfg 6 - mle vs scite
+                if ((algorithm == 'mle' && !reg %in% c('bic', 'aic', 'cmi2', 'cmi3', 'or'))
+                    || (algorithm == 'scite' && reg == 'no.reg')) {
+
+                    cat('\n    ', reg)
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
+                            if (sample[j] %in% select.sample) {
+                                results.c6 = rbind(results.c6, c(i,
+                                    m[i,j],
+                                    sd[i,j],
+                                    median[i,j],
+                                    sample[j],
+                                    paste(algorithm, reg)), stringsAsFactors = FALSE)
+                            }
+                        }
+                    }
+                    ordered.regs.c6 = c(ordered.regs.c6, paste(algorithm, reg))
+                }
+
+                # cfg 2 - mle vs scite
+                if ((algorithm == 'mltree' && !reg %in% c('bic', 'aic', 'cmi2', 'cmi3', 'or'))
+                    || (algorithm == 'scite' && reg == 'no.reg')) {
+
+                    cat('\n    ', reg)
+                    for (i in 1:nrow(m)) {
+                        for(j in 1:ncol(m)) {
+                            if (sample[j] %in% select.sample) {
+                                results.c2 = rbind(results.c2, c(i,
+                                    m[i,j],
+                                    sd[i,j],
+                                    median[i,j],
+                                    sample[j],
+                                    paste(algorithm, reg)), stringsAsFactors = FALSE)
+                            }
+                        }
+                    }
+                    ordered.regs.c2 = c(ordered.regs.c2, paste(algorithm, reg))
+                }
+
             }
         }
 
         colnames(results.c1) = c('x', 'mean', 'sd', 'median', 'sample', 'algorithm')
         colnames(results.c2) = c('x', 'mean', 'sd', 'median', 'sample', 'algorithm')
         colnames(results.c3) = c('x', 'mean', 'sd', 'median', 'sample', 'algorithm')
-        colnames(results.c4) = c('x', 'mean', 'sd', 'median', 'sample', 'algorithm')
+        #colnames(results.c4) = c('x', 'mean', 'sd', 'median', 'sample', 'algorithm')
         colnames(results.c5) = c('x', 'mean', 'sd', 'median', 'sample', 'algorithm')
+        colnames(results.c6) = c('x', 'mean', 'sd', 'median', 'sample', 'algorithm')
 
         results.c1$x = as.numeric(results.c1$x)
         results.c1$mean = as.numeric(results.c1$mean)
@@ -487,12 +688,12 @@ compare.performance.plot.2d <- function(dataset,
         results.c3$sample = as.numeric(results.c3$sample)
         results.c3$algorithm = as.factor(results.c3$algorithm)
 
-        results.c4$x = as.numeric(results.c4$x)
-        results.c4$mean = as.numeric(results.c4$mean)
-        results.c4$sd = as.numeric(results.c4$sd)
-        results.c4$median = as.numeric(results.c4$median)
-        results.c4$sample = as.numeric(results.c4$sample)
-        results.c4$algorithm = as.factor(results.c4$algorithm)
+        #results.c4$x = as.numeric(results.c4$x)
+        #results.c4$mean = as.numeric(results.c4$mean)
+        #results.c4$sd = as.numeric(results.c4$sd)
+        #results.c4$median = as.numeric(results.c4$median)
+        #results.c4$sample = as.numeric(results.c4$sample)
+        #results.c4$algorithm = as.factor(results.c4$algorithm)
 
         results.c5$x = as.numeric(results.c5$x)
         results.c5$mean = as.numeric(results.c5$mean)
@@ -500,6 +701,13 @@ compare.performance.plot.2d <- function(dataset,
         results.c5$median = as.numeric(results.c5$median)
         results.c5$sample = as.numeric(results.c5$sample)
         results.c5$algorithm = as.factor(results.c5$algorithm)
+
+        results.c6$x = as.numeric(results.c6$x)
+        results.c6$mean = as.numeric(results.c6$mean)
+        results.c6$sd = as.numeric(results.c6$sd)
+        results.c6$median = as.numeric(results.c6$median)
+        results.c6$sample = as.numeric(results.c6$sample)
+        results.c6$algorithm = as.factor(results.c6$algorithm)
 
 
         for (s in select.sample) {
@@ -632,19 +840,6 @@ compare.performance.plot.2d <- function(dataset,
             pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'edmods_scite', '.pdf'), width=8.5, height=6.5)
             ylim = c(min(res[,'mean']) - max(res[,'sd']) - 0.05, max(res[,'mean']) + max(res[,'sd']) + 0.05)
             mycolors = brewer.pal(length(ordered.regs.c5), 'Set1')[1:length(ordered.regs.c5)]
-            #print(xyplot(mean~x,
-            #    grid = TRUE,
-            #    data = res,
-            #    groups = algorithm,
-            #    col = mycolors,
-            #    main = toupper(paste('mean edmonds vs scite sample:', s, branching, type)),
-            #    xlab = 'noise',
-            #    ylab = '',
-            #    type = c("o"),
-            #    key = list(text=list(sort(ordered.regs.c5), col = mycolors),
-            #            lines = list(lty = rep(1, length(ordered.regs.c5)), col = mycolors)),
-            #    ylim = ylim))
-
             print(xyplot(mean~x,
                 grid = TRUE,
                 data = res,
@@ -661,6 +856,58 @@ compare.performance.plot.2d <- function(dataset,
                 type = c("o"),
                 key = list(text=list(sort(ordered.regs.c5), col = mycolors),
                         lines = list(lty = rep(1, length(ordered.regs.c5)), col = mycolors)),
+                ylim = ylim))
+            #ggplot(res, aes(x=x, y=mean, colour=algorithm))
+            #stop()
+            dev.off()
+
+
+
+            res = results.c6[which(results.c6$sample == s), ]
+            pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'mle_scite', '.pdf'), width=8.5, height=6.5)
+            ylim = c(min(res[,'mean']) - max(res[,'sd']) - 0.05, max(res[,'mean']) + max(res[,'sd']) + 0.05)
+            mycolors = brewer.pal(length(ordered.regs.c6), 'Set1')[1:length(ordered.regs.c6)]
+            print(xyplot(mean~x,
+                grid = TRUE,
+                data = res,
+                groups = algorithm,
+                ly = res$mean - res$sd,
+                uy = res$mean + res$sd,
+                prepanel = prepanel.ci,
+                panel = panel.superpose,
+                panel.groups = panel.ci,
+                col = mycolors,
+                main = toupper(paste('mean mle vs scite sample:', s, branching, type)),
+                xlab = 'noise',
+                ylab = '',
+                type = c("o"),
+                key = list(text=list(sort(ordered.regs.c6), col = mycolors),
+                        lines = list(lty = rep(1, length(ordered.regs.c6)), col = mycolors)),
+                ylim = ylim))
+            #ggplot(res, aes(x=x, y=mean, colour=algorithm))
+            #stop()
+            dev.off()
+
+            res = results.c2[which(results.c2$sample == s), ]
+            pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'mltree_scite', '.pdf'), width=8.5, height=6.5)
+            ylim = c(min(res[,'mean']) - max(res[,'sd']) - 0.05, max(res[,'mean']) + max(res[,'sd']) + 0.05)
+            mycolors = brewer.pal(length(ordered.regs.c2), 'Set1')[1:length(ordered.regs.c2)]
+            print(xyplot(mean~x,
+                grid = TRUE,
+                data = res,
+                groups = algorithm,
+                ly = res$mean - res$sd,
+                uy = res$mean + res$sd,
+                prepanel = prepanel.ci,
+                panel = panel.superpose,
+                panel.groups = panel.ci,
+                col = mycolors,
+                main = toupper(paste('mean mltree vs scite sample:', s, branching, type)),
+                xlab = 'noise',
+                ylab = '',
+                type = c("o"),
+                key = list(text=list(sort(ordered.regs.c2), col = mycolors),
+                        lines = list(lty = rep(1, length(ordered.regs.c2)), col = mycolors)),
                 ylim = ylim))
             #ggplot(res, aes(x=x, y=mean, colour=algorithm))
             #stop()
@@ -686,6 +933,49 @@ compare.performance.plot.2d <- function(dataset,
                         lines = list(lty = rep(1, length(ordered.regs.c5)), col = mycolors)),
                 ylim = ylim))
             dev.off()
+
+
+            # mle vs scite 5 median
+
+            res = results.c6[which(results.c6$sample == s), ]
+            pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'mle_scite_median', '.pdf'), width=8.5, height=6.5)
+            ylim = c(min(res[,'median']) - 0.05, max(res[,'median']) + 0.05)
+            mycolors = brewer.pal(length(ordered.regs.c6), 'Set1')[1:length(ordered.regs.c6)]
+            print(xyplot(median~x,
+                grid = TRUE,
+                data = res,
+                groups = algorithm,
+                col = mycolors,
+                main = toupper(paste('median mle vs scite sample:', s, branching, type)),
+                xlab = 'noise',
+                ylab = '',
+                type = c("o"),
+                key = list(text=list(sort(ordered.regs.c6), col = mycolors),
+                        lines = list(lty = rep(1, length(ordered.regs.c6)), col = mycolors)),
+                ylim = ylim))
+            dev.off()
+
+             # mltree vs scite 5 median
+
+            res = results.c2[which(results.c2$sample == s), ]
+            pdf(file = paste0(branching, '/', sample.type, '/', type, '/', s, '_', 'mltree_scite_median', '.pdf'), width=8.5, height=6.5)
+            ylim = c(min(res[,'median']) - 0.05, max(res[,'median']) + 0.05)
+            mycolors = brewer.pal(length(ordered.regs.c2), 'Set1')[1:length(ordered.regs.c2)]
+            print(xyplot(median~x,
+                grid = TRUE,
+                data = res,
+                groups = algorithm,
+                col = mycolors,
+                main = toupper(paste('median mltree vs scite sample:', s, branching, type)),
+                xlab = 'noise',
+                ylab = '',
+                type = c("o"),
+                key = list(text=list(sort(ordered.regs.c2), col = mycolors),
+                        lines = list(lty = rep(1, length(ordered.regs.c2)), col = mycolors)),
+                ylim = ylim))
+            dev.off()
+
+
         }
         cat('\n')
     }

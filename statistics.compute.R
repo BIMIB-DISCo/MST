@@ -30,6 +30,13 @@ get.stats <- function(results,
 	for (i in 1:number_experiments) {
 		for (a in my_algorithms) {
 			for (b in my_regularizators) {
+
+				#cat('n ex: ', i, ' - algo: ', a, 'reg: ', b, '\n')
+				#print(results[1,i][[1]][[as.character(1)]][["reconstructions"]][[a]][[b]])
+
+
+				#stop()
+
 				if (!is.null(results[1,i][[1]][[as.character(1)]][["reconstructions"]][[a]][[b]])) {
 					my.col.names = paste("Sample Level",1:sample_levels)
 					my.row.names = paste("Noise Level",1: noise_levels)
@@ -167,3 +174,6 @@ get.stats <- function(results,
 
 	return(to.return)
 }
+
+
+

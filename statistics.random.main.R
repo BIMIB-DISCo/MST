@@ -4,8 +4,10 @@ source('statistics.compute.R')
 number_experiments = 100
 my_experiments = 1:number_experiments
 names(my_experiments) = paste("Experiment",my_experiments)
-my_algorithms = c("capri","caprese","edmonds","chowliu","prim", "scite")
-my_regularizators = c("no.reg.res","loglik.res","aic.res","bic.res")
+#my_algorithms = c("capri","caprese","edmonds","mle","chowliu","prim", "scite")
+my_algorithms = c("edmonds","mle","scite", 'mltree')
+#my_regularizators = c("no.reg.res","loglik.res","aic.res","bic.res")
+my_regularizators = c("pmi.no.reg.res", "cpmi.no.reg.res", "entropy.no.reg.res", "no.reg.res")
 sample_levels = 10
 noise_levels = 8
 

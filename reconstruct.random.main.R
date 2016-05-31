@@ -23,7 +23,7 @@ seed = 12345
 number_experiments = 100
 my_experiments = 1:number_experiments
 names(my_experiments) = paste("Experiment",my_experiments)
-my_algorithms = c("capri","caprese","edmonds","mle","chowliu","prim", "scite")
+my_algorithms = c("capri","caprese","edmonds","mle","chowliu","prim", "scite", 'mltree')
 my_regularizators = c("no.reg.res","loglik.res","aic.res","bic.res")
 cores.ratio = 1
 
