@@ -24,8 +24,8 @@ reconstruct.and.plot <- function(this.experiment, scite.tree, exp.code, epos, en
     #print(dataset)
     dataset = import.genotypes(dataset)
     #oncoprint(dataset)
-    #dev.new()
-    par(mfrow =c(2, 4))
+    dev.new()
+    par(mfrow =c(3, 4))
 
     true.tree.graph = graph.adjacency(true.tree)
     true.tree.nel = igraph.to.graphNEL(true.tree.graph)
@@ -35,7 +35,15 @@ reconstruct.and.plot <- function(this.experiment, scite.tree, exp.code, epos, en
     print(epos)
     print(eneg)
 
-    recon = tronco.mst.edmonds(dataset, 
+    #recon = tronco.mst.edmonds(dataset, 
+    #    regularization = c("no_reg"),
+    #    score = c('entropy', 'pmi', 'cpmi'),
+    #    pvalue = 0.1,
+    #    nboot = 1000,
+    #    epos = epos,
+    #    eneg = eneg)
+
+    recon.gabow = tronco.mst.gabow(dataset, 
         regularization = c("no_reg"),
         score = c('entropy', 'pmi', 'cpmi'),
         pvalue = 0.1,
@@ -43,28 +51,61 @@ reconstruct.and.plot <- function(this.experiment, scite.tree, exp.code, epos, en
         epos = epos,
         eneg = eneg)
 
-    recon.mltree = tronco.mltree(dataset)
+    recon.gabow.false = tronco.mst.gabow(dataset, 
+        regularization = c("no_reg"),
+        score = c('entropy', 'pmi', 'cpmi'),
+        pvalue = 0.1,
+        nboot = 1000,
+        epos = epos,
+        eneg = eneg,
+        do.raising = FALSE)
 
-    tree.list = recon.mltree$tree.list
+    #recon.mltree = tronco.mltree(dataset)
 
-    net = empty.graph(colnames(true.tree), num = 4)
+    #tree.list = recon.mltree$tree.list
 
-    pf.cyclic = recon$adj.matrix.prima.facie.cyclic 
-    pf = recon$adj.matrix.prima.facie
+    net = empty.graph(colnames(true.tree), num = 10)
 
-    pf.mltree = recon.mltree$adj.matrix.prima.facie
+    #pf.cyclic = recon.gabow.false$adj.matrix.prima.facie.cyclic 
+    #pf = recon.gabow.false$adj.matrix.prima.facie
+
+    #pf.mltree = recon.mltree$adj.matrix.prima.facie
     
-    model.pmi = recon$model$edmonds_no_reg_pmi$adj.matrix$adj.matrix.fit
-    amat(net[[1]]) = model.pmi
-    score.pmi = bnlearn::score(net[[1]], categoric.dataset, type='loglik')
+    #model.pmi = recon$model$edmonds_no_reg_pmi$adj.matrix$adj.matrix.fit
+    #amat(net[[1]]) = model.pmi
+    #score.pmi = bnlearn::score(net[[1]], categoric.dataset, type='loglik')
+
+    model.pmi.gabow = recon.gabow$model$gabow_no_reg_pmi$adj.matrix$adj.matrix.fit
+    amat(net[[5]]) = model.pmi.gabow
+    score.pmi.gabow = bnlearn::score(net[[5]], categoric.dataset, type='loglik')
+
+    model.pmi.gabow.false = recon.gabow.false$model$gabow_no_reg_pmi$adj.matrix$adj.matrix.fit
+    amat(net[[8]]) = model.pmi.gabow.false
+    score.pmi.gabow.false = bnlearn::score(net[[8]], categoric.dataset, type='loglik')
     
-    model.cpmi = recon$model$edmonds_no_reg_cpmi$adj.matrix$adj.matrix.fit
-    amat(net[[2]]) = model.cpmi
-    score.cpmi = bnlearn::score(net[[2]], categoric.dataset, type='loglik')
+    #model.cpmi = recon$model$edmonds_no_reg_cpmi$adj.matrix$adj.matrix.fit
+    #amat(net[[2]]) = model.cpmi
+    #score.cpmi = bnlearn::score(net[[2]], categoric.dataset, type='loglik')
+
+    model.cpmi.gabow = recon.gabow$model$gabow_no_reg_cpmi$adj.matrix$adj.matrix.fit
+    amat(net[[6]]) = model.cpmi.gabow
+    score.cpmi.gabow = bnlearn::score(net[[6]], categoric.dataset, type='loglik')
+
+    model.cpmi.gabow.false = recon.gabow.false$model$gabow_no_reg_cpmi$adj.matrix$adj.matrix.fit
+    amat(net[[9]]) = model.cpmi.gabow.false
+    score.cpmi.gabow.false = bnlearn::score(net[[9]], categoric.dataset, type='loglik')
+
+    model.entropy.gabow = recon.gabow$model$gabow_no_reg_entropy$adj.matrix$adj.matrix.fit
+    amat(net[[7]]) = model.entropy.gabow
+    score.entropy.gabow = bnlearn::score(net[[7]], categoric.dataset, type='loglik')
+
+    model.entropy.gabow.false = recon.gabow.false$model$gabow_no_reg_entropy$adj.matrix$adj.matrix.fit
+    amat(net[[10]]) = model.entropy.gabow.false
+    score.entropy.gabow.false = bnlearn::score(net[[10]], categoric.dataset, type='loglik')
     
-    model.mltree = recon.mltree$model$mltree_no_reg$adj.matrix$adj.matrix.fit
-    amat(net[[3]]) = model.mltree
-    score.mltree = bnlearn::score(net[[3]], categoric.dataset, type='loglik')
+    #model.mltree = recon.mltree$model$mltree_no_reg$adj.matrix$adj.matrix.fit
+    #amat(net[[3]]) = model.mltree
+    #score.mltree = bnlearn::score(net[[3]], categoric.dataset, type='loglik')
 
     model.scite = scite.tree
     amat(net[[4]]) = model.scite
@@ -73,42 +114,74 @@ reconstruct.and.plot <- function(this.experiment, scite.tree, exp.code, epos, en
     cat('scite \n')
     res.scite = getStats(true.tree, model.scite)
 
-    cat('pf cyclic \n')
-    print(pf.cyclic)
-    res.pf.cyclic = getStats(true.tree, pf.cyclic)
+    #cat('pf cyclic \n')
+    #print(pf.cyclic)
+    #res.pf.cyclic = getStats(true.tree, pf.cyclic)
 
-    cat('pf \n')
-    res.pf = getStats(true.tree, pf)
+    #cat('pf \n')
+    #res.pf = getStats(true.tree, pf)
 
-    pf.cyclic.graph = graph.adjacency(pf.cyclic)
-    pf.cyclic.nel = igraph.to.graphNEL(pf.cyclic.graph)
-    plot(pf.cyclic.nel)
-    title('\nPF CYCLIC')
+    #pf.cyclic.graph = graph.adjacency(pf.cyclic)
+    #pf.cyclic.nel = igraph.to.graphNEL(pf.cyclic.graph)
+    #plot(pf.cyclic.nel)
+    #title('\nPF CYCLIC')
 
-    pf.graph = graph.adjacency(pf)
-    pf.nel = igraph.to.graphNEL(pf.graph)
-    plot(pf.nel)
-    title('\nPF')
+    #pf.graph = graph.adjacency(pf)
+    #pf.nel = igraph.to.graphNEL(pf.graph)
+    #plot(pf.nel)
+    #title('\nPF')
 
-    pmi.graph = graph.adjacency(model.pmi)
-    pmi.nel = igraph.to.graphNEL(pmi.graph)
-    plot(pmi.nel)
-    title(paste('\nPMI ', round(score.pmi, 3)))
+    #pmi.graph = graph.adjacency(model.pmi)
+    #pmi.nel = igraph.to.graphNEL(pmi.graph)
+    #plot(pmi.nel)
+    #title(paste('\nPMI ', round(score.pmi, 3)))
 
-    cpmi.graph = graph.adjacency(model.cpmi)
-    cpmi.nel = igraph.to.graphNEL(cpmi.graph)
-    plot(cpmi.nel)
-    title(paste('\nCPMI', round(score.cpmi, 3)))
+    #cpmi.graph = graph.adjacency(model.cpmi)
+    #cpmi.nel = igraph.to.graphNEL(cpmi.graph)
+    #plot(cpmi.nel)
+    #title(paste('\nCPMI', round(score.cpmi, 3)))
 
-    pf.mltree.graph = graph.adjacency(pf.mltree)
-    pf.mltree.nel = igraph.to.graphNEL(pf.mltree.graph)
-    plot(pf.mltree.nel)
-    title(paste('\nPF MLTREE '))
+    pmi.graph.gabow = graph.adjacency(model.pmi.gabow)
+    pmi.nel.gabow = igraph.to.graphNEL(pmi.graph.gabow)
+    plot(pmi.nel.gabow)
+    title(paste('\nPMI GABOW ', round(score.pmi.gabow, 3)))
 
-    mltree.graph = graph.adjacency(model.mltree)
-    mltree.nel = igraph.to.graphNEL(mltree.graph)
-    plot(mltree.nel)
-    title(paste('\nMLTREE ', round(score.mltree, 3)))
+    cpmi.graph.gabow = graph.adjacency(model.cpmi.gabow)
+    cpmi.nel.gabow = igraph.to.graphNEL(cpmi.graph.gabow)
+    plot(cpmi.nel.gabow)
+    title(paste('\nCPMI GABOW ', round(score.cpmi.gabow, 3)))
+
+    entropy.graph.gabow = graph.adjacency(model.entropy.gabow)
+    entropy.nel.gabow = igraph.to.graphNEL(entropy.graph.gabow)
+    plot(entropy.nel.gabow)
+    title(paste('\nENTROPY GABOW ', round(score.entropy.gabow, 3)))
+
+
+    pmi.graph.gabow.false = graph.adjacency(model.pmi.gabow.false)
+    pmi.nel.gabow.false = igraph.to.graphNEL(pmi.graph.gabow.false)
+    plot(pmi.nel.gabow.false)
+    title(paste('\nPMI GABOW F ', round(score.pmi.gabow.false, 3)))
+
+    cpmi.graph.gabow.false = graph.adjacency(model.cpmi.gabow.false)
+    cpmi.nel.gabow.false = igraph.to.graphNEL(cpmi.graph.gabow.false)
+    plot(cpmi.nel.gabow.false)
+    title(paste('\nCPMI GABOW F ', round(score.cpmi.gabow.false, 3)))
+
+    entropy.graph.gabow.false = graph.adjacency(model.entropy.gabow.false)
+    entropy.nel.gabow.false = igraph.to.graphNEL(entropy.graph.gabow.false)
+    plot(entropy.nel.gabow.false)
+    title(paste('\nENTROPY GABOW F', round(score.entropy.gabow.false, 3)))
+
+
+    #pf.mltree.graph = graph.adjacency(pf.mltree)
+    #pf.mltree.nel = igraph.to.graphNEL(pf.mltree.graph)
+    #plot(pf.mltree.nel)
+    #title(paste('\nPF MLTREE '))
+
+    #mltree.graph = graph.adjacency(model.mltree)
+    #mltree.nel = igraph.to.graphNEL(mltree.graph)
+    #plot(mltree.nel)
+    #title(paste('\nMLTREE ', round(score.mltree, 3)))
 
     scite.graph = graph.adjacency(model.scite)
     scite.nel = igraph.to.graphNEL(scite.graph)
@@ -135,49 +208,48 @@ reconstruct.and.plot <- function(this.experiment, scite.tree, exp.code, epos, en
     #line = readline()
     #if (line %in% c('s', 'S')) {
 
-    if (!all(true.tree == model.mltree)
-        || !all(true.tree == model.pmi)
-        || !all(true.tree == model.cpmi)
-        || !all(true.tree == model.scite)
-        || res.pf$fn > 0) {
+    if (!all(true.tree == model.scite)
+        || !all(true.tree == model.pmi.gabow.false)) {
+        #|| res.pf$fn > 0) {
 
         dev.copy2pdf(file = paste0(exp.code, '_score.pdf'))
         dev.off()
 
         print(exp.code)
         dev.new()
-        oncoprint(recon, title = exp.code, file = paste0(exp.code, '_oncoprint.pdf'))
+        oncoprint(recon.gabow, title = exp.code, file = paste0(exp.code, '_oncoprint.pdf'))
         dev.off()
 
-        dev.new()
-        par(mfrow =c(5, 5))
-        for (tree in tree.list) {
-            tree.graph = graph.adjacency(tree)
-            tree.nel = igraph.to.graphNEL(tree.graph)
-            net = empty.graph(colnames(true.tree))
-            amat(net) = tree
-            score = bnlearn::score(net, categoric.dataset, type='loglik')
-            #cat('score: ', score, '\n')
-            #bnlearn:::print.bn(net)
-            plot(tree.nel)
-            title(paste('\nMLTREE ', round(score, 3)))
-        }
+        #dev.new()
+        #par(mfrow =c(5, 5))
+        #for (tree in tree.list) {
+        #    tree.graph = graph.adjacency(tree)
+        #    tree.nel = igraph.to.graphNEL(tree.graph)
+        #    net = empty.graph(colnames(true.tree))
+        #    amat(net) = tree
+        #    score = bnlearn::score(net, categoric.dataset, type='loglik')
+        #    #cat('score: ', score, '\n')
+        #    #bnlearn:::print.bn(net)
+        #    plot(tree.nel)
+        #    title(paste('\nMLTREE ', round(score, 3)))
+        #}
+        #dev.copy2pdf(file = paste0(exp.code, '_mltree.pdf'))
+        #dev.off()
 
-        dev.copy2pdf(file = paste0(exp.code, '_mltree.pdf'))
+    } else {
         dev.off()
-
     }
 
-    cat('marginal probs\n')
-    print(recon.mltree$model$mltree_no_reg$probabilities$probabilities.observed$marginal.probs)
-    cat('joint probs\n')
-    print(recon.mltree$model$mltree_no_reg$probabilities$probabilities.observed$joint.probs)
-    cat('conditional probs\n')
-    print(recon.mltree$model$mltree_no_reg$probabilities$probabilities.observed$conditional.probs)
-    cat('selective advantage relations pf\n')
-    #print(as.selective.advantage.relations(recon.mltree, type='pf')[['pf']])
+    #cat('marginal probs\n')
+    #print(recon$model$mltree_no_reg$probabilities$probabilities.observed$marginal.probs)
+    #cat('joint probs\n')
+    #print(recon$model$mltree_no_reg$probabilities$probabilities.observed$joint.probs)
+    #cat('conditional probs\n')
+    #print(recon$model$mltree_no_reg$probabilities$probabilities.observed$conditional.probs)
+    #cat('selective advantage relations pf\n')
+    ##print(as.selective.advantage.relations(recon.mltree, type='pf')[['pf']])
 
-    return(recon.mltree)
+    return(recon.gabow.false)
 }
 
 
@@ -251,14 +323,12 @@ sample = 5
 sample.scite = sample_sizes_single_cells[[sample]]
 epos = e_pos_single_cells[[noise]]
 eneg = e_neg_single_cells[[noise]]
-epos = 0
-eneg = 0
 branching = 'random_5'
 sample.type = 'single'
 #dev.new()
 
 #for (exp in 1:ncol(dataset.random.single.cells.5.nodes)) {
-for (exp in 13) {
+for (exp in 1:100) {
     print(exp)
     exp.code = paste(branching, sample.type, sample, exp, noise, sep = '_')
     exp.code = paste0('test/', exp.code)

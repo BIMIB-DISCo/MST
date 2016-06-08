@@ -45,6 +45,23 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg ) {
         pmi.no.reg.adj = adj.matrix.edmonds.pmi.no.reg, pmi.no.reg.res = results.edmonds.pmi.no.reg,
         cpmi.no.reg.adj = adj.matrix.edmonds.cpmi.no.reg, cpmi.no.reg.res = results.edmonds.cpmi.no.reg)
     results[["edmonds"]] = edmonds
+
+    # performs the reconstructions with Gabow
+    res = NULL
+    res = tronco.mst.gabow(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi'), pvalue = 0.1, nboot = 1000, epos = epos, eneg = eneg)
+    adj.matrix.gabow.entropy.no.reg = as.adj.matrix(res,model="gabow_no_reg_entropy")
+    results.gabow.entropy.no.reg = getStats(true_tree,adj.matrix.gabow.entropy.no.reg[["gabow_no_reg_entropy"]])
+
+    adj.matrix.gabow.pmi.no.reg = as.adj.matrix(res,model="gabow_no_reg_pmi")
+    results.gabow.pmi.no.reg = getStats(true_tree,adj.matrix.gabow.pmi.no.reg[["gabow_no_reg_pmi"]])
+
+    adj.matrix.gabow.cpmi.no.reg = as.adj.matrix(res,model="gabow_no_reg_cpmi")
+    results.gabow.cpmi.no.reg = getStats(true_tree,adj.matrix.gabow.cpmi.no.reg[["gabow_no_reg_cpmi"]])
+
+    gabow = list(entropy.no.reg.adj=adj.matrix.gabow.entropy.no.reg, entropy.no.reg.res=results.gabow.entropy.no.reg,
+        pmi.no.reg.adj = adj.matrix.gabow.pmi.no.reg, pmi.no.reg.res = results.gabow.pmi.no.reg,
+        cpmi.no.reg.adj = adj.matrix.gabow.cpmi.no.reg, cpmi.no.reg.res = results.gabow.cpmi.no.reg)
+    results[["gabow"]] = gabow
     
     ## performs the reconstructions with MLE no_reg, loglik, aic and bic
     #res = NULL
@@ -187,11 +204,11 @@ expand.random.input <- function(datasets, seed, cores, epos.list, eneg.list) {
     for(i in 1:nrow(datasets)) {
         for (j in 1:ncol(datasets)) {
             cat((((i - 1) * ncol(datasets)) + j) , '/', nrow(datasets) * ncol(datasets), '\n')
-            single.experiment = datasets[[i,j]]
-            for (k in 1:length(results)) {
+            for (k in 1:length(datasets[[i,j]])) {
                 datasets[[i,j]][[k]]$true_tree$epos = epos.list[[k]]
                 datasets[[i,j]][[k]]$true_tree$eneg = eneg.list[[k]]
             }    
+            single.experiment = datasets[[i,j]]
             results = parLapply(cl, single.experiment, function(x){
                 run.reconstructions(x$dataset,
                     x$true_tree$structure,
@@ -208,4 +225,3 @@ expand.random.input <- function(datasets, seed, cores, epos.list, eneg.list) {
     return(datasets)
 
 }
-

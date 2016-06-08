@@ -1,4 +1,4 @@
-load('RData_old/dataset.random.single.cells.5.nodes.RData')
+#load('RData_old/dataset.random.single.cells.5.nodes.RData')
 
 e_pos_single_cells = c(0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035)
 e_neg_single_cells = c(0.000, 0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350)
@@ -15,12 +15,21 @@ dataset = this.experiment$dataset
 
 dataset = import.genotypes(dataset)
 
-recon = tronco.mst.edmonds(dataset, 
+#recon = tronco.mst.edmonds(dataset, 
+#    regularization = c("no_reg"),
+#    score = c('entropy', 'pmi', 'cpmi'),
+#    nboot = nboot,
+#    epos = epos,
+#    eneg = eneg)
+
+
+recon = tronco.mst.gabow(dataset, 
     regularization = c("no_reg"),
     score = c('entropy', 'pmi', 'cpmi'),
     nboot = nboot,
     epos = epos,
-    eneg = eneg)
+    eneg = eneg,
+    do.raising = TRUE)
 
 
 load('scores.RData')
@@ -33,7 +42,8 @@ to = 4
 
 
 # from -> to  
-# b -> a
+# a -> b
+# 2 -> 4
 
 
 # p b 
@@ -48,16 +58,15 @@ p.to = scores$marginal.probs.distributions[[to,1]]
 p.joint.from.to = scores$joint.probs.distributions[[from, to]]
 
 
-# p b|a  = p a,b  * p a 
-p.to.given.from = p.joint.from.to * p.to
+# p(b|a)  = p(a,b) / p(a) 
+p.to.given.from = p.joint.from.to / p.from
 
-# p b|-a  =  p b - p a,b / 1 - p a
-p.to.not.given.from = (p.from - p.joint.from.to) / (1 - p.to)
+# p(b|-a)  =  p(b) - p(a,b) / 1 - p(a)
+p.to.not.given.from = (p.to - p.joint.from.to) / (1 - p.from)
 
 tp = recon$confidence[1,][[1]][[from, to]]
 pr = recon$confidence[2,][[1]][[from, to]]
 hg = recon$confidence[3,][[1]][[from, to]]
-
 
 density.value = cbind(p.from, p.to)
 colnames(density.value) = c(paste0('p(', from, ')'), paste0('p(', to, ')'))
@@ -95,10 +104,10 @@ p2 = ggplot(density.raising.value.s, aes(x=values)) +
 
 
 p1 = ggplot_gtable(ggplot_build(p1))
-p1$layout$clip[gt$layout$name=="panel"] <- "off"
+p1$layout$clip[p1$layout$name=="panel"] <- "off"
 
 p2 = ggplot_gtable(ggplot_build(p2))
-p2$layout$clip[gt$layout$name=="panel"] <- "off"
+p2$layout$clip[p2$layout$name=="panel"] <- "off"
 
 grid.arrange( p1, p2, ncol=2)
 
