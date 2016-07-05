@@ -23,7 +23,7 @@ seed = 12345
 number_experiments = 100
 my_experiments = 1:number_experiments
 names(my_experiments) = paste("Experiment",my_experiments)
-my_algorithms = c("capri","caprese","edmonds","mle","chowliu","prim", "scite", 'mltree')
+my_algorithms = c("capri","caprese","edmonds","mle","chowliu","prim", "scite", 'mltree', 'gabow', 'gabow_no_raising')
 my_regularizators = c("no.reg.res","loglik.res","aic.res","bic.res")
 cores.ratio = 1
 
@@ -65,7 +65,7 @@ load('RData/dataset.random.multiple.biopses.20.nodes.RData')
 
 # generate dataset for single cells 5
 cat('result single cells 5\n')
-result.random.single.cells.5.nodes = expand.random.input(dataset.random.single.cells.5.nodes, seed, cores)
+result.random.single.cells.5.nodes = expand.random.input(dataset.random.single.cells.5.nodes, seed, cores, e_pos_single_cells, e_neg_single_cells)
 save(result.random.single.cells.5.nodes, file="RData/result.random.single.cells.5.nodes.RData")
 
 # generate dataset for single cells low
@@ -143,4 +143,13 @@ save(experiments.random.multiple.biopses.15.nodes.scite, file = 'RData/experimen
 
 experiments.random.multiple.biopses.20.nodes.scite = import.scite.output(result.random.multiple.biopses.20.nodes, 'multiple', 'random_20')
 save(experiments.random.multiple.biopses.20.nodes.scite, file = 'RData/experiments.random.multiple.biopses.20.nodes.scite.RData')
+
+
+
+
+
+
+experiments.single.cells.low.scite = import.scite.output(result.single.cells.low, 'single', 'low')
+save(experiments.single.cells.low.scite, file = 'RData/experiments.single.cells.low.scite.RData')
+
 

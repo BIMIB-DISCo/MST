@@ -36,6 +36,10 @@ generate.dataset.single.cells <- function (type,
             for (j in 1:length(e_pos)) {
                 curr_dataset = sample.single.cells.polyclonal.low(i,nodes_probabilities,e_pos[j],e_neg[j])
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+
             }
         }
     } else if (type == "medium") {
@@ -43,6 +47,9 @@ generate.dataset.single.cells <- function (type,
             for (j in 1:length(e_pos)) {
                 curr_dataset = sample.single.cells.polyclonal.medium(i,nodes_probabilities,e_pos[j],e_neg[j])
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
     } else if (type == "high") {
@@ -50,6 +57,9 @@ generate.dataset.single.cells <- function (type,
             for (j in 1:length(e_pos)) {
                 curr_dataset = sample.single.cells.polyclonal.high(i,nodes_probabilities,e_pos[j],e_neg[j])
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
     } else if (type == "random") {
@@ -57,7 +67,12 @@ generate.dataset.single.cells <- function (type,
             for (j in 1:length(e_pos)) {
                 random_dataset = sample.random.single.cells(i,e_pos[j],e_neg[j],nodes,min_significance,max_significance,samples_significance)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
-                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                results[[as.character(i)]][[as.character(j)]][["probabilities"]] = random_dataset$random_tree$probabilities
+                results[[as.character(i)]][[as.character(j)]][["root_prob"]] = random_dataset$random_tree$root_prob
+                results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
     }

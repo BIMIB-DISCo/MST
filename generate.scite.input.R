@@ -8,7 +8,7 @@ create.scite.input = function(dataset,
 
     e_pos_single_cells = c(0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035)
     e_neg_single_cells = c(0.000, 0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350)
-    sample_sizes_single_cells = c(10, 25, 50, 75, 100, 150, 200, 250, 500, 1000)
+    sample_sizes_single_cells = c(10, 25, 50, 75, 100)
     e_pos_multiple_biopses = c(0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035)
     e_neg_multiple_biopses = c(0.000, 0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350)
     sample_sizes_multiple_biopses = c(5, 6, 7, 8, 9, 10, 15, 20, 50, 100)
@@ -46,8 +46,7 @@ create.scite.input = function(dataset,
     }
 
     set.seed(seed)
-    runif
-
+    
     count = 1
     sample.count = 1
     for (sample in 1:nrow(dataset)) {
@@ -61,7 +60,6 @@ create.scite.input = function(dataset,
                     epos_level = '0.00000000000001'
                 }
                 eneg_level = eneg[noise_level]
-                eneg_level = generate.beta(eneg_level, betasd)
                 if (eneg_level == 0) {
                     eneg_level = '0.00000000000001'
                 }

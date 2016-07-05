@@ -3,6 +3,9 @@
 #library(bnlearn)
 #library(Rgraphviz)
 #library(sna)
+#library(oncoNEM)
+#library(TRONCO)
+#
 ## load the data
 #load('RData_old/dataset.random.single.cells.5.nodes.RData')
 
@@ -21,6 +24,41 @@ reconstruct.and.plot <- function(this.experiment, scite.tree, exp.code, epos, en
     for (name in colnames(categoric.dataset)) {
         levels(categoric.dataset[[name]]) = c(0,1)
     }
+
+    onconem.dataset = t(dataset)
+
+    recon.onconem = oncoNEM$new(Data = onconem.dataset, FPR = epos, FNR = eneg)
+    recon.onconem$search(delta = 50, verbose = TRUE)
+    #linear.tree.onconem = recon.onconem$best$tree
+    score.onconem = recon.onconem$best$llh
+    oncoTree = clusterOncoNEM(oNEM = recon.onconem, epsilon = 10)
+    post = oncoNEMposteriors(tree = oncoTree$g,
+        clones = oncoTree$clones,
+        Data = recon.onconem$Data,
+        FPR = recon.onconem$FPR,
+        FNR = recon.onconem$FNR)
+    edgeLengths = colSums(post$p_theta)[-1]
+
+    dev.new()
+    plotTree(tree = oncoTree$g,
+        clones = oncoTree$clones,
+        e.length = edgeLengths,
+        label.length = 4)
+    title(paste('\noncoNEM ', round(score.onconem, 3)))
+    dev.copy2pdf(file = paste0(exp.code, '_onconem.pdf'))
+    dev.off()
+
+
+    #onconem.tree = matrix(0, ncol = length(linear.tree.onconem), nrow = length(linear.tree.onconem))
+    #colnames(onconem.tree) = paste0('S', 1:length(linear.tree.onconem))
+    #rownames(onconem.tree) = paste0('S', 1:length(linear.tree.onconem))
+    #for (i in 1:length(linear.tree.onconem)) {
+    #    onconem.tree[linear.tree.onconem[i], i] = 1
+    #}
+
+
+
+
     #print(dataset)
     dataset = import.genotypes(dataset)
     #oncoprint(dataset)
@@ -208,7 +246,7 @@ reconstruct.and.plot <- function(this.experiment, scite.tree, exp.code, epos, en
     #line = readline()
     #if (line %in% c('s', 'S')) {
 
-    if (!all(true.tree == model.scite)
+    if (TRUE || !all(true.tree == model.scite)
         || !all(true.tree == model.pmi.gabow.false)) {
         #|| res.pf$fn > 0) {
 
@@ -323,16 +361,18 @@ sample = 5
 sample.scite = sample_sizes_single_cells[[sample]]
 epos = e_pos_single_cells[[noise]]
 eneg = e_neg_single_cells[[noise]]
-branching = 'random_5'
+branching = 'random_10'
 sample.type = 'single'
 #dev.new()
+
+dataset = dataset.random.single.cells.10.nodes
 
 #for (exp in 1:ncol(dataset.random.single.cells.5.nodes)) {
 for (exp in 1:100) {
     print(exp)
     exp.code = paste(branching, sample.type, sample, exp, noise, sep = '_')
     exp.code = paste0('test/', exp.code)
-    this.experiment = dataset.random.single.cells.5.nodes[[sample, exp]][[noise]]
+    this.experiment = dataset[[sample, exp]][[noise]]
 
     filename = paste0('../MST/scite_output/', branching,  '/', sample.type, '/', sample.scite, '_', exp, '_', noise, '_ml0')
     readdot = read.dot(paste0(filename, '.correct.gv'))
