@@ -3,22 +3,30 @@ library(Rmisc)
 
 source('../giulio.plot.R')
 load('RData/results.values.low.RData')
+results.values.low = results.values
 load('RData/results.values.medium.RData')
+results.values.medium = results.values
 load('RData/results.values.high.RData')
+results.values.high = results.values
 
 load('RData/results.low.RData')
+results.low = results
 load('RData/results.medium.RData')
+results.medium = results
 load('RData/results.high.RData')
-
+results.high = results
 
 for (branching in c('low', 'medium', 'high')) {
     if (branching == 'low') {
+        branching = 'lowr'
         results.values = results.values.low
         results = results.low
     } else if (branching == 'medium') {
+        branching = 'mediumr'
         results.values = results.values.medium
         results = results.medium
-    } else if (branching == 'hing') {
+    } else if (branching == 'high') {
+        branching = 'highr'
         results.values = results.values.high
         results = results.high
     }
@@ -48,7 +56,7 @@ for (branching in c('low', 'medium', 'high')) {
         plotlist.median[[plot.id]] = m
         plot.id = plot.id + 1
     }
-    pdf(paste('plot/capri_caprese', branching, '.pdf', sep='_'), height = 14, width = 11)
+    pdf(paste0('plot/capri_caprese_', branching, '_random_cols.pdf'), height = 14, width = 11)
     multiplot(plotlist = plotlist)
     dev.off()
 
@@ -80,7 +88,7 @@ for (branching in c('low', 'medium', 'high')) {
         plotlist.median[[plot.id]] = m
         plot.id = plot.id + 1
     }
-    pdf(paste('plot/gabow', branching, '.pdf', sep='_'), height = 14, width = 11)
+    pdf(paste0('plot/gabow_', branching, '_random_cols.pdf'), height = 14, width = 11)
     multiplot(plotlist = plotlist)
     dev.off()
 
@@ -113,7 +121,7 @@ for (branching in c('low', 'medium', 'high')) {
         plotlist.median[[plot.id]] = m
         plot.id = plot.id + 1
     }
-    pdf(paste('plot/edmonds', branching, '.pdf', sep='_'), height = 14, width = 11)
+    pdf(paste0('plot/edmonds_', branching, '_random_cols.pdf'), height = 14, width = 11)
     multiplot(plotlist = plotlist)
     dev.off()
 
@@ -169,7 +177,7 @@ for (branching in c('low', 'medium', 'high')) {
         plotlist.median[[plot.id]] = m
         plot.id = plot.id + 1
     }
-    pdf(paste('plot/prim_chowliu', branching, '.pdf', sep='_'), height = 14, width = 11)
+    pdf(paste0('plot/prim_chowliu_', branching, '_random_cols.pdf'), height = 14, width = 11)
     multiplot(plotlist = plotlist)
     dev.off()
     

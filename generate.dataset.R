@@ -75,6 +75,17 @@ generate.dataset.single.cells <- function (type,
                 results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
+    } else if (type == "random_forest") {
+        for (i in samples_num) {
+            for (j in 1:length(e_pos)) {
+                random_dataset = sample.random.single.cells.forest(i, e_pos[j],e_neg[j],nodes,min_significance,max_significance,samples_significance)
+                results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+            }
+        }
     }
     
     return(results)

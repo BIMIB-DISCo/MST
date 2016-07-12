@@ -25,7 +25,7 @@ create.scite.input = function(dataset,
         stop('sample.type must be "single" or "multiple"\n')
     }
 
-    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20')) {
+    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20', 'random_forest')) {
         stop('branching must be "low", "medium" or "high"')
     } 
 

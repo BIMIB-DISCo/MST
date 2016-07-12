@@ -3,7 +3,8 @@ giulio.plot <- function(dataset,
     sample.type,
     branching) {
 
-    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20')) {
+    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20',
+        'lowr', 'mediumr', 'highr', 'random_forest')) {
         stop('branching must be "low", "medium" or "high"')
     } 
 
@@ -32,7 +33,7 @@ giulio.plot <- function(dataset,
         nodes = 10
     } else if (branching == 'random_15') {
         nodes = 15
-    } else if (branching == 'random_20') {
+    } else if (branching == 'random_20' || branching == 'random_forest') {
         nodes = 20
     }
 
@@ -111,8 +112,8 @@ giulio.plot <- function(dataset,
         results.values$sample = as.numeric(results.values$sample)
         results.values$algorithm = as.factor(results.values$algorithm)
 
-        save(results, file='RData/results.RData')
-        save(results.values, file='RData/results.values.RData')
+        save(results, file=paste0('RData/results.', branching, '.RData'))
+        save(results.values, file=paste0('RData/results.values.', branching, '.RData'))
 
     }
 }
@@ -154,11 +155,116 @@ dotplotter <- function(res.values, sample, algorithm, branching, title) {
         'gabow_no_rising_no.raising.mi.no.reg' = '#ae017e',
         'chowliu_loglik' = '#006d2c',
         'prim_no.reg' = '#66c2a4',
-        'scite_no.reg' = '#df65b0')
+        'scite_no.reg' = '#ffff32')
 
-    experiment.names = c('capri_loglik' = 'logLik', 
-        'capri_aic' = 'AIC',
-        'capri_bic' = 'BIC',
+    experiment.names = c('capri_loglik' = 'Capri (logLik)', 
+        'capri_aic' = 'Capri (AIC)',
+        'capri_bic' = 'Capri (BIC)',
+        'caprese_no.reg' = 'Caprese',                           
+        'edmonds_entropy.no.reg' = 'Edmonds (entropy)',
+        'edmonds_pmi.no.reg' = 'Edmonds (pmi)',
+        'edmonds_cpmi.no.reg' = 'Edmonds (cpmi)',
+        'gabow_entropy.no.reg' = 'Gabow (entropy)',
+        'gabow_pmi.no.reg' = 'Gabow (pmi)',
+        'gabow_cpmi.no.reg' = 'Gabow (cpmi)',
+        'gabow_mi.no.reg' = 'Gabow (mi)',
+        'gabow_no_rising_no.raising.entropy.no.reg' = 'Gabow (entropy no PR)',
+        'gabow_no_rising_no.raising.pmi.no.reg' = 'Gabow (pmi no PR)',
+        'gabow_no_rising_no.raising.cpmi.no.reg' = 'Gabow (cpmi no PR)',
+        'gabow_no_rising_no.raising.mi.no.reg' = 'Gabow (mi no PR)',
+        'chowliu_loglik' = 'Chow-Liu',
+        'prim_no.reg' = 'PRIM',
+        'scite_no.reg' = 'SCITE')
+
+    if (branching == 'low') {
+        nodes = 6
+        cut = 3
+    } else if (branching == 'medium') {
+        nodes = 11
+        cut = 4
+    } else if (branching == 'high') {
+        nodes = 17
+        cut = 8
+    } else if (branching == 'random_5') {
+        nodes = 5
+        cut = 3
+    } else if (branching == 'random_10') {
+        nodes = 10
+        cut = 5
+    } else if (branching == 'random_15') {
+        nodes = 15
+        cut = 7
+    } else if (branching == 'random_20') {
+        nodes = 20
+        cut = 11
+    } else if (branching == 'lowr') {
+        nodes = 7
+        cut = 3
+    } else if (branching == 'mediumr') {
+        nodes = 13
+        cut = 4
+    } else if (branching == 'highr') {
+        nodes = 21
+        cut = 8
+    } else if (branching == 'random_forest') {
+        nodes = 20
+        cut = 11
+    }
+
+    cat(title, '\n')
+
+    epos = c(0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035)
+    eneg = c(0.000, 0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350)
+    xlabels = paste(format(epos, scientific=TRUE), format(eneg, scientific=TRUE), sep=',')
+    connections = nodes * (nodes - 1)
+
+    p = ggplot(res.values, aes(x = noise, y = value, fill = algorithm)) + 
+    scale_fill_manual(values = experiment.palette, labels = experiment.names) +
+    scale_x_discrete(label=xlabels) +
+    expand_limits(y=c(0,connections/cut)) +
+    scale_y_continuous(label = function(x){paste0(x, ' (', as.integer(x/connections*100), '%)')}) +
+    ylab(paste0('Hamming distance (n = ', nodes, ')')) +
+    xlab('False Positives, False Negatives (rates)') +
+    geom_boxplot(outlier.size = 0) +
+    #geom_jitter(pch = 21, position = position_jitterdodge(jitter.height = 0.2, jitter.width = 2))
+    ggtitle(title)
+    
+    return(p)
+}
+
+
+
+# median
+
+
+
+medianplotter <- function(res, sample, algorithm, branching, title) {
+
+    res = res[which(res$sample == sample), ]
+    res = res[which(res$algorithm %in% algorithm), ]
+
+    experiment.palette = c('capri_loglik' = '#ef3b2c', 
+        'capri_aic' = '#fb6a4a',
+        'capri_bic' = '#fc9272',
+        'caprese_no.reg' = '#67001f',                           
+        'edmonds_entropy.no.reg' = '#fd8d3c',
+        'edmonds_pmi.no.reg' = '#f16913',
+        'edmonds_cpmi.no.reg' = '#d94801',
+        'gabow_entropy.no.reg' = '#9ecae1',
+        'gabow_pmi.no.reg' = '#6baed6',
+        'gabow_cpmi.no.reg' = '#4292c6',
+        'gabow_mi.no.reg' = '#2171b5',
+        'gabow_no_rising_no.raising.entropy.no.reg' = '#fa9fb5',
+        'gabow_no_rising_no.raising.pmi.no.reg' = '#f768a1',
+        'gabow_no_rising_no.raising.cpmi.no.reg' = '#dd3497',
+        'gabow_no_rising_no.raising.mi.no.reg' = '#ae017e',
+        'chowliu_loglik' = '#006d2c',
+        'prim_no.reg' = '#66c2a4',
+        'scite_no.reg' = '#ffff32')
+
+    experiment.names = c('capri_loglik' = 'Capri (logLik)', 
+        'capri_aic' = 'Capri (AIC)',
+        'capri_bic' = 'Capri (BIC)',
         'caprese_no.reg' = 'caprese',                           
         'edmonds_entropy.no.reg' = 'entropy',
         'edmonds_pmi.no.reg' = 'PMI',
@@ -186,12 +292,28 @@ dotplotter <- function(res.values, sample, algorithm, branching, title) {
         cut = 8
     } else if (branching == 'random_5') {
         nodes = 5
+        cut = 3
     } else if (branching == 'random_10') {
         nodes = 10
+        cut = 5
     } else if (branching == 'random_15') {
         nodes = 15
+        cut = 7
     } else if (branching == 'random_20') {
         nodes = 20
+        cut = 11
+    } else if (branching == 'lowr') {
+        nodes = 7
+        cut = 3
+    } else if (branching == 'mediumr') {
+        nodes = 13
+        cut = 4
+    } else if (branching == 'highr') {
+        nodes = 21
+        cut = 8
+    } else if (branching == 'random_forest') {
+        nodes = 20
+        cut = 11
     }
 
     cat(title, '\n')
@@ -201,16 +323,19 @@ dotplotter <- function(res.values, sample, algorithm, branching, title) {
     xlabels = paste(format(epos, scientific=TRUE), format(eneg, scientific=TRUE), sep=',')
     connections = nodes * (nodes - 1)
 
-    p = ggplot(res.values, aes(x = noise, y = value, fill = algorithm)) + 
-    scale_fill_manual(values = experiment.palette, labels = experiment.names) +
+    p = NULL
+    p = ggplot(res, aes(x = noise, y = median, group = algorithm, colour = algorithm)) +
+    scale_color_manual(values = experiment.palette, labels = experiment.names) +
+    geom_line() +
+    geom_point() +
     scale_x_discrete(label=xlabels) +
-    expand_limits(y=c(0,connections/cut)) +
-    scale_y_continuous(label = function(x){paste0(round(x/connections*100, 2), '%')}) +
-    ggtitle(title) +
-    ylab(paste0('Hamming distance (% out of max, n = ', nodes, ')')) +
+    expand_limits(y=c(0,nodes/2)) +
+    #scale_y_continuous(label = function(x){paste0(round(x/connections*100, 2), '%')}) +
+    ylab(paste0('Hamming distance (n = ', nodes, ')')) +
     xlab('False Positives, False Negatives (rates)') +
-    geom_boxplot(outlier.size = 0) +
-    geom_jitter(pch = 21, position = position_jitterdodge(jitter.height = 0.2, jitter.width = 2))
+    #geom_jitter(pch = 21, position = position_jitterdodge(jitter.height = 0.2, jitter.width = 2))
+    ggtitle(title)
     
     return(p)
 }
+

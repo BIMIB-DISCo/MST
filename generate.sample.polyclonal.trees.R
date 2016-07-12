@@ -558,3 +558,84 @@ apply.noise.to.sample <- function (my_sample,
     }
     return(my_sample)
 }
+
+sample.random.single.cells.forest <- function(  samples_num, e_pos, e_neg, nodes, min_significance = 0.60, max_significance = 0.9, sample_significance = 0.005 ) {
+
+    num.trees = sample(c(2,3), 1)
+    prob.trees = runif(num.trees)
+    prob.trees = prob.trees / sum(prob.trees)
+    num.nodes = rep(2, num.trees)
+
+    steps = sort(sample(0:(nodes - (num.trees * 2)), num.trees - 1,replace = FALSE))
+    steps = c(steps, nodes - (num.trees * 2))
+
+    prec = 0
+    for (i in 1:num.trees) {
+        nodes.to.add = steps[i] - prec
+        prec = steps[i]
+        num.nodes[i] = num.nodes[i] + nodes.to.add
+    }
+
+    first.node = 0
+    last.node = 0
+
+    empty.graph = matrix(0, nodes, nodes)
+    colnames(empty.graph) = paste0('node_', 1:nodes)
+    rownames(empty.graph) =paste0('node_', 1:nodes)
+    final.true.tree = graph.adjacency(empty.graph)
+    final.probs = matrix(0, 0, 1)
+    final.values = matrix(0, 0, 0)
+
+    for (i in 1:num.trees) {
+        tree = sample.random.single.cells(samples_num, 0, 0, num.nodes[[i]], min_significance,max_significance,sample_significance)
+        samples = tree$random_tree$dataset_samples
+        true.tree = tree$random_tree$structure
+        first.node = last.node + 1
+        last.node = first.node + num.nodes[[i]] - 1
+        node.names = paste0('node_', first.node:last.node)
+        colnames(true.tree) = node.names
+        rownames(true.tree) = node.names
+        colnames(samples) = c(node.names, 'Probs')
+        #print(samples)
+        #print(prob.trees[i])
+        samples[, 'Probs'] = samples[, 'Probs'] * prob.trees[i]
+        probs = samples[, 'Probs', drop = FALSE]
+        #print(probs)
+        final.probs = rbind(final.probs, probs)
+        values = samples[, -ncol(samples), drop = FALSE]
+
+        left = rbind(final.values, matrix(0, ncol = ncol(final.values), nrow = nrow(values)))
+        right = rbind(matrix(0, ncol = ncol(values), nrow = nrow(final.values)), values)
+        final.values = cbind(left, right)
+
+        #print(values)
+        #print(samples)
+        #print(true.tree)
+        true.tree = graph.adjacency(true.tree)
+        final.true.tree = graph.union(final.true.tree, true.tree)
+    }
+    #plot(final.true.tree)
+    #print(final.probs)
+    #print(final.values)
+    final.true.tree = get.adjacency(final.true.tree, sparse = FALSE)
+    
+    rownames(final.probs) = paste0('sample_', 1:nrow(final.probs))
+    rownames(final.values) = paste0('sample_', 1:nrow(final.values))
+    final.dataset.samples = cbind(final.values, final.probs)
+    final.dataset = final.values[sample(1:nrow(final.values),
+        size = samples_num,
+        replace = TRUE,
+        prob = final.probs),]
+    rownames(final.dataset) = paste0("sample_",1:samples_num)
+
+    # apply the noise
+    for(i in 1:nrow(final.dataset)) {
+        final.dataset[i,] = apply.noise.to.sample(final.dataset[i,], e_pos, e_neg)
+    }
+
+    random_tree = list(structure = final.true.tree, dataset_samples = final.dataset.samples)
+    res = list( random_tree = random_tree, sampled_dataset = final.dataset )
+    return(res)
+
+}
+

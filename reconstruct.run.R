@@ -1,15 +1,21 @@
 
 # perform the reconstructions
-run.reconstructions <- function( dataset, true_tree, epos, eneg) {
+run.reconstructions <- function( dataset, true_tree, epos, eneg, debug = FALSE, seed = NA) {
     
     results = NULL
     
+    silent = !debug
+
+    if (is.na(seed)) {
+        seed = as.integer(runif(1) * 10000)
+    }
+
     # create a TRONCO object of the dataset
     data = import.genotypes(dataset)
     
     ## performs the reconstructions with CAPRI loglik, aic and bic
     res = NULL
-    res = tronco.capri(data,regularization=c("loglik","aic","bic"), silent = TRUE, epos = epos, eneg = eneg)
+    res = tronco.capri(data,regularization=c("loglik","aic","bic"), epos = epos, eneg = eneg, silent = silent, boot.seed = seed)
     adj.matrix.capri.loglik = as.adj.matrix(res,model="capri_loglik")
     results.capri.loglik = getStats(true_tree,adj.matrix.capri.loglik[["capri_loglik"]])
     adj.matrix.capri.aic = as.adj.matrix(res,model="capri_aic")
@@ -23,7 +29,7 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg) {
     
     # performs the reconstructions with CAPRESE
     res = NULL
-    res = tronco.caprese(data, silent = TRUE, epos = epos, eneg = eneg)
+    res = tronco.caprese(data, epos = epos, eneg = eneg, silent = silent)
     adj.matrix.caprese = as.adj.matrix(res,model="caprese")
     results.caprese = getStats(true_tree,adj.matrix.caprese[["caprese"]])
     caprese = list(adj.caprese=adj.matrix.caprese,caprese.res=results.caprese)
@@ -31,7 +37,7 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg) {
     
     # performs the reconstructions with Edmonds no_reg, loglik, aic and bic
     res = NULL
-    res = tronco.mst.edmonds(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi'), epos = epos, eneg = eneg, silent = TRUE)
+    res = tronco.mst.edmonds(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi'), epos = epos, eneg = eneg, silent = silent, boot.seed = seed)
     adj.matrix.edmonds.entropy.no.reg = as.adj.matrix(res,model="edmonds_no_reg_entropy")
     results.edmonds.entropy.no.reg = getStats(true_tree,adj.matrix.edmonds.entropy.no.reg[["edmonds_no_reg_entropy"]])
 
@@ -48,7 +54,7 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg) {
 
     # performs the reconstructions with Gabow
     res = NULL
-    res = tronco.mst.gabow(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi', 'mi'), epos = epos, eneg = eneg, silent = TRUE)
+    res = tronco.mst.gabow(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi', 'mi'), epos = epos, eneg = eneg, silent = silent, boot.seed = seed)
     adj.matrix.gabow.entropy.no.reg = as.adj.matrix(res,model="gabow_no_reg_entropy")
     results.gabow.entropy.no.reg = getStats(true_tree,adj.matrix.gabow.entropy.no.reg[["gabow_no_reg_entropy"]])
 
@@ -69,7 +75,7 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg) {
 
     # performs the reconstructions with Gabow no raising
     res = NULL
-    res = tronco.mst.gabow(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi', 'mi'), epos = epos, eneg = eneg, do.raising = FALSE, silent = TRUE)
+    res = tronco.mst.gabow(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi', 'mi'), epos = epos, eneg = eneg, do.raising = FALSE, silent = silent, boot.seed = seed)
     
     adj.matrix.gabow.no.raising.entropy.no.reg = as.adj.matrix(res,model="gabow_no_reg_entropy")
     results.gabow.no.raising.entropy.no.reg = getStats(true_tree,adj.matrix.gabow.no.raising.entropy.no.reg[["gabow_no_reg_entropy"]])
@@ -91,7 +97,7 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg) {
       
     # performs the reconstructions with Chow Liu loglik, aic and bic
     res = NULL
-    res = tronco.mst.chowliu(data,regularization=c("loglik"), epos = epos, eneg = eneg, silent = TRUE)   
+    res = tronco.mst.chowliu(data,regularization=c("loglik"), epos = epos, eneg = eneg, silent = silent, boot.seed = seed)   
     adj.matrix.chowliu.loglik = as.adj.matrix(res,model="chow_liu_loglik")
     results.chowliu.loglik = getStats(true_tree,adj.matrix.chowliu.loglik[["chow_liu_loglik"]])
     chowliu = list(loglik.adj=adj.matrix.chowliu.loglik,loglik.res=results.chowliu.loglik)
@@ -99,7 +105,7 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg) {
     
     # performs the reconstructions with Prim no_reg, loglik, aic and bic
     res = NULL
-    res = tronco.mst.prim(data,regularization=c("no_reg"), epos = epos, eneg = eneg, silent = TRUE)
+    res = tronco.mst.prim(data,regularization=c("no_reg"), epos = epos, eneg = eneg, silent = silent, boot.seed = seed)
     adj.matrix.prim.no.reg = as.adj.matrix(res,model="prim_no_reg")
     results.prim.no.reg = getStats(true_tree,adj.matrix.prim.no.reg[["prim_no_reg"]])
     prim = list(no.reg.adj=adj.matrix.prim.no.reg,no.reg.res=results.prim.no.reg)
@@ -187,3 +193,19 @@ expand.input <- function(datasets, seed, cores) {
 
 }
 
+
+
+expand.input.debug <- function(x) {
+    cat('\n\n\n\tDEBUG MODE!!!\n\n\n')
+
+    for (seed in as.integer(runif(10000) * 10000)) {
+
+                run.reconstructions(x$dataset,
+                    x$true_tree,
+                    x$epos,
+                    x$eneg,
+                    debug = TRUE,
+                    seed = seed)
+
+    }
+}

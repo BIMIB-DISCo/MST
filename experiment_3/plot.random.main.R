@@ -2,25 +2,38 @@ library(ggplot2)
 library(Rmisc)
 
 source('../giulio.plot.R')
-load('RData/results.values.low.RData')
-load('RData/results.values.medium.RData')
-load('RData/results.values.high.RData')
+load('RData/results.values.random_5.RData')
+results.values.random_5 = results.values
+load('RData/results.values.random_10.RData')
+results.values.random_10 = results.values
+load('RData/results.values.random_15.RData')
+results.values.random_15 = results.values
+load('RData/results.values.random_20.RData')
+results.values.random_20 = results.values
 
-load('RData/results.low.RData')
-load('RData/results.medium.RData')
-load('RData/results.high.RData')
+load('RData/results.random_5.RData')
+results.random_5 = results
+load('RData/results.random_10.RData')
+results.random_10 = results
+load('RData/results.random_15.RData')
+results.random_15 = results
+load('RData/results.random_20.RData')
+results.random_20 = results
 
 
-for (branching in c('low', 'medium', 'high')) {
-    if (branching == 'low') {
-        results.values = results.values.low
-        results = results.low
-    } else if (branching == 'medium') {
-        results.values = results.values.medium
-        results = results.medium
-    } else if (branching == 'hing') {
-        results.values = results.values.high
-        results = results.high
+for (branching in c('random_5', 'random_10', 'random_15', 'random_20')) {
+    if (branching == 'random_5') {
+        results.values = results.values.random_5
+        results = results.random_5
+    } else if (branching == 'random_10') {
+        results.values = results.values.random_10
+        results = results.random_10
+    } else if (branching == 'random_15') {
+        results.values = results.values.random_15
+        results = results.random_15
+    } else if (branching == 'random_20') {
+        results.values = results.values.random_20
+        results = results.random_20
     }
 
 
@@ -37,7 +50,6 @@ for (branching in c('low', 'medium', 'high')) {
             c('capri_bic', 'capri_aic', 'capri_loglik', 'caprese_no.reg', 'scite_no.reg'),
             branching,
             paste('SAMPLE SIZE = ', sample))
-        
         plotlist[[plot.id]] = p
 
         m = medianplotter(results,
@@ -66,12 +78,10 @@ for (branching in c('low', 'medium', 'high')) {
             'gabow_mi.no.reg', 'scite_no.reg'), 
             branching,
             paste('SAMPLE SIZE = ', sample))
-
         plotlist[[plot.id]] = p
-        
+
         m = medianplotter(results,
-            sample,
-            c('gabow_entropy.no.reg', 'gabow_pmi.no.reg', 'gabow_cpmi.no.reg',
+            sample,c('gabow_entropy.no.reg', 'gabow_pmi.no.reg', 'gabow_cpmi.no.reg',
             'gabow_mi.no.reg', 'gabow_no_rising_no.raising.entropy.no.reg',
             'gabow_no_rising_no.raising.pmi.no.reg', 'gabow_no_rising_no.raising.cpmi.no.reg',
             'gabow_no_rising_no.raising.mi.no.reg'), 
@@ -94,13 +104,14 @@ for (branching in c('low', 'medium', 'high')) {
     plot.id = 1
 
     for (sample in c(10, 25, 50, 75, 100)) {
-        p = dotplotter(results.values, sample, c('edmonds_entropy.no.reg',
+        p = dotplotter(results.values, 
+            sample, 
+            c('edmonds_entropy.no.reg',
             'edmonds_pmi.no.reg',
             'edmonds_cpmi.no.reg',
             'scite_no.reg'), 
             branching,
             paste('SAMPLE SIZE = ', sample))
-
         plotlist[[plot.id]] = p
         
         m = medianplotter(results,
@@ -111,6 +122,7 @@ for (branching in c('low', 'medium', 'high')) {
             branching,
             paste('SAMPLE SIZE = ', sample))
         plotlist.median[[plot.id]] = m
+
         plot.id = plot.id + 1
     }
     pdf(paste('plot/edmonds', branching, '.pdf', sep='_'), height = 14, width = 11)
@@ -125,17 +137,16 @@ for (branching in c('low', 'medium', 'high')) {
     #plotlist = list()
     #plotlist.median = list()
     #plot.id = 1
-
+    #
     #for (sample in c(10, 25, 50, 75, 100)) {
     #    p = dotplotter(results.values, sample, c('scite_no.reg'), 
     #        branching,
     #        paste('SAMPLE SIZE = ', sample))
-    #    
     #    plotlist[[plot.id]] = p
     #    
     #    m = medianplotter(results,
     #        sample,
-    #        c('scite_no.reg'),
+    #        c('scite_no.reg'), 
     #        branching,
     #        paste('SAMPLE SIZE = ', sample))
     #    plotlist.median[[plot.id]] = m
@@ -158,12 +169,11 @@ for (branching in c('low', 'medium', 'high')) {
         p = dotplotter(results.values, sample, c('chowliu_loglik', 'prim_no.reg', 'scite_no.reg'), 
             branching,
             paste('SAMPLE SIZE = ', sample))
-
         plotlist[[plot.id]] = p
 
         m = medianplotter(results,
             sample,
-            c('chowliu_loglik', 'prim_no.reg', 'scite_no.reg'),
+            c('chowliu_loglik', 'prim_no.reg'), 
             branching,
             paste('SAMPLE SIZE = ', sample))
         plotlist.median[[plot.id]] = m
@@ -175,5 +185,5 @@ for (branching in c('low', 'medium', 'high')) {
     
     #pdf(paste('plot/prim_chowliu', branching, '_median.pdf', sep='_'), height = 14, width = 11)
     #multiplot(plotlist = plotlist.median)
-    #dev.off()    
+    #dev.off()
 }
