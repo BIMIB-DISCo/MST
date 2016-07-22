@@ -13,7 +13,7 @@
 
 
 # generate a significant random tree with the Bayesian bulk model
-sample.random.bayesian.bulk.significant.tree <- function ( nodes, min_significance = 0.6, max_significance = 0.90, sample_significance = 0.005 ) {
+sample.random.bayesian.bulk.significant.tree <- function ( nodes, min_significance = 0.6, max_significance = 0.90, sample_significance = 0.00001 ) {
 	
 	# generate a random tree with minimum significance per samples
 	random_tree = NULL
