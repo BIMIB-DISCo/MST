@@ -433,6 +433,11 @@ sample.multiple.biopses.polyclonal.low <- function (samples_num,
     if (wild_type_samples > 0) {
         sampled_dataset = rbind(matrix(0, wild_type_samples,6), sampled_dataset)
     }
+
+    #for(i in 1:nrow(sampled_dataset)) {
+    #    sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
+    #}
+
     return(sampled_dataset)
 }
 
@@ -462,6 +467,11 @@ sample.multiple.biopses.polyclonal.medium <- function(samples_num,
     if (wild_type_samples > 0) {
         sampled_dataset = rbind(matrix(0, wild_type_samples,11), sampled_dataset)
     }
+
+    #for(i in 1:nrow(sampled_dataset)) {
+    #    sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
+    #}
+
     return(sampled_dataset)
 }
 
@@ -483,14 +493,19 @@ sample.multiple.biopses.polyclonal.high <- function (samples_num,
         sample.multiple.biospes.from.single.cells(clones_probabilities,
             "high",
             nodes_probabilities,
-            e_pos,
-            e_neg)
+            0,
+            0)
     })
     sampled_dataset = t(sampled_dataset)
     
     if(wild_type_samples > 0) {
         sampled_dataset = rbind(matrix(0, wild_type_samples, 17), sampled_dataset)
     }
+
+    for(i in 1:nrow(sampled_dataset)) {
+        sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
+    }
+
     return(sampled_dataset)
 }
 
@@ -519,8 +534,8 @@ sample.random.multiple.biopses <- function (samples_num,
     res = sapply(res.matrix[,1], function(x) {
     	sample.random.single.cells.given.tree(clones_per_sample,
     	                            nodes,
-    	                            e_pos,
-    	                            e_neg,
+    	                            0,
+    	                            0,
     	                            random_tree)
     })
     
@@ -528,6 +543,10 @@ sample.random.multiple.biopses <- function (samples_num,
     
     if (wild_type_samples > 0) {
         sampled_dataset = rbind(matrix(0, wild_type_samples,nodes), sampled_dataset)
+    }
+
+    for(i in 1:nrow(sampled_dataset)) {
+        sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
     }
     
     # save the results

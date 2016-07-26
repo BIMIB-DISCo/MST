@@ -9,14 +9,14 @@ giulio.plot <- function(dataset,
     } 
 
     sample_sizes_single_cells = c(10, 25, 50, 75, 100)
-    sample_sizes_multiple_biopses = c(5, 6, 7, 8, 9, 10, 15, 20, 50, 100)
+    sample_sizes_multiple_biopses = c(5, 7, 10, 20, 50)
 
     if (sample.type == "single") {
         sample = sample_sizes_single_cells
         select.sample = c(10, 25, 50, 75, 100)
     } else if (sample.type == "multiple") {
         sample = sample_sizes_multiple_biopses
-        select.sample = c(5, 20, 100)
+        select.sample = c(5, 7, 10, 20, 50)
     } else {
         stop('sample.type must be "single" or "multiple"\n')
     }
@@ -39,7 +39,7 @@ giulio.plot <- function(dataset,
 
     connections = (nodes * nodes) - nodes
 
-    for (type in c('hamming_distance')) {
+    for (type in c('hamming_distance', 'accuracy')) {
         cat(type, ' ')
 
         results = data.frame(x = NULL, stringsAsFactors = FALSE)
@@ -112,8 +112,8 @@ giulio.plot <- function(dataset,
         results.values$sample = as.numeric(results.values$sample)
         results.values$algorithm = as.factor(results.values$algorithm)
 
-        save(results, file=paste0('RData/results.', branching, '.RData'))
-        save(results.values, file=paste0('RData/results.values.', branching, '.RData'))
+        save(results, file=paste0('RData/results.', type, '.', branching, '.RData'))
+        save(results.values, file=paste0('RData/results.values.', type, '.', branching, '.RData'))
 
     }
 }
@@ -133,7 +133,7 @@ add.alpha <- function(col, alpha=1){
 
 
 
-dotplotter <- function(res.values, sample, algorithm, branching, title) {
+dotplotter <- function(res.values, sample, algorithm, branching, type, title, sample.type = 'single', external.epos = NA, external.eneg = NA) {
 
     res.values = res.values[which(res.values$sample == sample), ]
     res.values = res.values[which(res.values$algorithm %in% algorithm), ]
@@ -211,19 +211,32 @@ dotplotter <- function(res.values, sample, algorithm, branching, title) {
         cut = 11
     }
 
+    if (type == 'hamming_distance') {
+        description = 'Hamming Distance'
+    } else if (type == 'accuracy') {
+        description = 'Accuracy'
+    }
+
     cat(title, '\n')
 
     epos = c(0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035)
     eneg = c(0.000, 0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350)
+
+    if (sample.type == 'multiple') {
+        epos = external.epos
+        eneg = external.eneg
+    }
+
     xlabels = paste(format(epos, scientific=TRUE), format(eneg, scientific=TRUE), sep=',')
     connections = nodes * (nodes - 1)
 
     p = ggplot(res.values, aes(x = noise, y = value, fill = algorithm)) + 
+    #p = ggplot(res.values, aes(x = reorder(noise, value, FUN = median), y = value, fill = algorithm)) + 
     scale_fill_manual(values = experiment.palette, labels = experiment.names) +
     scale_x_discrete(label=xlabels) +
-    expand_limits(y=c(0,connections/cut)) +
-    scale_y_continuous(label = function(x){paste0(x, ' (', as.integer(x/connections*100), '%)')}) +
-    ylab(paste0('Hamming distance (n = ', nodes, ')')) +
+    #expand_limits(y=c(0,connections/cut)) +
+    #scale_y_continuous(label = function(x){paste0(x, ' (', as.integer(x/connections*100), '%)')}) +
+    ylab(paste0(description, ' (n = ', nodes, ')')) +
     xlab('False Positives, False Negatives (rates)') +
     geom_boxplot(outlier.size = 0) +
     #geom_jitter(pch = 21, position = position_jitterdodge(jitter.height = 0.2, jitter.width = 2))

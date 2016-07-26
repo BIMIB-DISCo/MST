@@ -11,13 +11,27 @@
 #                                                                                #
 ##################################################################################
 
-source('../statistics.plot.R')
-source('../statistics.compute.R')
-source('../giulio.plot.R')
+# source the needed script
 
-load('RData/experiments.random.single.cells.forest.nodes.scite.RData')
+library(parallel)
 
-experiments.random.single.cells.forest.nodes.scite.stats = get.stats(experiments.random.single.cells.forest.nodes.scite)
-save(experiments.random.single.cells.forest.nodes.scite.stats, file="RData/experiments.random.single.cells.forest.nodes.scite.stats.RData")
-giulio.plot(experiments.random.single.cells.forest.nodes.scite.stats, 'single', 'random_forest')
+source('../reconstruct.run.R')
+load('RData/dataset.multiple.biopses.low.RData')
 
+# setting of the experiments
+seed = 12345
+
+available.cores = detectCores()
+
+if (available.cores > 5) {
+    cores = 5
+} else if (available.cores > 1) {
+    cores = available.cores - 1
+} else {
+    cores = 1
+}
+
+# generate dataset for multiple.biopses low
+cat('result multiple biopses low\n')
+result.multiple.biopses.low = expand.input(dataset.multiple.biopses.low, seed, cores, pass.error.rates = FALSE)
+save(result.multiple.biopses.low, file="RData/result.multiple.biopses.low.RData")

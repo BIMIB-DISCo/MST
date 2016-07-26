@@ -11,13 +11,25 @@
 #                                                                                #
 ##################################################################################
 
-source('../statistics.plot.R')
-source('../statistics.compute.R')
-source('../giulio.plot.R')
+# source the needed script
 
-load('RData/experiments.random.single.cells.forest.nodes.scite.RData')
+source('../reconstruct.scite.import.R')
+source('../reconstruct.run.R')
 
-experiments.random.single.cells.forest.nodes.scite.stats = get.stats(experiments.random.single.cells.forest.nodes.scite)
-save(experiments.random.single.cells.forest.nodes.scite.stats, file="RData/experiments.random.single.cells.forest.nodes.scite.stats.RData")
-giulio.plot(experiments.random.single.cells.forest.nodes.scite.stats, 'single', 'random_forest')
+load('RData/result.multiple.biopses.low.RData')
+load('RData/result.multiple.biopses.medium.RData')
+load('RData/result.multiple.biopses.high.RData')
 
+library(igraph)
+library(sna)
+library(Rgraphviz)
+
+#### merge tronco results with scite
+experiments.multiple.biopses.low.scite = import.scite.output(result.multiple.biopses.low, 'multiple', 'low')
+save(experiments.multiple.biopses.low.scite, file = 'RData/experiments.multiple.biopses.low.scite.RData')
+
+experiments.multiple.biopses.medium.scite = import.scite.output(result.multiple.biopses.medium, 'multiple', 'medium')
+save(experiments.multiple.biopses.medium.scite, file = 'RData/experiments.multiple.biopses.medium.scite.RData')
+
+experiments.multiple.biopses.high.scite = import.scite.output(result.multiple.biopses.high, 'multiple', 'high')
+save(experiments.multiple.biopses.high.scite, file = 'RData/experiments.multiple.biopses.high.scite.RData')

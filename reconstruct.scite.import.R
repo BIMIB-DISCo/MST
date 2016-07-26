@@ -5,7 +5,7 @@ import.scite.output = function(dataset,
 	branching) {
 
 	sample_sizes_single_cells = c(10, 25, 50, 75, 100)
-	sample_sizes_multiple_biopses = c(5, 6, 7, 8, 9, 10, 15, 20, 50, 100)
+	sample_sizes_multiple_biopses = c(5, 7, 10, 20, 50)
 
 	if (sample.type == "single") {
         sample.size = sample_sizes_single_cells

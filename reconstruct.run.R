@@ -1,6 +1,11 @@
 
 # perform the reconstructions
-run.reconstructions <- function( dataset, true_tree, epos, eneg, debug = FALSE, seed = NA) {
+run.reconstructions <- function( dataset, true_tree, epos, eneg, debug = FALSE, seed = NA, pass.error.rates = TRUE) {
+
+    if (!pass.error.rates) {
+        epos = 0
+        eneg = 0
+    }
     
     results = NULL
     
@@ -165,7 +170,7 @@ getStats <- function(true_matrix,
 
 
 
-expand.input <- function(datasets, seed, cores) {
+expand.input <- function(datasets, seed, cores, pass.error.rates = TRUE) {
     cat('Using', cores, 'cores via "parallel" \n')
     cl = makeCluster(cores, outfile='')
     clusterEvalQ(cl, library(TRONCO))
@@ -177,12 +182,13 @@ expand.input <- function(datasets, seed, cores) {
         for (j in 1:ncol(datasets)) {
             cat((((i - 1) * ncol(datasets)) + j) , '/', nrow(datasets) * ncol(datasets), '\n')
             single.experiment = datasets[[i,j]] 
-            results = parLapply(cl, single.experiment, function(x){
+            results = parLapply(cl, single.experiment, function(x, pass.error.rates){
                 run.reconstructions(x$dataset,
                     x$true_tree,
                     x$epos,
-                    x$eneg)
-            })
+                    x$eneg,
+                    pass.error.rates = pass.error.rates)
+            }, pass.error.rates = pass.error.rates)
             for (k in 1:length(results)) {
                 datasets[[i,j]][[k]]$reconstructions = results[[k]]
             }

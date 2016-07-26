@@ -122,6 +122,9 @@ generate.dataset.multiple.biopses <- function(type,
                     e_neg[j],
                     wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
     } else if (type == "medium") {
@@ -134,6 +137,9 @@ generate.dataset.multiple.biopses <- function(type,
                     e_neg[j],
                     wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
     } else if (type == "high") {
@@ -146,6 +152,9 @@ generate.dataset.multiple.biopses <- function(type,
                     e_neg[j],
                     wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
     } else if (type == "random") {
@@ -153,7 +162,10 @@ generate.dataset.multiple.biopses <- function(type,
             for (j in 1:length(e_pos)) {
                 random_dataset = sample.random.multiple.biopses(i,e_pos[j],e_neg[j],nodes,min_significance,max_significance,samples_significance,wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
-                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
     }
