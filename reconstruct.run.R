@@ -45,7 +45,7 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg, debug = FALSE, 
     res = tronco.mst.edmonds(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi'), epos = epos, eneg = eneg, silent = silent, boot.seed = seed)
     adj.matrix.edmonds.entropy.no.reg = as.adj.matrix(res,model="edmonds_no_reg_entropy")
     results.edmonds.entropy.no.reg = getStats(true_tree,adj.matrix.edmonds.entropy.no.reg[["edmonds_no_reg_entropy"]])
-
+    
     adj.matrix.edmonds.pmi.no.reg = as.adj.matrix(res,model="edmonds_no_reg_pmi")
     results.edmonds.pmi.no.reg = getStats(true_tree,adj.matrix.edmonds.pmi.no.reg[["edmonds_no_reg_pmi"]])
 
@@ -62,15 +62,19 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg, debug = FALSE, 
     res = tronco.mst.gabow(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi', 'mi'), epos = epos, eneg = eneg, silent = silent, boot.seed = seed)
     adj.matrix.gabow.entropy.no.reg = as.adj.matrix(res,model="gabow_no_reg_entropy")
     results.gabow.entropy.no.reg = getStats(true_tree,adj.matrix.gabow.entropy.no.reg[["gabow_no_reg_entropy"]])
+    results.gabow.entropy.no.reg[['fallback.edmonds']] = res$parameters$fallback.edmonds
 
     adj.matrix.gabow.pmi.no.reg = as.adj.matrix(res,model="gabow_no_reg_pmi")
     results.gabow.pmi.no.reg = getStats(true_tree,adj.matrix.gabow.pmi.no.reg[["gabow_no_reg_pmi"]])
+    results.gabow.pmi.no.reg[['fallback.edmonds']] = res$parameters$fallback.edmonds
 
     adj.matrix.gabow.cpmi.no.reg = as.adj.matrix(res,model="gabow_no_reg_cpmi")
     results.gabow.cpmi.no.reg = getStats(true_tree,adj.matrix.gabow.cpmi.no.reg[["gabow_no_reg_cpmi"]])
+    results.gabow.cpmi.no.reg[['fallback.edmonds']] = res$parameters$fallback.edmonds
 
     adj.matrix.gabow.mi.no.reg = as.adj.matrix(res,model="gabow_no_reg_mi")
     results.gabow.mi.no.reg = getStats(true_tree,adj.matrix.gabow.mi.no.reg[["gabow_no_reg_mi"]])
+    results.gabow.mi.no.reg[['fallback.edmonds']] = res$parameters$fallback.edmonds
 
     gabow = list(entropy.no.reg.adj=adj.matrix.gabow.entropy.no.reg, entropy.no.reg.res=results.gabow.entropy.no.reg,
         pmi.no.reg.adj = adj.matrix.gabow.pmi.no.reg, pmi.no.reg.res = results.gabow.pmi.no.reg,
@@ -78,27 +82,27 @@ run.reconstructions <- function( dataset, true_tree, epos, eneg, debug = FALSE, 
         mi.no.reg.adj = adj.matrix.gabow.mi.no.reg, mi.no.reg.res = results.gabow.mi.no.reg)
     results[["gabow"]] = gabow
 
-    # performs the reconstructions with Gabow no raising
-    res = NULL
-    res = tronco.mst.gabow(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi', 'mi'), epos = epos, eneg = eneg, do.raising = FALSE, silent = silent, boot.seed = seed)
-    
-    adj.matrix.gabow.no.raising.entropy.no.reg = as.adj.matrix(res,model="gabow_no_reg_entropy")
-    results.gabow.no.raising.entropy.no.reg = getStats(true_tree,adj.matrix.gabow.no.raising.entropy.no.reg[["gabow_no_reg_entropy"]])
-
-    adj.matrix.gabow.no.raising.pmi.no.reg = as.adj.matrix(res,model="gabow_no_reg_pmi")
-    results.gabow.no.raising.pmi.no.reg = getStats(true_tree,adj.matrix.gabow.no.raising.pmi.no.reg[["gabow_no_reg_pmi"]])
-
-    adj.matrix.gabow.no.raising.cpmi.no.reg = as.adj.matrix(res,model="gabow_no_reg_cpmi")
-    results.gabow.no.raising.cpmi.no.reg = getStats(true_tree,adj.matrix.gabow.no.raising.cpmi.no.reg[["gabow_no_reg_cpmi"]])
-
-    adj.matrix.gabow.no.raising.mi.no.reg = as.adj.matrix(res,model="gabow_no_reg_mi")
-    results.gabow.no.raising.mi.no.reg = getStats(true_tree,adj.matrix.gabow.no.raising.mi.no.reg[["gabow_no_reg_mi"]])
-
-    gabow = list(no.raising.entropy.no.reg.adj=adj.matrix.gabow.no.raising.entropy.no.reg, no.raising.entropy.no.reg.res=results.gabow.no.raising.entropy.no.reg,
-        no.raising.pmi.no.reg.adj = adj.matrix.gabow.no.raising.pmi.no.reg, no.raising.pmi.no.reg.res = results.gabow.no.raising.pmi.no.reg,
-        no.raising.cpmi.no.reg.adj = adj.matrix.gabow.no.raising.cpmi.no.reg, no.raising.cpmi.no.reg.res = results.gabow.no.raising.cpmi.no.reg,
-        no.raising.mi.no.reg.adj = adj.matrix.gabow.no.raising.mi.no.reg, no.raising.mi.no.reg.res = results.gabow.no.raising.mi.no.reg)
-    results[["gabow_no_rising"]] = gabow
+#    # performs the reconstructions with Gabow no raising
+#    res = NULL
+#    res = tronco.mst.gabow(data,regularization=c("no_reg"), score=c('entropy', 'pmi', 'cpmi', 'mi'), epos = epos, eneg = eneg, do.raising = FALSE, silent = silent, boot.seed = seed)
+#    
+#    adj.matrix.gabow.no.raising.entropy.no.reg = as.adj.matrix(res,model="gabow_no_reg_entropy")
+#    results.gabow.no.raising.entropy.no.reg = getStats(true_tree,adj.matrix.gabow.no.raising.entropy.no.reg[["gabow_no_reg_entropy"]])
+#
+#    adj.matrix.gabow.no.raising.pmi.no.reg = as.adj.matrix(res,model="gabow_no_reg_pmi")
+#    results.gabow.no.raising.pmi.no.reg = getStats(true_tree,adj.matrix.gabow.no.raising.pmi.no.reg[["gabow_no_reg_pmi"]])
+#
+#    adj.matrix.gabow.no.raising.cpmi.no.reg = as.adj.matrix(res,model="gabow_no_reg_cpmi")
+#    results.gabow.no.raising.cpmi.no.reg = getStats(true_tree,adj.matrix.gabow.no.raising.cpmi.no.reg[["gabow_no_reg_cpmi"]])
+#
+#    adj.matrix.gabow.no.raising.mi.no.reg = as.adj.matrix(res,model="gabow_no_reg_mi")
+#    results.gabow.no.raising.mi.no.reg = getStats(true_tree,adj.matrix.gabow.no.raising.mi.no.reg[["gabow_no_reg_mi"]])
+#
+#    gabow = list(no.raising.entropy.no.reg.adj=adj.matrix.gabow.no.raising.entropy.no.reg, no.raising.entropy.no.reg.res=results.gabow.no.raising.entropy.no.reg,
+#        no.raising.pmi.no.reg.adj = adj.matrix.gabow.no.raising.pmi.no.reg, no.raising.pmi.no.reg.res = results.gabow.no.raising.pmi.no.reg,
+#        no.raising.cpmi.no.reg.adj = adj.matrix.gabow.no.raising.cpmi.no.reg, no.raising.cpmi.no.reg.res = results.gabow.no.raising.cpmi.no.reg,
+#        no.raising.mi.no.reg.adj = adj.matrix.gabow.no.raising.mi.no.reg, no.raising.mi.no.reg.res = results.gabow.no.raising.mi.no.reg)
+#    results[["gabow_no_rising"]] = gabow
       
     # performs the reconstructions with Chow Liu loglik, aic and bic
     res = NULL

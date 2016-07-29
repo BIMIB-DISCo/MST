@@ -58,6 +58,9 @@ get.stats <- function(results) {
                     curr_result_hamming_distance = array(0,c(length(noise_levels),length(sample_levels)))
                     colnames(curr_result_hamming_distance) = my.col.names
                     rownames(curr_result_hamming_distance) = my.row.names
+                    curr_result_fallback = array(0,c(length(noise_levels),length(sample_levels)))
+                    colnames(curr_result_fallback) = my.col.names
+                    rownames(curr_result_fallback) = my.row.names
                     for (j in 1:length(sample_levels)) {
                         for (l in 1:length(noise_levels)) {
                             curr_computed = results[j,i][[1]][[as.character(l)]][["reconstructions"]][[a]][[b]]
@@ -65,6 +68,11 @@ get.stats <- function(results) {
                             curr_result_sensitivity[l,j] = curr_computed[["sensitivity"]]
                             curr_result_specificity[l,j] = curr_computed[["specificity"]]
                             curr_result_hamming_distance[l,j] = curr_computed[["hamming_distance"]]
+                            if (a == 'gabow' && curr_computed[['fallback.edmonds']]) {
+                                curr_result_fallback[l,j] = 1
+                            } else {
+                                curr_result_fallback[l,j] = 0
+                            }
                         }
                     }
 
@@ -85,6 +93,10 @@ get.stats <- function(results) {
                         res = NULL
                         res[[1]] = list(curr_result_hamming_distance)
                         my_results[["hamming_distance"]][[a]][[gsub("\\.res","",b)]] = res
+                        res = NULL
+                        res[[1]] = list(curr_result_fallback)
+                        my_results[["fallback_edmonds"]][[a]][[gsub("\\.res","",b)]] = res
+
                         
                     } else {
                         if (a == 'caprese') {
@@ -95,7 +107,8 @@ get.stats <- function(results) {
                         my_results[["sensitivity"]][[a]][[gsub("\\.res","",b)]][[i]] = list(curr_result_sensitivity)
                         my_results[["specificity"]][[a]][[gsub("\\.res","",b)]][[i]] = list(curr_result_specificity)
                         my_results[["hamming_distance"]][[a]][[gsub("\\.res","",b)]][[i]] = list(curr_result_hamming_distance)
-                        
+                        my_results[['fallback_edmonds']][[a]][[gsub("\\.res","",b)]][[i]] = list(curr_result_fallback)
+
                     }
                 }
 
@@ -186,7 +199,8 @@ get.stats <- function(results) {
                         mean = mean(values)
                         sd = sd(values)
                         median = median(values)
-                        this.stats[[noise,sample]] = list(mean=mean, sd=sd, median=median, values=values)
+                        sum = sum(values)
+                        this.stats[[noise,sample]] = list(mean=mean, sd=sd, median=median, values=values, sum=sum)
                     }
                 }
 

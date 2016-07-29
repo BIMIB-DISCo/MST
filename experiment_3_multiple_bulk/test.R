@@ -462,14 +462,15 @@ branching = 'random_20'
 sample.type = 'multiple'
 #dev.new()
 
-dataset = dataset.random.multiple.biopses.20.nodes
+dataset = dataset.random.multiple.biopses.bulk.15.nodes
 
 #for (exp in 1:ncol(dataset.random.single.cells.5.nodes)) {
 for (exp in 1:100) {
-    for (noise in 1:5) {
+    for(noise in 1:5) {
+    #for (exp in 10) {
         print(exp)
         exp.code = paste(branching, sample.type, sample, exp, noise, sep = '_')
-        exp.code = paste0('/home/dex/project/MST/experiment_3_multiple/test/', exp.code)
+        exp.code = paste0('/home/dex/project/MST/experiment_3_multiple_bulk/test/', exp.code)
         this.experiment = dataset[[sample, exp]][[noise]]
 
     #    filename = paste0('scite_output/datasets/', branching,  '/', sample.type, '/', sample.scite, '_', exp, '_', noise, '_ml0')

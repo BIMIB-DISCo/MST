@@ -223,8 +223,8 @@ dotplotter <- function(res.values, sample, algorithm, branching, type, title, sa
     eneg = c(0.000, 0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350)
 
     if (sample.type == 'multiple') {
-        epos = external.epos
-        eneg = external.eneg
+        epos = c(0.000, 0.05, 0.1, 0.15, 0.20)
+        eneg = epos
     }
 
     xlabels = paste(format(epos, scientific=TRUE), format(eneg, scientific=TRUE), sep=',')

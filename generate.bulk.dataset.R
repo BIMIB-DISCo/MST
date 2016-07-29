@@ -13,21 +13,39 @@
 
 
 # generate a significant random tree with the Bayesian bulk model
-sample.random.bayesian.bulk.significant.tree <- function ( nodes, min_significance = 0.6, max_significance = 0.90, sample_significance = 0.00001 ) {
-	
-	# generate a random tree with minimum significance per samples
-	random_tree = NULL
-	while(is.null(random_tree) || 
-	        min(random_tree$dataset_samples[,"Probs"])<=sample_significance || 
-	        max(random_tree$dataset_samples[,"Probs"])>=(1-sample_significance)) {
-	        	
-		# keep generating random trees until I get a valid one
-		random_tree = generate.random.bayesian.bulk.dataset(nodes,min_significance, max_significance)
-		
-	}
+sample.random.bayesian.bulk.significant.tree <- function ( samples_num, e_pos, e_neg, nodes, min_significance = 0.6, max_significance = 0.90, sample_significance = 0.00001 ) {
     
-    return(random_tree)
-	
+    # generate a random tree with minimum significance per samples
+    random_tree = NULL
+    while(is.null(random_tree) || 
+            min(random_tree$dataset_samples[,"Probs"])<=sample_significance || 
+            max(random_tree$dataset_samples[,"Probs"])>=(1-sample_significance)) {
+                
+        # keep generating random trees until I get a valid one
+        random_tree = generate.random.bayesian.bulk.dataset(nodes,min_significance, max_significance)
+        
+    }
+
+    dataset = random_tree$dataset_samples[,1:nodes]
+    samples_probabilities = random_tree$dataset_samples[,nodes+1]
+    
+    # sample the dataset
+    sampled_dataset = dataset[sample(1:nrow(dataset),
+        size = samples_num,
+        replace = TRUE,
+        prob = samples_probabilities),]
+    
+    # apply the noise
+    for(i in 1:nrow(sampled_dataset)) {
+        sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
+    }
+    rownames(sampled_dataset) = paste0("sample_",1:samples_num)
+    
+    # save the results
+    res = list( random_tree = random_tree, sampled_dataset = sampled_dataset )
+    
+    return(res)
+    
 }
 
 # generate a random tree and the probabilities of the associated bulk cell samples

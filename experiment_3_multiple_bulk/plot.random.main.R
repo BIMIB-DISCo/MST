@@ -4,8 +4,8 @@ library(Rmisc)
 source('../giulio.plot.R')
 
 for (type in c('accuracy', 'hamming_distance')) {
-    for (branching in c('random_5', 'random_10', 'random_15', 'random_20')) {
-    #for (branching in c('random_5', 'random_10')) {
+    #for (branching in c('random_5', 'random_10', 'random_15', 'random_20')) {
+    for (branching in c('random_5', 'random_10')) {
         e = NULL
         e = new.env()
         load(paste0('RData/results.values.', type, '.', branching, '.RData'), envir = e)

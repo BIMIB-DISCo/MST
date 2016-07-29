@@ -86,8 +86,7 @@ generate.dataset.single.cells <- function (type,
                 results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
-    }
-    
+    }     
     return(results)
     
 }
@@ -101,7 +100,7 @@ generate.dataset.multiple.biopses <- function(type,
     nodes_probabilities = NA,
     e_pos,
     e_neg,
-    wild_type,
+    wild_type = 0,
     nodes = NA,
     min_significance = 0.60,
     max_significance = 0.90,
@@ -163,6 +162,19 @@ generate.dataset.multiple.biopses <- function(type,
                 random_dataset = sample.random.multiple.biopses(i,e_pos[j],e_neg[j],nodes,min_significance,max_significance,samples_significance,wild_type)
                 results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
                 results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+            }
+        }
+    } else if (type == "random_bulk") {
+        for (i in samples_num) {
+            for (j in 1:length(e_pos)) {
+                random_dataset = sample.random.bayesian.bulk.significant.tree(i,e_pos[j],e_neg[j],nodes)
+                results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                results[[as.character(i)]][[as.character(j)]][["probabilities"]] = random_dataset$random_tree$probabilities
+                results[[as.character(i)]][[as.character(j)]][["root_prob"]] = random_dataset$random_tree$root_prob
                 results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
                 results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
                 results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]

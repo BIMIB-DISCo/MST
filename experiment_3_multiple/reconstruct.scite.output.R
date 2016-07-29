@@ -16,10 +16,10 @@
 source('../reconstruct.scite.import.R')
 source('../reconstruct.run.R')
 
-load('RData/result.random.single.cells.5.nodes.RData')
-load('RData/result.random.single.cells.10.nodes.RData')
-load('RData/result.random.single.cells.15.nodes.RData')
-load('RData/result.random.single.cells.20.nodes.RData')
+load('RData/result.random.multiple.biopses.5.nodes.RData')
+load('RData/result.random.multiple.biopses.10.nodes.RData')
+load('RData/result.random.multiple.biopses.15.nodes.RData')
+load('RData/result.random.multiple.biopses.20.nodes.RData')
 
 
 
@@ -28,14 +28,14 @@ library(sna)
 library(Rgraphviz)
 
 #### merge tronco results with scite
-experiments.random.single.cells.5.nodes.scite = import.scite.output(result.random.single.cells.5.nodes, 'single', 'random_5')
-save(experiments.random.single.cells.5.nodes.scite, file = 'RData/experiments.random.single.cells.5.nodes.scite.RData')
+experiments.random.multiple.biopses.5.nodes.scite = import.scite.output(result.random.multiple.biopses.5.nodes, 'multiple', 'random_5')
+save(experiments.random.multiple.biopses.5.nodes.scite, file = 'RData/experiments.random.multiple.biopses.5.nodes.scite.RData')
 
-experiments.random.single.cells.10.nodes.scite = import.scite.output(result.random.single.cells.10.nodes, 'single', 'random_10')
-save(experiments.random.single.cells.10.nodes.scite, file = 'RData/experiments.random.single.cells.10.nodes.scite.RData')
+experiments.random.multiple.biopses.10.nodes.scite = import.scite.output(result.random.multiple.biopses.10.nodes, 'multiple', 'random_10')
+save(experiments.random.multiple.biopses.10.nodes.scite, file = 'RData/experiments.random.multiple.biopses.10.nodes.scite.RData')
 
-experiments.random.single.cells.15.nodes.scite = import.scite.output(result.random.single.cells.15.nodes, 'single', 'random_15')
-save(experiments.random.single.cells.15.nodes.scite, file = 'RData/experiments.random.single.cells.15.nodes.scite.RData')
+experiments.random.multiple.biopses.15.nodes.scite = import.scite.output(result.random.multiple.biopses.15.nodes, 'multiple', 'random_15')
+save(experiments.random.multiple.biopses.15.nodes.scite, file = 'RData/experiments.random.multiple.biopses.15.nodes.scite.RData')
 
-experiments.random.single.cells.20.nodes.scite = import.scite.output(result.random.single.cells.20.nodes, 'single', 'random_20')
-save(experiments.random.single.cells.20.nodes.scite, file = 'RData/experiments.random.single.cells.20.nodes.scite.RData')
+experiments.random.multiple.biopses.20.nodes.scite = import.scite.output(result.random.multiple.biopses.20.nodes, 'multiple', 'random_20')
+save(experiments.random.multiple.biopses.20.nodes.scite, file = 'RData/experiments.random.multiple.biopses.20.nodes.scite.RData')
