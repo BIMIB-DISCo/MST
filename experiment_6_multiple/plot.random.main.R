@@ -1,13 +1,14 @@
 library(ggplot2)
 library(Rmisc)
 
+samples = c(5, 7, 10, 20, 50)
+epos = c(0.000, 0.050, 0.100, 0.150, 0.200)
+eneg = c(0.000, 0.050, 0.100, 0.150, 0.200)
 source('../giulio.plot.R')
+e = new.env()
 
-for (type in c('accuracy', 'hamming_distance', 'sensitivity', 'specificity')) {
-    for (branching in c('random_5', 'random_10', 'random_15', 'random_20')) {
-    #for (branching in c('random_5', 'random_10')) {
-        e = NULL
-        e = new.env()
+for (type in c('accuracy', 'hamming_distance', 'specificity', 'sensitivity')) {
+    for (branching in c('random_forest')) {
         load(paste0('RData/results.values.', type, '.', branching, '.RData'), envir = e)
         results.values = e$results.values
         load(paste0('RData/results.', type, '.', branching, '.RData'), envir = e)
@@ -20,14 +21,13 @@ for (type in c('accuracy', 'hamming_distance', 'sensitivity', 'specificity')) {
 
         cat('capri caprese', branching, '\n')
 
-        for (sample in c(5, 7, 10, 20, 50)) {
+        for (sample in samples) {
             p = dotplotter(results.values, 
                 sample,
                 c('capri_bic', 'capri_aic', 'capri_loglik', 'caprese_no.reg', 'scite_no.reg'),
                 branching,
                 type,
-                paste('SAMPLE SIZE = ', sample),
-                sample.type = 'multiple')
+                paste('SAMPLE SIZE = ', sample))
             
             plotlist[[plot.id]] = p
 
@@ -52,13 +52,12 @@ for (type in c('accuracy', 'hamming_distance', 'sensitivity', 'specificity')) {
         plotlist.median = list()
         plot.id = 1
 
-        for (sample in c(5, 7, 10, 20, 50)) {
+        for (sample in samples) {
             p = dotplotter(results.values, sample, c('gabow_entropy.no.reg', 'gabow_pmi.no.reg', 'gabow_cpmi.no.reg',
                 'gabow_mi.no.reg', 'scite_no.reg'), 
                 branching,
                 type,
-                paste('SAMPLE SIZE = ', sample),
-                sample.type = 'multiple')
+                paste('SAMPLE SIZE = ', sample))
 
             plotlist[[plot.id]] = p
             
@@ -86,15 +85,14 @@ for (type in c('accuracy', 'hamming_distance', 'sensitivity', 'specificity')) {
         plotlist.median = list()
         plot.id = 1
 
-        for (sample in c(5, 7, 10, 20, 50)) {
+        for (sample in samples) {
             p = dotplotter(results.values, sample, c('edmonds_entropy.no.reg',
                 'edmonds_pmi.no.reg',
                 'edmonds_cpmi.no.reg',
                 'scite_no.reg'), 
                 branching,
                 type,
-                paste('SAMPLE SIZE = ', sample),
-                sample.type = 'multiple')
+                paste('SAMPLE SIZE = ', sample))
 
             plotlist[[plot.id]] = p
             
@@ -121,12 +119,11 @@ for (type in c('accuracy', 'hamming_distance', 'sensitivity', 'specificity')) {
         plotlist.median = list()
         plot.id = 1
 
-        for (sample in c(5, 7, 10, 20, 50)) {
+        for (sample in samples) {
             p = dotplotter(results.values, sample, c('chowliu_loglik', 'prim_no.reg', 'scite_no.reg'), 
                 branching,
                 type,
-                paste('SAMPLE SIZE = ', sample),
-                sample.type = 'multiple')
+                paste('SAMPLE SIZE = ', sample))
 
             plotlist[[plot.id]] = p
 
@@ -152,7 +149,7 @@ for (type in c('accuracy', 'hamming_distance', 'sensitivity', 'specificity')) {
         plotlist.median = list()
         plot.id = 1
 
-        for (sample in c(5, 7, 10, 20, 50)) {
+        for (sample in samples) {
             p = dotplotter(results.values, sample, c('capri_bic', 'capri_aic',
                 'caprese_no.reg', 'edmonds_entropy.no.reg',
                 'edmonds_pmi.no.reg', 'edmonds_cpmi.no.reg',
@@ -161,8 +158,7 @@ for (type in c('accuracy', 'hamming_distance', 'sensitivity', 'specificity')) {
                 'scite_no.reg'), 
                 branching,
                 type,
-                paste('SAMPLE SIZE = ', sample),
-                sample.type = 'multiple')
+                paste('SAMPLE SIZE = ', sample))
 
             plotlist[[plot.id]] = p
             
@@ -184,4 +180,3 @@ for (type in c('accuracy', 'hamming_distance', 'sensitivity', 'specificity')) {
 
     }
 }
-

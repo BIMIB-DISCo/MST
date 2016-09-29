@@ -4,7 +4,7 @@ library(Rmisc)
 source('../giulio.plot.R')
 e <- new.env()
 
-for (type in c('accuracy', 'hamming_distance')) {
+for (type in c('accuracy', 'hamming_distance', 'sensitivity', 'specificity')) {
     for (branching in c('low', 'medium', 'high')) {
         load(paste0('RData/results.values.', type, '.', branching, '.RData'), envir = e)
         results.values = e$results.values

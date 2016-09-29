@@ -303,16 +303,16 @@ sample.single.cells.polyclonal.high <- function (samples_num,
 }
 
 # generate a dataset of random single cell trees
-sample.random.single.cells <- function ( samples_num, e_pos, e_neg, nodes, min_significance = 0.60, max_significance = 0.9, sample_significance = 0.005 ) {
-	
+sample.random.single.cells <- function ( samples_num, e_pos, e_neg, nodes, min_significance = 0.60, max_significance = 0.9, sample_significance = 0.005, true_tree = NULL ) {
 	# generate a random tree with minimum significance per samples
 	random_tree = NULL
 	while(is.null(random_tree) || 
 	        min(random_tree$dataset_samples[,"Probs"])<=sample_significance || 
 	        max(random_tree$dataset_samples[,"Probs"])>=(1-sample_significance)) {
 	        	
+
 		# keep generating random trees until I get a valid one
-		random_tree = generate.random.single.cell.dataset(nodes,min_significance,max_significance)
+		random_tree = generate.random.single.cell.dataset(nodes,min_significance,max_significance,true_tree)
 		
 	}
 	
@@ -339,7 +339,7 @@ sample.random.single.cells <- function ( samples_num, e_pos, e_neg, nodes, min_s
 }
 
 # generate a significant random tree
-sample.random.single.cells.significant.tree <- function ( nodes, min_significance = 0.6, max_significance = 0.90, sample_significance = 0.005 ) {
+sample.random.single.cells.significant.tree <- function ( nodes, min_significance = 0.6, max_significance = 0.90, sample_significance = 0.005, true_tree = NULL ) {
 	
 	# generate a random tree with minimum significance per samples
 	random_tree = NULL
@@ -348,7 +348,7 @@ sample.random.single.cells.significant.tree <- function ( nodes, min_significanc
 	        max(random_tree$dataset_samples[,"Probs"])>=(1-sample_significance)) {
 	        	
 		# keep generating random trees until I get a valid one
-		random_tree = generate.random.single.cell.dataset(nodes,min_significance, max_significance)
+		random_tree = generate.random.single.cell.dataset(nodes,min_significance, max_significance, true_tree)
 		
 	}
     
@@ -425,8 +425,8 @@ sample.multiple.biopses.polyclonal.low <- function (samples_num,
         sample.multiple.biospes.from.single.cells(clones_probabilities,
             "low",
             nodes_probabilities,
-            e_pos,
-            e_neg)
+            0,
+            0)
     })
     sampled_dataset = t(sampled_dataset)
     
@@ -434,9 +434,9 @@ sample.multiple.biopses.polyclonal.low <- function (samples_num,
         sampled_dataset = rbind(matrix(0, wild_type_samples,6), sampled_dataset)
     }
 
-    #for(i in 1:nrow(sampled_dataset)) {
-    #    sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
-    #}
+    for(i in 1:nrow(sampled_dataset)) {
+        sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
+    }
 
     return(sampled_dataset)
 }
@@ -459,8 +459,8 @@ sample.multiple.biopses.polyclonal.medium <- function(samples_num,
         sample.multiple.biospes.from.single.cells(clones_probabilities,
             "medium",
             nodes_probabilities,
-            e_pos,
-            e_neg)
+            0,
+            0)
     })
     sampled_dataset = t(sampled_dataset)
     
@@ -468,9 +468,9 @@ sample.multiple.biopses.polyclonal.medium <- function(samples_num,
         sampled_dataset = rbind(matrix(0, wild_type_samples,11), sampled_dataset)
     }
 
-    #for(i in 1:nrow(sampled_dataset)) {
-    #    sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
-    #}
+    for(i in 1:nrow(sampled_dataset)) {
+        sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
+    }
 
     return(sampled_dataset)
 }
@@ -517,7 +517,8 @@ sample.random.multiple.biopses <- function (samples_num,
     min_significance,
     max_significance,
     samples_significance,
-    wild_type) {
+    wild_type,
+    true_tree) {
     
     wild_type_samples = round(samples_num * wild_type)
     if (wild_type > 0 && wild_type_samples == 0) {
@@ -525,7 +526,7 @@ sample.random.multiple.biopses <- function (samples_num,
     }
     
     # generate a random single cell tree
-    random_tree = sample.random.single.cells.significant.tree(nodes,min_significance,max_significance,samples_significance)
+    random_tree = sample.random.single.cells.significant.tree(nodes,min_significance,max_significance,samples_significance,true_tree)
     
     # as an heuristics, one bulk sample is the mix of nodes/2 single cells samples
     clones_per_sample = round(nodes/2)
@@ -578,7 +579,7 @@ apply.noise.to.sample <- function (my_sample,
     return(my_sample)
 }
 
-sample.random.single.cells.forest <- function(  samples_num, e_pos, e_neg, nodes, min_significance = 0.60, max_significance = 0.9, sample_significance = 0.005 ) {
+sample.random.single.cells.forest <- function(  samples_num, e_pos, e_neg, nodes, min_significance = 0.60, max_significance = 0.9, sample_significance = 0.005, true_tree = NULL ) {
 
     num.trees = sample(c(2,3), 1)
     prob.trees = runif(num.trees)
@@ -656,5 +657,193 @@ sample.random.single.cells.forest <- function(  samples_num, e_pos, e_neg, nodes
     res = list( random_tree = random_tree, sampled_dataset = final.dataset )
     return(res)
 
+}
+
+
+
+# sample multiple biopses from a random single cell tree model
+sample.random.multiple.biopses.forest <- function (samples_num,
+    e_pos,
+    e_neg,
+    nodes,
+    min_significance,
+    max_significance,
+    samples_significance,
+    wild_type) {
+    
+    wild_type_samples = round(samples_num * wild_type)
+    if (wild_type > 0 && wild_type_samples == 0) {
+        wild_type_samples = 1
+    }
+    
+    # generate a random single cell tree
+    random_tree = sample.random.single.cells.forest(samples_num,
+        e_pos,
+        e_neg,
+        nodes,
+        min_significance,
+        max_significance,
+        samples_significance)$random_tree
+    
+    # as an heuristics, one bulk sample is the mix of nodes/2 single cells samples
+    clones_per_sample = round(nodes/2)
+    
+    res.matrix = matrix(NA, ncol=nodes, nrow=(samples_num - wild_type_samples))
+    res = sapply(res.matrix[,1], function(x) {
+        sample.random.single.cells.given.tree(clones_per_sample,
+                                    nodes,
+                                    0,
+                                    0,
+                                    random_tree)
+    })
+    
+    sampled_dataset = t(res)
+    
+    if (wild_type_samples > 0) {
+        sampled_dataset = rbind(matrix(0, wild_type_samples,nodes), sampled_dataset)
+    }
+
+    for(i in 1:nrow(sampled_dataset)) {
+        sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
+    }
+    
+    # save the results
+    res = list( random_tree = random_tree, sampled_dataset = sampled_dataset )
+    
+    return(res)
+    
+}
+
+
+sample.random.single.cells.forest.fixed.tree <- function(  samples_num, e_pos, e_neg, min_significance = 0.60, max_significance = 0.9, sample_significance = 0.005) {
+
+    nodes = 7
+    num.trees = 2
+    num.nodes = c(4,3)
+    prob.trees = c(0.6, 0.4)
+
+    first.tree = matrix(0, 4, 4)
+    first.tree[1,2] = 1
+    first.tree[1,3] = 1
+    first.tree[3,4] = 1
+    second.tree = matrix(0, 3, 3)
+    second.tree[1,2] = 1
+    second.tree[2,3] = 1
+
+    true_tree = list(first.tree, second.tree)
+
+    first.node = 0
+    last.node = 0
+
+    empty.graph = matrix(0, nodes, nodes)
+    colnames(empty.graph) = paste0('node_', 1:nodes)
+    rownames(empty.graph) =paste0('node_', 1:nodes)
+    final.true.tree = graph.adjacency(empty.graph)
+    final.probs = matrix(0, 0, 1)
+    final.values = matrix(0, 0, 0)
+
+    for (i in 1:num.trees) {
+        tree = sample.random.single.cells(samples_num, 0, 0, num.nodes[[i]], min_significance,max_significance,sample_significance, true_tree[[i]])
+        samples = tree$random_tree$dataset_samples
+        true.tree = tree$random_tree$structure
+        first.node = last.node + 1
+        last.node = first.node + num.nodes[[i]] - 1
+        node.names = paste0('node_', first.node:last.node)
+        colnames(true.tree) = node.names
+        rownames(true.tree) = node.names
+        colnames(samples) = c(node.names, 'Probs')
+        #print(samples)
+        #print(prob.trees[i])
+        samples[, 'Probs'] = samples[, 'Probs'] * prob.trees[i]
+        probs = samples[, 'Probs', drop = FALSE]
+        #print(probs)
+        final.probs = rbind(final.probs, probs)
+        values = samples[, -ncol(samples), drop = FALSE]
+
+        left = rbind(final.values, matrix(0, ncol = ncol(final.values), nrow = nrow(values)))
+        right = rbind(matrix(0, ncol = ncol(values), nrow = nrow(final.values)), values)
+        final.values = cbind(left, right)
+
+        #print(values)
+        #print(samples)
+        #print(true.tree)
+        true.tree = graph.adjacency(true.tree)
+        final.true.tree = graph.union(final.true.tree, true.tree)
+    }
+    #plot(final.true.tree)
+    #print(final.probs)
+    #print(final.values)
+    final.true.tree = get.adjacency(final.true.tree, sparse = FALSE)
+    
+    rownames(final.probs) = paste0('sample_', 1:nrow(final.probs))
+    rownames(final.values) = paste0('sample_', 1:nrow(final.values))
+    final.dataset.samples = cbind(final.values, final.probs)
+    final.dataset = final.values[sample(1:nrow(final.values),
+        size = samples_num,
+        replace = TRUE,
+        prob = final.probs),]
+    rownames(final.dataset) = paste0("sample_",1:samples_num)
+
+    # apply the noise
+    for(i in 1:nrow(final.dataset)) {
+        final.dataset[i,] = apply.noise.to.sample(final.dataset[i,], e_pos, e_neg)
+    }
+
+    random_tree = list(structure = final.true.tree, dataset_samples = final.dataset.samples)
+    res = list( random_tree = random_tree, sampled_dataset = final.dataset )
+    return(res)
+
+}
+
+# sample multiple biopses from a random single cell tree model
+sample.random.multiple.biopses.forest.fixed.tree <- function (samples_num,
+    e_pos,
+    e_neg,
+    min_significance,
+    max_significance,
+    samples_significance,
+    wild_type) {
+    
+    wild_type_samples = round(samples_num * wild_type)
+    if (wild_type > 0 && wild_type_samples == 0) {
+        wild_type_samples = 1
+    }
+    
+    # generate a random single cell tree
+    random_tree = sample.random.single.cells.forest.fixed.tree(samples_num,
+        e_pos,
+        e_neg,
+        min_significance,
+        max_significance,
+        samples_significance)$random_tree
+    
+    # as an heuristics, one bulk sample is the mix of nodes/2 single cells samples
+    nodes = 7
+    clones_per_sample = round(nodes/2)
+    
+    res.matrix = matrix(NA, ncol=nodes, nrow=(samples_num - wild_type_samples))
+    res = sapply(res.matrix[,1], function(x) {
+        sample.random.single.cells.given.tree(clones_per_sample,
+                                    nodes,
+                                    0,
+                                    0,
+                                    random_tree)
+    })
+    
+    sampled_dataset = t(res)
+    
+    if (wild_type_samples > 0) {
+        sampled_dataset = rbind(matrix(0, wild_type_samples,nodes), sampled_dataset)
+    }
+
+    for(i in 1:nrow(sampled_dataset)) {
+        sampled_dataset[i,] = apply.noise.to.sample(sampled_dataset[i,], e_pos, e_neg)
+    }
+    
+    # save the results
+    res = list( random_tree = random_tree, sampled_dataset = sampled_dataset )
+    
+    return(res)
+    
 }
 

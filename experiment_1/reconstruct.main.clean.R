@@ -16,7 +16,7 @@
 library(parallel)
 
 source('../reconstruct.run.R')
-load('RData/dataset.single.cells.random.columns.low.RData')
+load('RData/dataset.single.cells.clean.RData')
 
 # setting of the experiments
 seed = 12345
@@ -31,7 +31,7 @@ if (available.cores > 8) {
     cores = 1
 }
 
-# generate dataset for single cells low
-cat('result single cells low\n')
-result.single.cells.low = expand.input(dataset.single.cells.random.columns.low, seed, cores)
-save(result.single.cells.low, file="RData/result.single.cells.low.RData")
+# generate dataset for single cells high
+cat('result single cells high\n')
+result.single.cells.clean = expand.input(dataset.single.cells.clean, seed, cores)
+save(result.single.cells.clean, file="RData/result.single.cells.clean.RData")

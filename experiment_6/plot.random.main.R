@@ -7,7 +7,7 @@ eneg = c(0.000, 0.050, 0.100, 0.150, 0.200)
 source('../giulio.plot.R')
 e = new.env()
 
-for (type in c('accuracy', 'hamming_distance')) {
+for (type in c('accuracy', 'hamming_distance', 'specificity', 'sensitivity')) {
     for (branching in c('random_forest')) {
         load(paste0('RData/results.values.', type, '.', branching, '.RData'), envir = e)
         results.values = e$results.values

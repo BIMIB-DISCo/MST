@@ -68,7 +68,7 @@ get.stats <- function(results) {
                             curr_result_sensitivity[l,j] = curr_computed[["sensitivity"]]
                             curr_result_specificity[l,j] = curr_computed[["specificity"]]
                             curr_result_hamming_distance[l,j] = curr_computed[["hamming_distance"]]
-                            if (a == 'gabow' && curr_computed[['fallback.edmonds']]) {
+                            if (a == 'gabow' && !is.null(curr_computed[['fallback.edmonds']]) && curr_computed[['fallback.edmonds']]) {
                                 curr_result_fallback[l,j] = 1
                             } else {
                                 curr_result_fallback[l,j] = 0

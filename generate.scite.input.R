@@ -5,9 +5,13 @@ create.scite.input = function(dataset,
     branching,
     betasd,
     seed = 12345,
-    pass.error.rates = TRUE) {
+    pass.error.rates = TRUE,
+    steps = 100000) {
 
-    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20', 'random_forest')) {
+    options(scipen = 999)
+
+    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20', 'random_forest',
+        'clean', 'convergent', 'random_columns', 'random_forest_fixed')) {
         stop('branching must be "low", "medium" or "high"')
     } 
 
@@ -53,7 +57,7 @@ create.scite.input = function(dataset,
                 seed_level = round(runif(1) * 10000, 0)
                 write.table(genotype, file = paste0('scite_input/', filename), quote = FALSE, sep = ' ', col.names = FALSE, row.names = FALSE)
                 script = paste0(script, 'printf "EXEC: ', count, '/800 - sample: ', sample, ' experiment: ', experiment, ' noise lev: ', noise, ' \\n" \n')
-                script = paste0(script, '../scite -i ', filename, ' -n ', nmuts, ' -m ', nsample, ' -r 1 -l 100000 -fd ', epos_level, ' -ad ', eneg_level, ' -seed ', seed_level, ' -max_treelist_size 1', ' \n')
+                script = paste0(script, '../scite -i ', filename, ' -n ', nmuts, ' -m ', nsample, ' -r 1 -l ', steps,' -fd ', epos_level, ' -ad ', eneg_level, ' -seed ', seed_level, ' -max_treelist_size 1', ' \n')
                 count = count + 1
             }
         }

@@ -15,21 +15,9 @@ source('../statistics.plot.R')
 source('../statistics.compute.R')
 source('../giulio.plot.R')
 
-load('RData/experiments.single.cells.low.scite.RData')
-load('RData/experiments.single.cells.medium.scite.RData')
-load('RData/experiments.single.cells.high.scite.RData')
+load('RData/experiments.random.multiple.biopses.forest.nodes.scite.RData')
 
-experiments.single.cells.low.scite.stats = get.stats(experiments.single.cells.low.scite)
-save(experiments.single.cells.low.scite.stats, file="RData/experiments.single.cells.low.scite.stats.RData")
-giulio.plot(experiments.single.cells.low.scite.stats, 'single', 'low')
-
-experiments.single.cells.medium.scite.stats = get.stats(experiments.single.cells.medium.scite)
-save(experiments.single.cells.medium.scite.stats, file="RData/experiments.single.cells.medium.scite.stats.RData")
-giulio.plot(experiments.single.cells.medium.scite.stats, 'single', 'medium')
-
-experiments.single.cells.high.scite.stats = get.stats(experiments.single.cells.high.scite)
-save(experiments.single.cells.high.scite.stats, file="RData/experiments.single.cells.high.scite.stats.RData")
-giulio.plot(experiments.single.cells.high.scite.stats, 'single', 'high')
-
-
+experiments.random.multiple.biopses.forest.nodes.scite.stats = get.stats(experiments.random.multiple.biopses.forest.nodes.scite)
+save(experiments.random.multiple.biopses.forest.nodes.scite.stats, file="RData/experiments.random.multiple.biopses.forest.nodes.scite.stats.RData")
+giulio.plot(experiments.random.multiple.biopses.forest.nodes.scite.stats, 'multiple', 'random_forest')
 

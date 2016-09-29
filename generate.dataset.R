@@ -26,7 +26,7 @@ generate.dataset.single.cells <- function (type,
         
     
     library(igraph)
-    
+
     # structure to save the results
     results = NULL
     
@@ -43,13 +43,28 @@ generate.dataset.single.cells <- function (type,
             }
         }
     } else if (type == "medium") {
-        for (i in samples_num) {
-            for (j in 1:length(e_pos)) {
-                curr_dataset = sample.single.cells.polyclonal.medium(i,nodes_probabilities,e_pos[j],e_neg[j])
-                results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
-                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
-                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
-                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+        if (!is.null(true_tree)) {
+            for (i in samples_num) {
+                for (j in 1:length(e_pos)) {
+                    random_dataset = sample.random.single.cells(i,e_pos[j],e_neg[j],ncol(true_tree),min_significance,max_significance,samples_significance,true_tree)
+                    results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                    results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                    results[[as.character(i)]][[as.character(j)]][["probabilities"]] = random_dataset$random_tree$probabilities
+                    results[[as.character(i)]][[as.character(j)]][["root_prob"]] = random_dataset$random_tree$root_prob
+                    results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
+                    results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                    results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+                }
+            }
+        } else {
+            for (i in samples_num) {
+                for (j in 1:length(e_pos)) {
+                    curr_dataset = sample.single.cells.polyclonal.medium(i,nodes_probabilities,e_pos[j],e_neg[j])
+                    results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
+                    results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
+                    results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                    results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+                }
             }
         }
     } else if (type == "high") {
@@ -86,7 +101,18 @@ generate.dataset.single.cells <- function (type,
                 results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
-    }     
+    } else if (type == "random_forest_fixed") {
+        for (i in samples_num) {
+            for (j in 1:length(e_pos)) {
+                random_dataset = sample.random.single.cells.forest.fixed.tree(i, e_pos[j],e_neg[j],min_significance,max_significance,samples_significance)
+                results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+            }
+        }
+    }  
     return(results)
     
 }
@@ -96,7 +122,7 @@ generate.dataset.single.cells <- function (type,
 generate.dataset.multiple.biopses <- function(type,
     true_tree = NULL,
     samples_num,
-    clones_probabilities,
+    clones_probabilities = NA,
     nodes_probabilities = NA,
     e_pos,
     e_neg,
@@ -105,6 +131,9 @@ generate.dataset.multiple.biopses <- function(type,
     min_significance = 0.60,
     max_significance = 0.90,
     samples_significance = 0.001) {
+
+    library(igraph)
+
     
     
     # structure to save the results
@@ -127,18 +156,31 @@ generate.dataset.multiple.biopses <- function(type,
             }
         }
     } else if (type == "medium") {
-        for (i in samples_num) {
-            for (j in 1:length(e_pos)) {
-                curr_dataset = sample.multiple.biopses.polyclonal.medium(i,
-                    clones_probabilities,
-                    nodes_probabilities,
-                    e_pos[j],
-                    e_neg[j],
-                    wild_type)
-                results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
-                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
-                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
-                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+        if (!is.null(true_tree)) {
+            for (i in samples_num) {
+                for (j in 1:length(e_pos)) {
+                    random_dataset = sample.random.multiple.biopses(i,e_pos[j],e_neg[j],ncol(true_tree),min_significance,max_significance,samples_significance,wild_type,true_tree)
+                    results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                    results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                    results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
+                    results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                    results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+                }
+            }
+        } else {
+            for (i in samples_num) {
+                for (j in 1:length(e_pos)) {
+                    curr_dataset = sample.multiple.biopses.polyclonal.medium(i,
+                        clones_probabilities,
+                        nodes_probabilities,
+                        e_pos[j],
+                        e_neg[j],
+                        wild_type)
+                    results[[as.character(i)]][[as.character(j)]][["dataset"]] = curr_dataset
+                    results[[as.character(i)]][[as.character(j)]][["true_tree"]] = true_tree
+                    results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                    results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+                }
             }
         }
     } else if (type == "high") {
@@ -180,16 +222,38 @@ generate.dataset.multiple.biopses <- function(type,
                 results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
             }
         }
+    } else if (type == "random_forest") {
+        for (i in samples_num) {
+            for (j in 1:length(e_pos)) {
+                random_dataset = sample.random.multiple.biopses.forest(i, e_pos[j],e_neg[j],nodes,min_significance,max_significance,samples_significance,wild_type)
+                results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+            }
+        }
+    } else if (type == "random_forest_fixed") {
+        for (i in samples_num) {
+            for (j in 1:length(e_pos)) {
+                random_dataset = sample.random.multiple.biopses.forest.fixed.tree(i, e_pos[j],e_neg[j],min_significance,max_significance,samples_significance,wild_type)
+                results[[as.character(i)]][[as.character(j)]][["dataset"]] = random_dataset$sampled_dataset
+                results[[as.character(i)]][[as.character(j)]][["true_tree"]] = random_dataset$random_tree$structure
+                results[[as.character(i)]][[as.character(j)]][["dataset_samples"]] = random_dataset$random_tree$dataset_samples
+                results[[as.character(i)]][[as.character(j)]][["epos"]] = e_pos[j]
+                results[[as.character(i)]][[as.character(j)]][["eneg"]] = e_neg[j]
+            }
+        }
     }
     
     return(results)
 }
 
 # generate a random tree and the probabilities of the associated single cell samples
-generate.random.single.cell.dataset <- function ( nodes, min_significance = 0.6, max_significance = 0.90 ) {
+generate.random.single.cell.dataset <- function ( nodes, min_significance = 0.6, max_significance = 0.90, true_tree = NULL ) {
     
     # generate a random tree
-    my_tree = generate.random.tree(nodes = nodes, min_significance = min_significance, max_significance = max_significance)
+    my_tree = generate.random.tree(nodes = nodes, min_significance = min_significance, max_significance = max_significance, true_tree)
     
     # get adj.matrix
     adj.matrix = my_tree$structure
@@ -308,43 +372,57 @@ generate.random.single.cell.dataset <- function ( nodes, min_significance = 0.6,
 }
 
 # generate a random tree (both structure and conditional probabilities)
-generate.random.tree <- function ( nodes, min_significance = 0.60, max_significance = 0.90 ) {
+generate.random.tree <- function ( nodes, min_significance = 0.60, max_significance = 0.90, true_tree = NULL ) {
     
     # create the adjacency matrices to encode tree structure and probabilities
     adj.matrix.structure = array(0,c(nodes,nodes))
     adj.matrix.probabilities = array(0,c(nodes,nodes))
     
     # generate the tree structure randomly
-    my_tree = generate.random.tree.structure(nodes)
-    my_tree_structure = my_tree$structure
-    my_tree_root = my_tree$root
-    
-    # create the actual structure of the tree
-    root_prob = runif(1, min = min_significance, max = max_significance)
-    for (i in 2:length(my_tree_structure)) {
-        curr_parents_nodes = my_tree_structure[[i-1]]
-        curr_children_nodes = my_tree_structure[[i]]
-        for (j in 1:length(curr_children_nodes)) {
-            curr_node = curr_children_nodes[j]
-            if(length(curr_parents_nodes)==1) {
-                curr_parent = curr_parents_nodes[1]
+    if (!is.null(true_tree)) {
+        adj.matrix.structure = true_tree
+        for (i in 1:nrow(adj.matrix.structure)) {
+            for (j in 1:ncol(adj.matrix.structure)) {
+                if (adj.matrix.structure[[i,j]] == 1) {
+                    adj.matrix.probabilities[[i,j]] = runif(1, min = min_significance, max = max_significance)
+                }
             }
-            else {
-                curr_parent = sample(curr_parents_nodes,size=1)
-            }
-            curr_conditional_prob = runif(1, min = min_significance, max = max_significance)
-            # set the values in the adjacency matrices
-            adj.matrix.structure[curr_parent,curr_node] = 1
-            adj.matrix.probabilities[curr_parent,curr_node] = curr_conditional_prob
         }
-    }
-    
-    # get the leaves in the tree
-    leaves = NULL
-    for (i in 1:nrow(adj.matrix.structure)) {
-        nodes_children = which(adj.matrix.structure[i,]==1)
-        if(length(nodes_children)==0) {
-            leaves = c(leaves,i)
+        root_prob = runif(1, min = min_significance, max = max_significance)
+        my_tree_root = which(colSums(true_tree) == 0)
+        leaves = which(rowSums(true_tree) == 0)
+    } else {
+        my_tree = generate.random.tree.structure(nodes)
+        my_tree_structure = my_tree$structure
+        my_tree_root = my_tree$root
+        
+        # create the actual structure of the tree
+        root_prob = runif(1, min = min_significance, max = max_significance)
+        for (i in 2:length(my_tree_structure)) {
+            curr_parents_nodes = my_tree_structure[[i-1]]
+            curr_children_nodes = my_tree_structure[[i]]
+            for (j in 1:length(curr_children_nodes)) {
+                curr_node = curr_children_nodes[j]
+                if(length(curr_parents_nodes)==1) {
+                    curr_parent = curr_parents_nodes[1]
+                }
+                else {
+                    curr_parent = sample(curr_parents_nodes,size=1)
+                }
+                curr_conditional_prob = runif(1, min = min_significance, max = max_significance)
+                # set the values in the adjacency matrices
+                adj.matrix.structure[curr_parent,curr_node] = 1
+                adj.matrix.probabilities[curr_parent,curr_node] = curr_conditional_prob
+            }
+        }
+        
+        # get the leaves in the tree
+        leaves = NULL
+        for (i in 1:nrow(adj.matrix.structure)) {
+            nodes_children = which(adj.matrix.structure[i,]==1)
+            if(length(nodes_children)==0) {
+                leaves = c(leaves,i)
+            }
         }
     }
     

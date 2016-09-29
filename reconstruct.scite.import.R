@@ -2,10 +2,16 @@
 
 import.scite.output = function(dataset,
 	sample.type,
-	branching) {
+	branching,
+    sample_size = NULL) {
 
-	sample_sizes_single_cells = c(10, 25, 50, 75, 100)
-	sample_sizes_multiple_biopses = c(5, 7, 10, 20, 50)
+    if (is.null(sample_size)) {
+	   sample_sizes_single_cells = c(10, 25, 50, 75, 100)
+	   sample_sizes_multiple_biopses = c(5, 7, 10, 20, 50)
+    } else {
+        sample_sizes_single_cells = sample_size
+        sample_sizes_multiple_biopses = sample_size
+    }
 
 	if (sample.type == "single") {
         sample.size = sample_sizes_single_cells
@@ -15,7 +21,8 @@ import.scite.output = function(dataset,
         stop('sample.type must be "single" or "multiple"\n')
     }
 
-    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20', 'random_forest')) {
+    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15',
+        'random_20', 'random_forest', 'clean', 'convergent', 'random_columns', 'random_forest_fixed')) {
         stop('branching must be "low", "medium" or "high"')
     } 
 

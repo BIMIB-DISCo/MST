@@ -16,9 +16,9 @@
 source('../generate.scite.input.R')
 scite.sd = 0
 
-load('RData/dataset.single.cells.low.RData')
-load('RData/dataset.single.cells.medium.RData')
-load('RData/dataset.single.cells.high.RData')
+load('RData/dataset.multiple.biopses.low.RData')
+load('RData/dataset.multiple.biopses.medium.RData')
+load('RData/dataset.multiple.biopses.high.RData')
 
 ncol.low = 1
 ncol.medium = 2
@@ -30,16 +30,15 @@ add.columns <-function(x, ncols) {
 
 	nrow = nrow(dataset)
 	
-	#sums = colSums(dataset)
-	#marginal = sums/nrow(dataset)
-	#marginal.mean = mean(marginal)
-	#inf.limit = max(0.1, marginal.mean - 0.15)
-	#sup.limit = min(0.9, marginal.mean + 0.15)
+	sums = colSums(dataset)
+	marginal = sums/nrow(dataset)
+	marginal.mean = mean(marginal)
+	inf.limit = max(0.1, marginal.mean - 0.15)
+	sup.limit = min(0.9, marginal.mean + 0.15)
 
 	for (i in 1:ncols) {
 		# compute the marginal rate
-		#alpha = runif(1, inf.limit, sup.limit)
-		alpha = 0.5
+		alpha = runif(1, inf.limit, sup.limit)
 		col = rep(0, nrow)
 		# add if x < alpha flip 0 -> 1
 		col[which(runif(nrow) < alpha)] = 1
@@ -73,18 +72,18 @@ add.random.columns <- function(datasets, ncols) {
 }
 
 cat('low\n')
-dataset.single.cells.random.columns.low = add.random.columns(dataset.single.cells.low, ncol.low)
-save(dataset.single.cells.random.columns.low, file = 'RData/dataset.single.cells.random.columns.low.RData')
+dataset.multiple.biopses.random.columns.low = add.random.columns(dataset.multiple.biopses.low, ncol.low)
+save(dataset.multiple.biopses.random.columns.low, file = 'RData/dataset.multiple.biopses.random.columns.low.RData')
 cat('medium\n')
-dataset.single.cells.random.columns.medium = add.random.columns(dataset.single.cells.medium, ncol.medium)
-save(dataset.single.cells.random.columns.medium, file = 'RData/dataset.single.cells.random.columns.medium.RData')
+dataset.multiple.biopses.random.columns.medium = add.random.columns(dataset.multiple.biopses.medium, ncol.medium)
+save(dataset.multiple.biopses.random.columns.medium, file = 'RData/dataset.multiple.biopses.random.columns.medium.RData')
 cat('high\n')
-dataset.single.cells.random.columns.high = add.random.columns(dataset.single.cells.high, ncol.high)
-save(dataset.single.cells.random.columns.high, file = 'RData/dataset.single.cells.random.columns.high.RData')
+dataset.multiple.biopses.random.columns.high = add.random.columns(dataset.multiple.biopses.high, ncol.high)
+save(dataset.multiple.biopses.random.columns.high, file = 'RData/dataset.multiple.biopses.random.columns.high.RData')
 
 cat('scite low\n')
-create.scite.input(dataset.single.cells.random.columns.low, 'single', 'low', scite.sd)
+create.scite.input(dataset.multiple.biopses.random.columns.low, 'multiple', 'low', scite.sd, pass.error.rates = FALSE)
 cat('scite medium\n')
-create.scite.input(dataset.single.cells.random.columns.medium, 'single', 'medium', scite.sd)
+create.scite.input(dataset.multiple.biopses.random.columns.medium, 'multiple', 'medium', scite.sd, pass.error.rates = FALSE)
 cat('scite high\n')
-create.scite.input(dataset.single.cells.random.columns.high, 'single', 'high', scite.sd)
+create.scite.input(dataset.multiple.biopses.random.columns.high, 'multiple', 'high', scite.sd, pass.error.rates = FALSE)

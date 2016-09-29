@@ -39,3 +39,5 @@ cfg.R
 *.gv
 *.newick
 /experiment_3_multiple/gabow_error_dataset
+/experiment_1/conv_table.ods
+/experiment_1_multiple/conv_table.ods

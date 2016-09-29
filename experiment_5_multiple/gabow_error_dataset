@@ -1,0 +1,6 @@
+> check.fallback(experiments.multiple.biopses.high.scite.stats)
+sample:  10  - noise:  0  - sum(fallback_edmonds):  1  - exp:  74 
+sample:  20  - noise:  0  - sum(fallback_edmonds):  6  - exp:  20 33 55 67 71 94 
+sample:  20  - noise:  0.05  - sum(fallback_edmonds):  4  - exp:  4 31 84 90 
+sample:  50  - noise:  0  - sum(fallback_edmonds):  3  - exp:  18 93 98 
+sample:  50  - noise:  0.05  - sum(fallback_edmonds):  2  - exp:  10 75 

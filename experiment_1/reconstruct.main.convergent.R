@@ -13,12 +13,10 @@
 
 # source the needed script
 
-#  longjob -c "/afs/inf.ed.ac.uk/user/v/v1ldesa/download/R-3.2.5/bin/Rscript reconstruct.main.sh.R > high.log 2>&1"
-
 library(parallel)
 
 source('../reconstruct.run.R')
-load('RData/dataset.single.cells.random.columns.medium.RData')
+load('RData/dataset.single.cells.convergent.RData')
 
 # setting of the experiments
 seed = 12345
@@ -33,7 +31,7 @@ if (available.cores > 8) {
     cores = 1
 }
 
-# generate dataset for single cells medium
-cat('result single cells medium\n')
-result.single.cells.medium = expand.input(dataset.single.cells.random.columns.medium, seed, cores)
-save(result.single.cells.medium, file="RData/result.single.cells.medium.RData")
+# generate dataset for single cells low
+cat('result single cells low\n')
+result.single.cells.convergent = expand.input(dataset.single.cells.convergent, seed, cores)
+save(result.single.cells.convergent, file="RData/result.single.cells.convergent.RData")

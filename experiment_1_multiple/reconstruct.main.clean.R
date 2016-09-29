@@ -16,7 +16,7 @@
 library(parallel)
 
 source('../reconstruct.run.R')
-load('RData/dataset.single.cells.random.columns.high.RData')
+load('RData/dataset.multiple.biopses.clean.RData')
 
 # setting of the experiments
 seed = 12345
@@ -33,5 +33,5 @@ if (available.cores > 8) {
 
 # generate dataset for single cells high
 cat('result single cells high\n')
-result.single.cells.high = expand.input(dataset.single.cells.random.columns.high, seed, cores)
-save(result.single.cells.high, file="RData/result.single.cells.high.RData")
+result.multiple.biopses.clean = expand.input(dataset.multiple.biopses.clean, seed, cores)
+save(result.multiple.biopses.clean, file="RData/result.multiple.biopses.clean.RData")

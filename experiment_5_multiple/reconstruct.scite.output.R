@@ -16,20 +16,20 @@
 source('../reconstruct.scite.import.R')
 source('../reconstruct.run.R')
 
-load('RData/result.single.cells.low.RData')
-load('RData/result.single.cells.medium.RData')
-load('RData/result.single.cells.high.RData')
+load('RData/result.multiple.biopses.low.RData')
+load('RData/result.multiple.biopses.medium.RData')
+load('RData/result.multiple.biopses.high.RData')
 
 library(igraph)
 library(sna)
 library(Rgraphviz)
 
 #### merge tronco results with scite
-experiments.single.cells.low.scite = import.scite.output(result.single.cells.low, 'single', 'low')
-save(experiments.single.cells.low.scite, file = 'RData/experiments.single.cells.low.scite.RData')
+experiments.multiple.biopses.low.scite = import.scite.output(result.multiple.biopses.low, 'multiple', 'low')
+save(experiments.multiple.biopses.low.scite, file = 'RData/experiments.multiple.biopses.low.scite.RData')
 
-experiments.single.cells.medium.scite = import.scite.output(result.single.cells.medium, 'single', 'medium')
-save(experiments.single.cells.medium.scite, file = 'RData/experiments.single.cells.medium.scite.RData')
+experiments.multiple.biopses.medium.scite = import.scite.output(result.multiple.biopses.medium, 'multiple', 'medium')
+save(experiments.multiple.biopses.medium.scite, file = 'RData/experiments.multiple.biopses.medium.scite.RData')
 
-experiments.single.cells.high.scite = import.scite.output(result.single.cells.high, 'single', 'high')
-save(experiments.single.cells.high.scite, file = 'RData/experiments.single.cells.high.scite.RData')
+experiments.multiple.biopses.high.scite = import.scite.output(result.multiple.biopses.high, 'multiple', 'high')
+save(experiments.multiple.biopses.high.scite, file = 'RData/experiments.multiple.biopses.high.scite.RData')
