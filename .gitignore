@@ -32,6 +32,11 @@ cfg.R
 *.out
 
 *.toc
+*.XLSX
+*.xlsx
+*.svg
+*.ods
+*.PDF
 
 *.csv
 *.sh

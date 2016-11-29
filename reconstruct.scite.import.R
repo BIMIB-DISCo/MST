@@ -21,10 +21,13 @@ import.scite.output = function(dataset,
         stop('sample.type must be "single" or "multiple"\n')
     }
 
-    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15',
-        'random_20', 'random_forest', 'clean', 'convergent', 'random_columns', 'random_forest_fixed')) {
-        stop('branching must be "low", "medium" or "high"')
-    } 
+    if (branching %in% c('mini_01', 'mini_02', 'mini_03', 'mini_04', 'mini_05')) {
+        sample.size = c(50)
+        if (sample.type == 'multiple') {
+            sample.size = c(20)
+        }
+    }
+
 
     if (! dir.exists('RData')) {
     	stop('no buono')
@@ -33,10 +36,13 @@ import.scite.output = function(dataset,
     for (sample in 1:nrow(dataset)) {
     	for (experiment in 1:ncol(dataset)) {
     		execution = dataset[[sample, experiment]]
-    		for (noise in ls(execution)) {
+    		for (noise in 1:length(execution)) {
     			noise_level = as.numeric(noise)
     			sample_size_level = sample.size[sample]
     			filename = paste0('scite_output/datasets/', branching,  '/', sample.type, '/', sample_size_level, '_', experiment, '_', noise, '_ml0')
+                if (branching == 'missing') {
+                    filename = paste0('scite_output/datasets/', branching,  '/', sample.type, '/75_', experiment, '_', sample, '_ml0')
+                }
                 read = readLines(paste0(filename, '.gv'))
                 read = gsub(' ', '', read)
                 read = gsub(';', '', read)

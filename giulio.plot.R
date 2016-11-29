@@ -12,10 +12,10 @@ giulio.plot <- function(dataset,
         sample_sizes_multiple_biopses = sample_size
     }
 
-    if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20',
-        'lowr', 'mediumr', 'highr', 'random_forest', 'clean', 'convergent', 'random_columns')) {
-        stop('branching must be "low", "medium" or "high"')
-    } 
+    #if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20',
+    #    'lowr', 'mediumr', 'highr', 'random_forest', 'clean', 'convergent', 'random_columns', 'mini')) {
+    #    stop('branching must be "low", "medium" or "high"')
+    #} 
 
     #sample_sizes_single_cells = c(10, 25, 50, 75, 100)
     #sample_sizes_multiple_biopses = c(5, 7, 10, 20, 50)
@@ -29,11 +29,20 @@ giulio.plot <- function(dataset,
     } else {
         stop('sample.type must be "single" or "multiple"\n')
     }
+
+    if (branching %in% c('mini_01', 'mini_02', 'mini_03', 'mini_04', 'mini_05')) {
+        sample = 50
+        if (sample.type == 'multiple') {
+            sample = 20
+        }
+    }
+
     select.sample = sample
 
     if (branching == 'low') {
         nodes = 6
-    } else if (branching %in% c('medium', 'clean', 'convergent', 'random_columns')) {
+    } else if (branching %in% c('medium', 'clean', 'convergent', 'random_columns', 
+        'mini_01', 'mini_02', 'mini_03', 'mini_04', 'mini_05')) {
         nodes = 11
     } else if (branching == 'high') {
         nodes = 17
@@ -46,6 +55,7 @@ giulio.plot <- function(dataset,
     } else if (branching == 'random_20' || branching == 'random_forest') {
         nodes = 20
     }
+
 
     connections = (nodes * nodes) - nodes
 
@@ -192,7 +202,8 @@ dotplotter <- function(res.values, sample, algorithm, branching, type, title, sa
     if (branching == 'low') {
         nodes = 6
         cut = 3
-    } else if (branching %in% c('medium', 'clean')) {
+    } else if (branching %in% c('medium', 'clean', 'mini_01', 'mini_02',
+        'mini_03', 'mini_04', 'mini_05')) {
         nodes = 11
         cut = 4
     } else if (branching == 'convergent') {
@@ -245,6 +256,15 @@ dotplotter <- function(res.values, sample, algorithm, branching, type, title, sa
     if (sample.type == 'multiple') {
         epos = c(0.000, 0.05, 0.1, 0.15, 0.20)
         eneg = epos
+    }
+
+    if (branching %in% c('mini_01', 'mini_02',
+        'mini_03', 'mini_04', 'mini_05')) {
+        epos = external.epos
+        eneg = external.eneg
+        if (sample.type == 'multiple') {
+            epos = eneg
+        }
     }
 
     if (!is.null(noise)) {
@@ -322,7 +342,8 @@ medianplotter <- function(res, sample, algorithm, branching, title) {
     if (branching == 'low') {
         nodes = 6
         cut = 3
-    } else if (branching %in% c('medium', 'clean')) {
+    } else if (branching %in% c('medium', 'clean', 'mini_01', 'mini_02',
+        'mini_03', 'mini_04', 'mini_05')) {
         nodes = 11
         cut = 4
     } else if (branching == 'convergent') {
@@ -430,7 +451,8 @@ jitterplotter <- function(res.values, sample, algorithm, branching, type, title,
     if (branching == 'low') {
         nodes = 6
         cut = 3
-    } else if (branching %in% c('medium', 'clean')) {
+    } else if (branching %in% c('medium', 'clean', 'mini_01', 'mini_02',
+        'mini_03', 'mini_04', 'mini_05')) {
         nodes = 11
         cut = 4
     } else if (branching == 'convergent') {
@@ -484,6 +506,16 @@ jitterplotter <- function(res.values, sample, algorithm, branching, type, title,
         epos = c(0.000, 0.05, 0.1, 0.15, 0.20)
         eneg = epos
     }
+
+    if (branching %in% c('mini_01', 'mini_02',
+        'mini_03', 'mini_04', 'mini_05')) {
+        epos = external.epos
+        eneg = external.eneg
+        if (sample.type == 'multiple') {
+            epos = eneg
+        }
+    }
+
 
     if (!is.null(noise)) {
         epos = epos[noise]

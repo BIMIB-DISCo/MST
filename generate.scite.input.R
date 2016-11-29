@@ -11,7 +11,8 @@ create.scite.input = function(dataset,
     options(scipen = 999)
 
     if (! branching %in% c('low', 'medium', 'high', 'random_5', 'random_10', 'random_15', 'random_20', 'random_forest',
-        'clean', 'convergent', 'random_columns', 'random_forest_fixed')) {
+        'clean', 'convergent', 'random_columns', 'random_forest_fixed', 'mini_01', 'missing', 'mini_02',
+        'mini_03', 'mini_04', 'mini_05')) {
         stop('branching must be "low", "medium" or "high"')
     } 
 
@@ -39,7 +40,7 @@ create.scite.input = function(dataset,
         script = ''
         for (experiment in 1:ncol(dataset)) {
             execution = dataset[[sample, experiment]]
-            for (noise in ls(execution)) {
+            for (noise in 1:length(execution)) {
                 noise_level = as.numeric(noise)
                 epos_level = execution[[noise]]$epos
                 if (epos_level == 0 || !pass.error.rates) {
@@ -52,6 +53,15 @@ create.scite.input = function(dataset,
                 sample_size_level = rownames(dataset)[sample]
                 filename = paste0('datasets/', branching,  '/', sample.type, '/', sample_size_level, '_', experiment, '_', noise, '.csv')
                 genotype = t(execution[[noise]]$dataset)
+                if (branching == 'missing') {
+                    for (i in 1:nrow(genotype)) {
+                        for(j in 1:ncol(genotype)) {
+                            if (is.na(genotype[[i,j]])) {
+                                genotype[[i,j]] = 3
+                            }
+                        }
+                    }
+                }
                 nsample = ncol(genotype)
                 nmuts = nrow(genotype)
                 seed_level = round(runif(1) * 10000, 0)
