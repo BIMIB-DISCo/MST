@@ -9,7 +9,7 @@ set.seed(12345)
 data_paper1 = list()
 
 # read the data and format them
-data_2 = read.table(file=paste0(getwd(),"/alterations.txt"),header=TRUE,sep="\t",check.names=FALSE,stringsAsFactors=FALSE)
+data_2 = read.table(file=paste0(getwd(),"/alterations_no_kif6.csv"),header=TRUE,sep="\t",check.names=FALSE,stringsAsFactors=FALSE)
 rownames(data_2) = data_2[,1]
 data_2 = data_2[,-1]
 for (i in 2:nrow(data_2)) {
@@ -30,7 +30,7 @@ original.data.paper2 = data_2
 
 # impute the missing data 100 times
 dataset_imputed = mi(missing_data.frame(original.data.paper2))
-dataset_imputed = complete(dataset_imputed,m=1)
+dataset_imputed = complete(dataset_imputed,m=100)
 
 # save the imputed datasets
 data_imputations = list()
