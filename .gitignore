@@ -46,3 +46,9 @@ cfg.R
 /experiment_3_multiple/gabow_error_dataset
 /experiment_1/conv_table.ods
 /experiment_1_multiple/conv_table.ods
+/experiment_real_data/multiple biospy/dataset 1 - CRC - multiregion (You-Wang)/crc.txt
+/experiment_real_data/multiple biospy/dataset 1 - CRC - multiregion (You-Wang)/crc_merged.txt
+/experiment_missing_data_1/alterations_pf.txt
+/experiment_missing_data_1/data_1.txt
+/experiment_missing_data_3/data3_pf.txt
+/experiment_missing_data_3/data_3.txt
