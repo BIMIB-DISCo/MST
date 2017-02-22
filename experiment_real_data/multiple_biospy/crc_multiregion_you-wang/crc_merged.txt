@@ -1,0 +1,6 @@
+.	stopgain_SNV_ATM	frameshift_deletion_TGFBR2	nonsynonymous_SNV_INHBA	nonsynonymous_SNV_CDKN2A	stopgain_SNV_SMAD4	frameshift_deletion_KMT2C	stopgain_SNV_GNAQ	indistinguishable_merged	stopgain_SNV_PPP2R1A	indistinguishable_clonal
+s1	1	1	1	1	0	0	0	0	0	1
+s2	1	1	0	0	1	0	0	0	0	1
+s3	1	0	1	0	1	1	1	0	0	1
+s4	0	1	0	0	0	0	1	1	0	1
+s5	1	0	0	0	0	0	1	1	1	1

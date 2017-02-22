@@ -1,0 +1,6 @@
+.	nonsynonymous_SNV_PARP1	frameshift_deletion_NOTCH2	stopgain_SNV_ATM	nonsynonymous_SNV_KRAS	nonsynonymous_SNV_PARP4	NA_PARP4	nonsynonymous_SNV_FANCM	NA_TP53	nonsynonymous_SNV_NCOR1	nonsynonymous_SNV_SETBP1	nonsynonymous_SNV_CIC	nonsynonymous_SNV_ALK	nonsynonymous_SNV_LRP1B	nonsynonymous_SNV_UGT1A1_	nonframeshift_deletion_NCOA3	nonsynonymous_SNV_BCR	frameshift_insertion_BCR	nonsynonymous_SNV_SMARCB1	frameshift_deletion_FANCD2	frameshift_deletion_TGFBR2	nonsynonymous_SNV_PIK3CA	nonsynonymous_SNV_KDR	frameshift_deletion_SKP2	frameshift_insertion_APC	nonsynonymous_SNV_CARD11	nonsynonymous_SNV_INHBA	nonsynonymous_SNV_KMT2C	stopgain_SNV_KMT2C	nonsynonymous_SNV_CDKN2A	nonsynonymous_SNV_GNAQ	nonsynonymous_SNV_PTCH1	nonsynonymous_SNV_TSC1	nonframeshift_insertion_AR	stopgain_SNV_SMAD4	frameshift_deletion_KMT2C	stopgain_SNV_GNAQ	nonsynonymous_SNV_SMAD4	nonsynonymous_SNV_SETD2	NA_AR	stopgain_SNV_PPP2R1A
+s1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	0	0	0	0	0
+s2	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	1	1	0	1	1	1	1	1	0	0	0	0	0	0
+s3	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1	0	0	0	0
+s4	1	1	0	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	1	1	0	1	1	1	1	0	0	1	1	1	1	0
+s5	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	1	1	1	1	1	0	1	1	0	1	1	1	1	0	0	1	1	1	1	1
