@@ -85,6 +85,6 @@ dataset.single.cells.convergent = parSapply(cl, my_experiments, function(x){
 dataset.single.cells.convergent = t(as.matrix(dataset.single.cells.convergent, byrow = TRUE))
 colnames(dataset.single.cells.convergent) = names(my_experiments)
 rownames(dataset.single.cells.convergent) = 75
-save(dataset.single.cells.convergent, file="RData/dataset.single.cells.convergent.RData")
+save(dataset.single.cells.convergent, file="RData/dataset.single.cells.convergent_OR.RData")
 
 stopCluster(cl)
