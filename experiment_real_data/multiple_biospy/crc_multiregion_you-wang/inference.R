@@ -9,7 +9,7 @@ primary = paste("p3-", 1:3, sep = "")
 metastatic = paste("L", 1:2, sep = "")
 regions = c(primary, metastatic)
 
-file = "./data/journal.pone.0152673.s002.XLSX"
+file = "data/journal.pone.0152673.s002.XLSX"
 
 if (!SKIPDATA) {
 
