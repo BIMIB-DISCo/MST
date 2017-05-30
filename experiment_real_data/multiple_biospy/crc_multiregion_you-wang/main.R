@@ -33,5 +33,9 @@ infer = function(x, y, ann, ...) {
     save(m, file=paste(y, '-', ann, '.Rdata', sep =''))
 }
 
+if(DOPLOT) {
+	oncoprint(data, sample.id = TRUE, font.column = 9, cellwidth = 10)
+	dev.copy2pdf(file = "oncoprint-ind.pdf")
+}
 
 sapply(ALGO, FUN = infer, x = data, ann = "ind", scale.nodes = 0.2, confidence = c('tp', 'pr', 'hg', 'npb'))
