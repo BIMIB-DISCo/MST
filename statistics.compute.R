@@ -21,6 +21,8 @@ get.stats <- function(results) {
     my_algorithms = names(results[[1,1]][[1]][['reconstructions']])
     my_regularizators = c()
 
+    elasped_time = FALSE
+
     for (algo in my_algorithms) {
         reg = names(results[[1,1]][[1]][['reconstructions']][[algo]])
         for (r in reg) {
@@ -61,6 +63,15 @@ get.stats <- function(results) {
                     curr_result_fallback = array(0,c(length(noise_levels),length(sample_levels)))
                     colnames(curr_result_fallback) = my.col.names
                     rownames(curr_result_fallback) = my.row.names
+
+                    if (!is.null(results[1,i][[1]][[as.character(1)]][["reconstructions"]][[a]][[b]][["elasped.time"]])) {
+                        elasped_time = TRUE
+                        curr_result_elasped_time = array(0,c(length(noise_levels),length(sample_levels)))
+                        colnames(curr_result_elasped_time) = my.col.names
+                        rownames(curr_result_elasped_time) = my.row.names
+                    }
+
+
                     for (j in 1:length(sample_levels)) {
                         for (l in 1:length(noise_levels)) {
                             curr_computed = results[j,i][[1]][[as.character(l)]][["reconstructions"]][[a]][[b]]
@@ -72,6 +83,9 @@ get.stats <- function(results) {
                                 curr_result_fallback[l,j] = 1
                             } else {
                                 curr_result_fallback[l,j] = 0
+                            }
+                            if (elasped_time) {
+                                curr_result_elasped_time[l,j] = curr_computed[["elasped.time"]]   
                             }
                         }
                     }
@@ -96,6 +110,11 @@ get.stats <- function(results) {
                         res = NULL
                         res[[1]] = list(curr_result_fallback)
                         my_results[["fallback_edmonds"]][[a]][[gsub("\\.res","",b)]] = res
+                        if (elasped_time) {
+                            res = NULL
+                            res[[1]] = list(curr_result_elasped_time)
+                            my_results[["elasped_time"]][[a]][[gsub("\\.res","",b)]] = res
+                        }
 
                         
                     } else {
@@ -108,6 +127,9 @@ get.stats <- function(results) {
                         my_results[["specificity"]][[a]][[gsub("\\.res","",b)]][[i]] = list(curr_result_specificity)
                         my_results[["hamming_distance"]][[a]][[gsub("\\.res","",b)]][[i]] = list(curr_result_hamming_distance)
                         my_results[['fallback_edmonds']][[a]][[gsub("\\.res","",b)]][[i]] = list(curr_result_fallback)
+                        if (elasped_time) {
+                            my_results[['elasped_time']][[a]][[gsub("\\.res","",b)]][[i]] = list(curr_result_elasped_time)
+                        }
 
                     }
                 }

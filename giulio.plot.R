@@ -2,7 +2,8 @@
 giulio.plot <- function(dataset,
     sample.type,
     branching,
-    sample_size = NULL) {
+    sample_size = NULL,
+    statistics = NULL) {
 
     if (is.null(sample_size)) {
        sample_sizes_single_cells = c(10, 25, 50, 75, 100)
@@ -59,7 +60,11 @@ giulio.plot <- function(dataset,
 
     connections = (nodes * nodes) - nodes
 
-    for (type in c('hamming_distance', 'accuracy', 'sensitivity', 'specificity')) {
+    if(is.null(statistics)) {
+        statistics = c('hamming_distance', 'accuracy', 'sensitivity', 'specificity')
+    }
+
+    for (type in statistics) {
         cat(type, ' ')
 
         results = data.frame(x = NULL, stringsAsFactors = FALSE)
@@ -153,7 +158,16 @@ add.alpha <- function(col, alpha=1){
 
 
 
-dotplotter <- function(res.values, sample, algorithm, branching, type, title, sample.type = 'single', external.epos = NA, external.eneg = NA, noise = NULL) {
+dotplotter <- function(res.values, 
+    sample,
+    algorithm,
+    branching,
+    type,
+    title,
+    sample.type = 'single',
+    external.epos = NA,
+    external.eneg = NA,
+    noise = NULL) {
 
     res.values = res.values[which(res.values$sample == sample), ]
     res.values = res.values[which(res.values$algorithm %in% algorithm), ]
@@ -221,7 +235,7 @@ dotplotter <- function(res.values, sample, algorithm, branching, type, title, sa
     } else if (branching == 'random_15') {
         nodes = 15
         cut = 7
-    } else if (branching == 'random_20') {
+    } else if (branching %in% c('random_20', 'large_20')) {
         nodes = 20
         cut = 11
     } else if (branching == 'lowr') {
@@ -246,6 +260,8 @@ dotplotter <- function(res.values, sample, algorithm, branching, type, title, sa
         description = 'Sensitivity'
     } else if (type == 'specificity') {
         description = 'Specificity'
+    } else if (type == 'elasped_time') {
+        description = 'Time'
     }
 
     cat(title, '\n')
@@ -257,9 +273,8 @@ dotplotter <- function(res.values, sample, algorithm, branching, type, title, sa
         epos = c(0.000, 0.05, 0.1, 0.15, 0.20)
         eneg = epos
     }
-
     if (branching %in% c('mini_01', 'mini_02',
-        'mini_03', 'mini_04', 'mini_05')) {
+        'mini_03', 'mini_04', 'mini_05', 'large_20')) {
         epos = external.epos
         eneg = external.eneg
         if (sample.type == 'multiple') {
@@ -495,6 +510,8 @@ jitterplotter <- function(res.values, sample, algorithm, branching, type, title,
         description = 'Sensitivity'
     } else if (type == 'specificity') {
         description = 'Specificity'
+    } else if (type == 'elasped_time') {
+        description = 'Time'
     }
 
     cat(title, '\n')
