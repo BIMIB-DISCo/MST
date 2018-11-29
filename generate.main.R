@@ -5,7 +5,7 @@
 ### Test data generation
 ###
 ##############################################################################
-## Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
 ### email: tronco@disco.unimib.it
 ### All rights reserved. This program and the accompanying materials
 ### are made available under the terms of the GNU GPL v3.0

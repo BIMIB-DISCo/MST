@@ -1,19 +1,31 @@
+##############################################################################
+###
+### MST
+###
+### Reconstruction (SiFit import)
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
 
-
-import.scite.output = function(dataset,
-	sample.type,
-	branching,
-    sample_size = NULL) {
+import.scite.output <- function(dataset,
+                                sample.type,
+                                branching,
+                                sample_size = NULL) {
 
     if (is.null(sample_size)) {
-	   sample_sizes_single_cells = c(10, 25, 50, 75, 100)
-	   sample_sizes_multiple_biopses = c(5, 7, 10, 20, 50)
+        sample_sizes_single_cells = c(10, 25, 50, 75, 100)
+        sample_sizes_multiple_biopses = c(5, 7, 10, 20, 50)
     } else {
         sample_sizes_single_cells = sample_size
         sample_sizes_multiple_biopses = sample_size
     }
 
-	if (sample.type == "single") {
+    if (sample.type == "single") {
         sample.size = sample_sizes_single_cells
     } else if (sample.type == "multiple") {
         sample.size = sample_sizes_multiple_biopses
@@ -28,20 +40,24 @@ import.scite.output = function(dataset,
         }
     }
 
-
     if (! dir.exists('RData')) {
     	stop('no buono')
     }
 
     for (sample in 1:nrow(dataset)) {
     	for (experiment in 1:ncol(dataset)) {
-    		execution = dataset[[sample, experiment]]
-    		for (noise in 1:length(execution)) {
-    			noise_level = as.numeric(noise)
-    			sample_size_level = sample.size[sample]
-    			filename = paste0('scite_output/datasets/', branching,  '/', sample.type, '/', sample_size_level, '_', experiment, '_', noise, '_ml0')
+            execution = dataset[[sample, experiment]]
+            for (noise in 1:length(execution)) {
+                noise_level = as.numeric(noise)
+                sample_size_level = sample.size[sample]
+                filename = paste0('scite_output/datasets/',
+                                  branching,  '/',
+                                  sample.type, '/',
+                                  sample_size_level, '_', experiment, '_', noise, '_ml0')
                 if (branching == 'missing') {
-                    filename = paste0('scite_output/datasets/', branching,  '/', sample.type, '/75_', experiment, '_', sample, '_ml0')
+                    filename = paste0('scite_output/datasets/',
+                                      branching,  '/',
+                                      sample.type, '/75_', experiment, '_', sample, '_ml0')
                 }
                 read = readLines(paste0(filename, '.gv'))
                 read = gsub(' ', '', read)
@@ -65,14 +81,14 @@ import.scite.output = function(dataset,
 
                 true_tree = object$true_tree
 
-
                 statistics = getStats(true_tree, result)
                 object$reconstructions$scite$no.reg.adj$scite_no_reg = result
                 object$reconstructions$scite$no.reg.res = statistics
                 dataset[[sample, experiment]][[noise]] = object
-    		}
+            }
         }
     }
     return(dataset)
 }
 
+### end of file -- reconstruct.sifit.import.R
