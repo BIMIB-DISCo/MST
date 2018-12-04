@@ -1,17 +1,19 @@
-##################################################################################
-#                                                                                #
-# MST                                                                            #
-#                                                                                #
-##################################################################################
-# Copyright (c) 2015, Giulio Caravagna, Luca De Sano, Daniele Ramazzotti         #
-# email: tronco@disco.unimib.it                                                  #
-# All rights reserved. This program and the accompanying materials               #
-# are made available under the terms of the GNU GPL v3.0                         #
-# which accompanies this distribution                                            #
-#                                                                                #
-##################################################################################
+##############################################################################
+###
+### MST
+###
+### Reconstruct Scite Output
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
 
-# source the needed script
+
+## Source the needed script
 
 source('../reconstruct.scite.import.R')
 source('../reconstruct.run.R')
@@ -25,7 +27,9 @@ library(igraph)
 library(sna)
 library(Rgraphviz)
 
-#### merge tronco results with scite
+
+### merge tronco results with Scite
+
 experiments.single.cells.clean.scite = import.scite.output(result.single.cells.clean, 'single', 'clean', c(75))
 save(experiments.single.cells.clean.scite, file = 'RData/experiments.single.cells.clean.scite.RData')
 
@@ -37,3 +41,6 @@ save(experiments.single.cells.random.columns.scite, file = 'RData/experiments.si
 
 experiments.single.cells.random.forest.scite = import.scite.output(result.single.cells.random.forest, 'single', 'random_forest_fixed', c(75))
 save(experiments.single.cells.random.forest.scite, file = 'RData/experiments.single.cells.random.forest.scite.RData')
+
+
+### end of file -- reconstruct.scite.output.R

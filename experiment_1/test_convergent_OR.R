@@ -1,3 +1,18 @@
+##############################################################################
+###
+### MST
+###
+### Test Convergent OR
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
+
+
 load("./RData/result.single.cells.convergent_OR.RData")
 
 em.list = list()
@@ -15,7 +30,7 @@ count_edmonds = em.list
 count_gabow = em.list
 count_prim = em.list
 
-count_conv = function(count.algo, adj.matrix) {
+count_conv <- function(count.algo, adj.matrix) {
     if (adj.matrix[2,5] == 1
         && adj.matrix[3,5] == 1
         && adj.matrix[3,6] == 1
@@ -25,7 +40,7 @@ count_conv = function(count.algo, adj.matrix) {
     } else if ((adj.matrix[2,5] == 1
         || adj.matrix[3,5] == 1)
         && (adj.matrix[3,6] == 1
-        || adj.matrix[4,6] == 1)) {
+            || adj.matrix[4,6] == 1)) {
         print(adj.matrix)
         count.algo[["2-3->5 + 3-4->6"]] = count.algo[["2-3->5 + 3-4->6"]] + 1
     } 
@@ -34,7 +49,7 @@ count_conv = function(count.algo, adj.matrix) {
         print(adj.matrix)
         count.algo[["2+3->5"]] = count.algo[["2+3->5"]] + 1
     } else if (adj.matrix[2,5] == 1
-        || adj.matrix[3,5] == 1){
+               || adj.matrix[3,5] == 1){
         print(adj.matrix)
         count.algo[["2-3->5"]] = count.algo[["2-3->5"]] + 1
     } 
@@ -43,12 +58,13 @@ count_conv = function(count.algo, adj.matrix) {
         print(adj.matrix)
         count.algo[["3+4->6"]] = count.algo[["3+4->6"]] + 1
     } else if (adj.matrix[3,6] == 1
-        || adj.matrix[4,6] == 1) {
+               || adj.matrix[4,6] == 1) {
         print(adj.matrix)
         count.algo[["3-4->6"]] = count.algo[["3-4->6"]] + 1
     }
     return(count.algo)
 }
+
 
 for (i in 1:100) {
     exp = result.single.cells.convergent[[1, i]][[1]]
@@ -75,3 +91,4 @@ for (i in 1:100) {
     print(i)
 }
 
+### end of file -- test_convergent_OR.R

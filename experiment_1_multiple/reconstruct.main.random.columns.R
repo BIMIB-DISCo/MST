@@ -1,19 +1,20 @@
-##################################################################################
-#                                                                                #
-# MST                                                                            #
-#                                                                                #
-##################################################################################
-# Copyright (c) 2015, Giulio Caravagna, Luca De Sano, Daniele Ramazzotti         #
-# email: tronco@disco.unimib.it                                                  #
-# All rights reserved. This program and the accompanying materials               #
-# are made available under the terms of the GNU GPL v3.0                         #
-# which accompanies this distribution                                            #
-#                                                                                #
-##################################################################################
+##############################################################################
+###
+### MST
+###
+### Reconstruct Main Random Columns
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
 
-# source the needed script
+## source the needed script
 
-#  longjob -c "/afs/inf.ed.ac.uk/user/v/v1ldesa/download/R-3.2.5/bin/Rscript reconstruct.main.sh.R > high.log 2>&1"
+##  longjob -c "/afs/inf.ed.ac.uk/user/v/v1ldesa/download/R-3.2.5/bin/Rscript reconstruct.main.sh.R > high.log 2>&1"
 
 library(parallel)
 
@@ -33,7 +34,11 @@ if (available.cores > 8) {
     cores = 1
 }
 
-# generate dataset for single cells random columns
+
+## Generate dataset for single cells random columns
+
 cat('result single cells random columns\n')
 result.multiple.biopses.random.columns = expand.input(dataset.multiple.biopses.random.columns, seed, cores)
-save(result.multiple.biopses.random.columns, file="RData/result.multiple.biopses.random.columns.RData")
+save(result.multiple.biopses.random.columns, file = "RData/result.multiple.biopses.random.columns.RData")
+
+### end of file -- reconstruct.main.random.columns.R

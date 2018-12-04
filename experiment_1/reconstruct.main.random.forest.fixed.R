@@ -1,15 +1,17 @@
-##################################################################################
-#                                                                                #
-# MST                                                                            #
-#                                                                                #
-##################################################################################
-# Copyright (c) 2015, Giulio Caravagna, Luca De Sano, Daniele Ramazzotti         #
-# email: tronco@disco.unimib.it                                                  #
-# All rights reserved. This program and the accompanying materials               #
-# are made available under the terms of the GNU GPL v3.0                         #
-# which accompanies this distribution                                            #
-#                                                                                #
-##################################################################################
+##############################################################################
+###
+### MST
+###
+### Reconstruct Main Random Forest Fixed
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
+
 
 # source the needed script
 
@@ -36,4 +38,6 @@ if (available.cores > 8) {
 # generate dataset for single cells random columns
 cat('result single cells random forest fixed\n')
 result.single.cells.random.forest = expand.input(dataset.single.cells.random.forest, seed, cores)
-save(result.single.cells.random.forest, file="RData/result.single.cells.random.forest.RData")
+save(result.single.cells.random.forest, file = "RData/result.single.cells.random.forest.RData")
+
+### end of file -- reconstruct.main.random.forest.fixed.R

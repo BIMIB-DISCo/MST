@@ -1,15 +1,16 @@
-##################################################################################
-#                                                                                #
-# MST                                                                            #
-#                                                                                #
-##################################################################################
-# Copyright (c) 2015, Giulio Caravagna, Luca De Sano, Daniele Ramazzotti         #
-# email: tronco@disco.unimib.it                                                  #
-# All rights reserved. This program and the accompanying materials               #
-# are made available under the terms of the GNU GPL v3.0                         #
-# which accompanies this distribution                                            #
-#                                                                                #
-##################################################################################
+##############################################################################
+###
+### MST
+###
+### Reconstruct Main Random Forest
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
 
 # source the needed script
 
@@ -33,7 +34,10 @@ if (available.cores > 8) {
     cores = 1
 }
 
-# generate dataset for single cells random columns
+## Generate dataset for single cells random columns
+
 cat('result single cells random columns\n')
 result.multiple.biopses.random.forest = expand.input(dataset.multiple.biopses.random.forest, seed, cores)
-save(result.multiple.biopses.random.forest, file="RData/result.multiple.biopses.random.forest.RData")
+save(result.multiple.biopses.random.forest, file = "RData/result.multiple.biopses.random.forest.RData")
+
+### end of file -- reconstruct.main.random.forest.R

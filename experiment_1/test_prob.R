@@ -1,17 +1,33 @@
-ratio_left = c()
-ratio_right = c()
+##############################################################################
+###
+### MST
+###
+### Test Probability
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
+
 
 library(TRONCO)
 
 
+ratio_left = c()
+ratio_right = c()
+
+
 for (i in 1:100) {
-	exp = dataset.single.cells.convergent[[1, i]][[1]]
-	prob = exp$probabilities
-	p_root = exp$root_prob
-	dataset = exp$dataset
+    exp = dataset.single.cells.convergent[[1, i]][[1]]
+    prob = exp$probabilities
+    p_root = exp$root_prob
+    dataset = exp$dataset
     epos = exp$epos
     eneg = exp$eneg
-	adj.matrix = array(1, c(ncol(dataset), ncol(dataset)))
+    adj.matrix = array(1, c(ncol(dataset), ncol(dataset)))
     colnames(adj.matrix) = colnames(dataset)
     rownames(adj.matrix) = colnames(dataset)
     scores = TRONCO:::get.dag.scores( dataset, adj.matrix, 0, 0)
@@ -26,9 +42,11 @@ for (i in 1:100) {
 }
 
 results = data.frame(x = NULL, stringsAsFactors = FALSE)
+
 for (val in ratio_left) {
     results = rbind(results, c(val, 'left'), stringsAsFactors = FALSE)
 }
+
 for (val in ratio_right) {
     results = rbind(results, c(val, 'right'), stringsAsFactors = FALSE)
 }
@@ -37,13 +55,9 @@ colnames(results) = c('value', 'direction')
 results$direction = as.factor(results$direction)
 results$value = as.numeric(results$value)
 
-experiment.palette = c(
-    'left' = 'red',
-    'right' = 'blue')
+experiment.palette = c('left' = 'red', 'right' = 'blue')
 
-experiment.names = c(
-    'left' = '2->5 3->5',
-    'right' = '3->6 4->6')
+experiment.names = c('left' = '2->5 3->5', 'right' = '3->6 4->6')
 
 
 p = ggplot(results, aes(direction, value)) + 
@@ -61,3 +75,5 @@ p = ggplot(results, aes(direction, value)) +
 
 print(p)
 dev.copy2pdf(file = 'test_prob.pdf')
+
+### end of file -- test_prob.R
