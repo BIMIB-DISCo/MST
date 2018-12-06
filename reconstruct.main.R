@@ -31,6 +31,7 @@ my_algorithms = c("capri", "caprese", "edmonds", "chowliu", "prim", "scite")
 my_regularizators = c("no.reg.res", "loglik.res", "aic.res", "bic.res")
 cores.ratio = 1
 
+
 ### Set the true trees
 
 low_true_tree = array(0, c(6, 6))
@@ -108,45 +109,59 @@ load('RData/dataset.multiple.biopses.low.RData')
 load('RData/dataset.multiple.biopses.medium.RData')
 load('RData/dataset.multiple.biopses.high.RData')
 
+
 ### Generate dataset for single cells low
 
 cat('result single cells low\n')
-result.single.cells.low = expand.input(dataset.single.cells.low, low_true_tree, seed, cores)
-save(result.single.cells.low, file="RData/result.single.cells.low.RData")
+result.single.cells.low =
+    expand.input(dataset.single.cells.low, low_true_tree, seed, cores)
+save(result.single.cells.low,
+     file = "RData/result.single.cells.low.RData")
 
 
 ### Generate dataset for single cells medium
 
 cat('result single cells medium\n')
-result.single.cells.medium = expand.input(dataset.single.cells.medium, medium_true_tree, seed, cores)
-save(result.single.cells.medium, file="RData/result.single.cells.medium.RData")
+result.single.cells.medium =
+    expand.input(dataset.single.cells.medium, medium_true_tree, seed, cores)
+save(result.single.cells.medium,
+     file = "RData/result.single.cells.medium.RData")
 
 
 ### Generate dataset for single cells high
 
 cat('result single cells high\n')
-result.single.cells.high = expand.input(dataset.single.cells.high, high_true_tree, seed, cores)
-save(result.single.cells.high, file="RData/result.single.cells.high.RData")
+result.single.cells.high =
+    expand.input(dataset.single.cells.high, high_true_tree, seed, cores)
+save(result.single.cells.high,
+     file = "RData/result.single.cells.high.RData")
 
 
 ### Generate dataset for multiple biopses low
 
 cat('result multiple biopses low\n')
-result.multiple.biopses.low = expand.input(dataset.multiple.biopses.low, low_true_tree, seed, cores)
-save(result.multiple.biopses.low,file="RData/result.multiple.biopses.low.RData")
+result.multiple.biopses.low =
+    expand.input(dataset.multiple.biopses.low, low_true_tree, seed, cores)
+save(result.multiple.biopses.low,
+     file = "RData/result.multiple.biopses.low.RData")
+
 
 ### Generate dataset for multiple biopses medium
 
 cat('result multiple biopses medium\n')
-result.multiple.biopses.medium = expand.input(dataset.multiple.biopses.medium, medium_true_tree, seed, cores)
-save(result.multiple.biopses.medium,file="RData/result.multiple.biopses.medium.RData")
+result.multiple.biopses.medium =
+    expand.input(dataset.multiple.biopses.medium, medium_true_tree, seed, cores)
+save(result.multiple.biopses.medium,
+     file = "RData/result.multiple.biopses.medium.RData")
 
 
 ### Generate dataset for multiple biopses high
 
 cat('result multiple biopses high\n')
-result.multiple.biopses.high = expand.input(dataset.multiple.biopses.high, high_true_tree, seed, cores)
-save(result.multiple.biopses.high,file="RData/result.multiple.biopses.high.RData")
+result.multiple.biopses.high =
+    expand.input(dataset.multiple.biopses.high, high_true_tree, seed, cores)
+save(result.multiple.biopses.high,
+     file = "RData/result.multiple.biopses.high.RData")
 
 
 ### Please, run SCITE!!!
@@ -163,89 +178,113 @@ library(Rgraphviz)
 
 ### Merge tronco results with scite
 
-experiments.single.cells.low.scite = import.scite.output(result.single.cells.low, 'single', 'low', low_true_tree)
-save(experiments.single.cells.low.scite, file = 'RData/experiments.single.cells.low.scite.RData')
+experiments.single.cells.low.scite =
+    import.scite.output(result.single.cells.low, 'single', 'low', low_true_tree)
+save(experiments.single.cells.low.scite,
+     file = 'RData/experiments.single.cells.low.scite.RData')
 
-experiments.single.cells.medium.scite = import.scite.output(result.single.cells.medium, 'single', 'medium', medium_true_tree)
-save(experiments.single.cells.medium.scite, file = 'RData/experiments.single.cells.medium.scite.RData')
+experiments.single.cells.medium.scite =
+    import.scite.output(result.single.cells.medium, 'single', 'medium', medium_true_tree)
+save(experiments.single.cells.medium.scite,
+     file = 'RData/experiments.single.cells.medium.scite.RData')
 
-experiments.single.cells.high.scite = import.scite.output(result.single.cells.high, 'single', 'high', high_true_tree)
-save(experiments.single.cells.high.scite, file = 'RData/experiments.single.cells.high.scite.RData')
+experiments.single.cells.high.scite =
+    import.scite.output(result.single.cells.high, 'single', 'high', high_true_tree)
+save(experiments.single.cells.high.scite,
+     file = 'RData/experiments.single.cells.high.scite.RData')
 
-experiments.multiple.biopses.low.scite = import.scite.output(result.multiple.biopses.low, 'multiple', 'low', low_true_tree)
-save(experiments.multiple.biopses.low.scite, file = 'RData/experiments.multiple.biopses.low.scite.RData')
+experiments.multiple.biopses.low.scite =
+    import.scite.output(result.multiple.biopses.low, 'multiple', 'low', low_true_tree)
+save(experiments.multiple.biopses.low.scite,
+     file = 'RData/experiments.multiple.biopses.low.scite.RData')
 
-experiments.multiple.biopses.medium.scite = import.scite.output(result.multiple.biopses.medium, 'multiple', 'medium', medium_true_tree)
-save(experiments.multiple.biopses.medium.scite, file = 'RData/experiments.multiple.biopses.medium.scite.RData')
+experiments.multiple.biopses.medium.scite =
+    import.scite.output(result.multiple.biopses.medium, 'multiple', 'medium', medium_true_tree)
+save(experiments.multiple.biopses.medium.scite,
+     file = 'RData/experiments.multiple.biopses.medium.scite.RData')
 
-experiments.multiple.biopses.high.scite = import.scite.output(result.multiple.biopses.high, 'multiple', 'high', high_true_tree)
-save(experiments.multiple.biopses.high.scite, file = 'RData/experiments.multiple.biopses.high.scite.RData')
+experiments.multiple.biopses.high.scite =
+    import.scite.output(result.multiple.biopses.high, 'multiple', 'high', high_true_tree)
+save(experiments.multiple.biopses.high.scite,
+     file = 'RData/experiments.multiple.biopses.high.scite.RData')
 
 
 ### Statistics for the experiments for single cells low
 
-experiments.single.cells.low.stats = get.stats(experiments.single.cells.low,
-                                               my_algorithms,
-                                               my_regularizators,
-                                               sample_levels,
-                                               noise_levels,
-                                               number_experiments)
-save(experiments.single.cells.low.stats, file="RData/experiments.single.cells.low.stats.RData")
+experiments.single.cells.low.stats =
+    get.stats(experiments.single.cells.low,
+              my_algorithms,
+              my_regularizators,
+              sample_levels,
+              noise_levels,
+              number_experiments)
+save(experiments.single.cells.low.stats,
+     file = "RData/experiments.single.cells.low.stats.RData")
 
 
 ### Statistics for the experiments for single cells medium
 
-experiments.single.cells.medium.stats = get.stats(experiments.single.cells.medium,
-                                                  my_algorithms,
-                                                  my_regularizators,
-                                                  sample_levels,
-                                                  noise_levels,
-                                                  number_experiments)
-save(experiments.single.cells.medium.stats, file="RData/experiments.single.cells.medium.stats.RData")
+experiments.single.cells.medium.stats =
+    get.stats(experiments.single.cells.medium,
+              my_algorithms,
+              my_regularizators,
+              sample_levels,
+              noise_levels,
+              number_experiments)
+save(experiments.single.cells.medium.stats,
+     file = "RData/experiments.single.cells.medium.stats.RData")
 
 
 #### Statistics for the experiments for single cells high
 
-experiments.single.cells.high.stats = get.stats(experiments.single.cells.high,
-                                                my_algorithms,
-                                                my_regularizators,
-                                                sample_levels,
-                                                noise_levels,
-                                                number_experiments)
-save(experiments.single.cells.high.stats,file="RData/experiments.single.cells.high.stats.RData")
+experiments.single.cells.high.stats =
+    get.stats(experiments.single.cells.high,
+              my_algorithms,
+              my_regularizators,
+              sample_levels,
+              noise_levels,
+              number_experiments)
+save(experiments.single.cells.high.stats,
+     file = "RData/experiments.single.cells.high.stats.RData")
 
 
 ### Statistics for the experiments for multiple biopses low
 
-experiments.multiple.biopses.low.stats = get.stats(experiments.multiple.biopses.low,
-                                                   my_algorithms,
-                                                   my_regularizators,
-                                                   sample_levels,
-                                                   noise_levels,
-                                                   number_experiments)
-save(experiments.multiple.biopses.low.stats, file="RData/experiments.multiple.biopses.low.stats.RData")
+experiments.multiple.biopses.low.stats =
+    get.stats(experiments.multiple.biopses.low,
+              my_algorithms,
+              my_regularizators,
+              sample_levels,
+              noise_levels,
+              number_experiments)
+save(experiments.multiple.biopses.low.stats,
+     file = "RData/experiments.multiple.biopses.low.stats.RData")
 
 
 ### Statistics for the experiments for multiple biopses medium
 
-experiments.multiple.biopses.medium.stats = get.stats(experiments.multiple.biopses.medium,
-                                                      my_algorithms,
-                                                      my_regularizators,
-                                                      sample_levels,
-                                                      noise_levels,
-                                                      number_experiments)
-save(experiments.multiple.biopses.medium.stats,file="RData/experiments.multiple.biopses.medium.stats.RData")
+experiments.multiple.biopses.medium.stats =
+    get.stats(experiments.multiple.biopses.medium,
+              my_algorithms,
+              my_regularizators,
+              sample_levels,
+              noise_levels,
+              number_experiments)
+save(experiments.multiple.biopses.medium.stats,
+     file = "RData/experiments.multiple.biopses.medium.stats.RData")
 
 
 ### Statistics for experiments for multiple biopses high
 
-experiments.multiple.biopses.high.stats = get.stats(experiments.multiple.biopses.high,
-                                                    my_algorithms,
-                                                    my_regularizators,
-                                                    sample_levels,
-                                                    noise_levels,
-                                                    number_experiments)
-save(experiments.multiple.biopses.high.stats,file="RData/experiments.multiple.biopses.high.stats.RData")
+experiments.multiple.biopses.high.stats =
+    get.stats(experiments.multiple.biopses.high,
+              my_algorithms,
+              my_regularizators,
+              sample_levels,
+              noise_levels,
+              number_experiments)
+save(experiments.multiple.biopses.high.stats,
+     file = "RData/experiments.multiple.biopses.high.stats.RData")
 
 
 ### stop the cluster
@@ -275,5 +314,6 @@ compare.performance.plot.2d(experiments.single.cells.high.stats, 'single', 'high
 compare.performance.plot.2d(experiments.multiple.biopses.low.stats, 'multiple', 'low')
 compare.performance.plot.2d(experiments.multiple.biopses.medium.stats, 'multiple', 'medium')
 compare.performance.plot.2d(experiments.multiple.biopses.high.stats, 'multiple', 'high')
+
 
 ### end of file -- reconstruct.main.R

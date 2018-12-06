@@ -41,7 +41,7 @@ import.scite.output <- function(dataset,
     }
 
     if (! dir.exists('RData')) {
-    	stop('no buono')
+    	stop('Missing RData folder.')
     }
 
     for (sample in 1:nrow(dataset)) {
