@@ -1,17 +1,18 @@
-##################################################################################
-#                                                                                #
-# MST                                                                            #
-#                                                                                #
-##################################################################################
-# Copyright (c) 2015, Giulio Caravagna, Luca De Sano, Daniele Ramazzotti         #
-# email: tronco@disco.unimib.it                                                  #
-# All rights reserved. This program and the accompanying materials               #
-# are made available under the terms of the GNU GPL v3.0                         #
-# which accompanies this distribution                                            #
-#                                                                                #
-##################################################################################
+##############################################################################
+###
+### MST
+###
+### Reconstruct SCITE Output
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
 
-# source the needed script
+## Source the needed script
 
 source('../reconstruct.scite.import.R')
 source('../reconstruct.run.R')
@@ -24,12 +25,22 @@ library(igraph)
 library(sna)
 library(Rgraphviz)
 
-#### merge tronco results with scite
-experiments.multiple.biopses.low.scite = import.scite.output(result.multiple.biopses.low, 'multiple', 'low')
-save(experiments.multiple.biopses.low.scite, file = 'RData/experiments.multiple.biopses.low.scite.RData')
 
-experiments.multiple.biopses.medium.scite = import.scite.output(result.multiple.biopses.medium, 'multiple', 'medium')
-save(experiments.multiple.biopses.medium.scite, file = 'RData/experiments.multiple.biopses.medium.scite.RData')
+## Merge tronco results with scite
 
-experiments.multiple.biopses.high.scite = import.scite.output(result.multiple.biopses.high, 'multiple', 'high')
-save(experiments.multiple.biopses.high.scite, file = 'RData/experiments.multiple.biopses.high.scite.RData')
+experiments.multiple.biopses.low.scite =
+    import.scite.output(result.multiple.biopses.low, 'multiple', 'low')
+save(experiments.multiple.biopses.low.scite,
+     file = 'RData/experiments.multiple.biopses.low.scite.RData')
+
+experiments.multiple.biopses.medium.scite =
+    import.scite.output(result.multiple.biopses.medium, 'multiple', 'medium')
+save(experiments.multiple.biopses.medium.scite,
+     file = 'RData/experiments.multiple.biopses.medium.scite.RData')
+
+experiments.multiple.biopses.high.scite =
+    import.scite.output(result.multiple.biopses.high, 'multiple', 'high')
+save(experiments.multiple.biopses.high.scite,
+     file = 'RData/experiments.multiple.biopses.high.scite.RData')
+
+### end of file -- reconstruct.scite.output.R

@@ -1,3 +1,18 @@
+##############################################################################
+###
+### MST
+###
+### Find Score
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
+
+
 library(bnlearn)
 library(igraph)
 library(Rgraphviz)
@@ -8,19 +23,19 @@ load('RData/experiment.missing.data.RData')
 source('../reconstruct.run.R')
 
 
-#plot_graph = function(model, title, file) {
-#    model = change.color(model, type='variant', new.color='lightgreen')
-#    oncoprint(model, file = paste0('plot/', file, '_data.pdf'), title = title)
-#    tronco.plot(model, 
-#        edge.cex = 1.5,          # scale edge size
-#        legend.cex = .5,         # scale legend size
-#        scale.nodes = .6,        # scale node size
-#        confidence = c('tp', 'pr', 'hg', 'npb'), # display p-values for these statistics 
-#        disconnected = FALSE,        # do not display nodes without incoming/outgoing edges
-#        height.logic = .3,       # scale logical connectives
-#        file = paste0('plot/', file, '.pdf'),
-#        title = title)
-#}
+##plot_graph = function(model, title, file) {
+##    model = change.color(model, type = 'variant', new.color = 'lightgreen')
+##    oncoprint(model, file = paste0('plot/', file, '_data.pdf'), title = title)
+##    tronco.plot(model,
+##        edge.cex = 1.5,          # scale edge size
+##        legend.cex = .5,         # scale legend size
+##        scale.nodes = .6,        # scale node size
+##        confidence = c('tp', 'pr', 'hg', 'npb'), # display p-values for these statistics
+##        disconnected = FALSE,        # do not display nodes without incoming/outgoing edges
+##        height.logic = .3,       # scale logical connectives
+##        file = paste0('plot/', file, '.pdf'),
+##        title = title)
+##}
 
 results.experiment.missing.data = experiment.missing.data
 
@@ -44,60 +59,70 @@ for(sample in 1:nrow(experiment.missing.data)) {
         for (imputated in 1:length(exec)) {
             experiment = exec[[imputated]]
 
-            # create a TRONCO object of the dataset
+            ## Create a TRONCO object of the dataset
             data = import.genotypes(experiment$dataset)
 
-            # create the igraph structure
+            ## Create the igraph structure
             net = empty.graph(colnames(as.genotypes(data)), num = 6)
             categoric.dataset = data.frame(apply(as.genotypes(data), 2, factor))
             for (name in colnames(categoric.dataset)) {
-                levels(categoric.dataset[[name]]) = c(0,1)
+                levels(categoric.dataset[[name]]) = c(0, 1)
             }
 
-            # capri
+            ## CAPRI
             amat(net[[1]]) = experiment$reconstructions$capri$adj
-            experiment$reconstruction$capri$score = bnlearn::score(net[[1]], categoric.dataset, type='loglik')
-            if (is.na(this.find.score$capri$score) || experiment$reconstruction$capri$score > this.find.score$capri$score) {
+            experiment$reconstruction$capri$score =
+                bnlearn::score(net[[1]], categoric.dataset, type = 'loglik')
+            if (is.na(this.find.score$capri$score)
+                || experiment$reconstruction$capri$score > this.find.score$capri$score) {
                 this.find.score$capri$score = experiment$reconstruction$capri$score
                 this.find.score$capri$id = imputated
             }
 
-            # caprese
+            ## CAPRESE
             amat(net[[2]]) = experiment$reconstructions$caprese$adj
-            experiment$reconstruction$caprese$score = bnlearn::score(net[[2]], categoric.dataset, type='loglik')
-            if (is.na(this.find.score$caprese$score) || experiment$reconstruction$caprese$score > this.find.score$caprese$score) {
+            experiment$reconstruction$caprese$score =
+                bnlearn::score(net[[2]], categoric.dataset, type = 'loglik')
+            if (is.na(this.find.score$caprese$score)
+                || experiment$reconstruction$caprese$score > this.find.score$caprese$score) {
                 this.find.score$caprese$score = experiment$reconstruction$caprese$score
                 this.find.score$caprese$id = imputated
             }
 
-            # prim
+            ## PRIM
             amat(net[[3]]) = experiment$reconstructions$prim$adj
-            experiment$reconstruction$prim$score = bnlearn::score(net[[3]], categoric.dataset, type='loglik')
+            experiment$reconstruction$prim$score = bnlearn::score(net[[3]], categoric.dataset, type = 'loglik')
             if (is.na(this.find.score$prim$score) || experiment$reconstruction$prim$score > this.find.score$prim$score) {
                 this.find.score$prim$score = experiment$reconstruction$prim$score
                 this.find.score$prim$id = imputated
             }
 
-            # chowliu
+            ## CHOWLIU
             amat(net[[4]]) = experiment$reconstructions$chowliu$loglik.adj
-            experiment$reconstruction$chowliu$score = bnlearn::score(net[[4]], categoric.dataset, type='loglik')
-            if (is.na(this.find.score$chowliu$score) || experiment$reconstruction$chowliu$score > this.find.score$chowliu$score) {
+            experiment$reconstruction$chowliu$score =
+                bnlearn::score(net[[4]], categoric.dataset, type = 'loglik')
+            if (is.na(this.find.score$chowliu$score)
+                || experiment$reconstruction$chowliu$score > this.find.score$chowliu$score) {
                 this.find.score$chowliu$score = experiment$reconstruction$chowliu$score
                 this.find.score$chowliu$id = imputated
             }
 
-            # edmonds
+            ## EDMONDS
             amat(net[[5]]) = experiment$reconstructions$edmonds$adj
-            experiment$reconstruction$edmonds$score = bnlearn::score(net[[5]], categoric.dataset, type='loglik')
-            if (is.na(this.find.score$edmonds$score) || experiment$reconstruction$edmonds$score > this.find.score$edmonds$score) {
+            experiment$reconstruction$edmonds$score =
+                bnlearn::score(net[[5]], categoric.dataset, type = 'loglik')
+            if (is.na(this.find.score$edmonds$score)
+                || experiment$reconstruction$edmonds$score > this.find.score$edmonds$score) {
                 this.find.score$edmonds$score = experiment$reconstruction$edmonds$score
                 this.find.score$edmonds$id = imputated
             }
 
-            # gabow
+            ## GABOW
             amat(net[[6]]) = experiment$reconstructions$gabow$pmi.no.reg.adj
-            experiment$reconstruction$gabow$score = bnlearn::score(net[[6]], categoric.dataset, type='loglik')
-            if (is.na(this.find.score$gabow$score) || experiment$reconstruction$gabow$score > this.find.score$gabow$score) {
+            experiment$reconstruction$gabow$score =
+                bnlearn::score(net[[6]], categoric.dataset, type = 'loglik')
+            if (is.na(this.find.score$gabow$score)
+                || experiment$reconstruction$gabow$score > this.find.score$gabow$score) {
                 this.find.score$gabow$score = experiment$reconstruction$gabow$score
                 this.find.score$gabow$id = imputated
             }
@@ -106,7 +131,10 @@ for(sample in 1:nrow(experiment.missing.data)) {
     }
 }
 
-best.score = matrix(list(), ncol = ncol(results.experiment.missing.data), nrow = nrow(results.experiment.missing.data))
+
+best.score = matrix(list(),
+                    ncol = ncol(results.experiment.missing.data),
+                    nrow = nrow(results.experiment.missing.data))
 colnames(best.score) =  colnames(results.experiment.missing.data)
 rownames(best.score) =  rownames(results.experiment.missing.data)
 
@@ -117,11 +145,16 @@ for(sample in 1:nrow(experiment.missing.data)) {
             print(algo)
             id = results.experiment.missing.data[[sample, exp]][[algo]][['id']]
             print(id)
-            this.result[[algo]][['dataset']] = experiment.missing.data[[sample, exp]][[id]][['dataset']]
-            this.result[[algo]][['true_tree']] = experiment.missing.data[[sample, exp]][[id]][['true_tree']]
-            this.result[[algo]][['epos']] = experiment.missing.data[[sample, exp]][[id]][['epos']]
-            this.result[[algo]][['eneg']] = experiment.missing.data[[sample, exp]][[id]][['eneg']]
-            this.result[[algo]][['reconstructions']] = experiment.missing.data[[sample, exp]][[id]][['reconstructions']][[algo]]
+            this.result[[algo]][['dataset']] =
+                experiment.missing.data[[sample, exp]][[id]][['dataset']]
+            this.result[[algo]][['true_tree']] =
+                experiment.missing.data[[sample, exp]][[id]][['true_tree']]
+            this.result[[algo]][['epos']] =
+                experiment.missing.data[[sample, exp]][[id]][['epos']]
+            this.result[[algo]][['eneg']] =
+                experiment.missing.data[[sample, exp]][[id]][['eneg']]
+            this.result[[algo]][['reconstructions']] =
+                experiment.missing.data[[sample, exp]][[id]][['reconstructions']][[algo]]
         }
         best.score[[sample, exp]] = this.result
     }
@@ -137,15 +170,18 @@ for(sample in 1:nrow(best.score)) {
         read = readLines(paste0(complete.filename, '.gv'))
         read = gsub(' ', '', read)
         read = gsub(';', '', read)
-        write(paste0(read, collapse = '\n'), file = paste0(complete.filename, '.correct.gv'))
+        write(paste0(read, collapse = '\n'),
+              file = paste0(complete.filename, '.correct.gv'))
         readdot = read.dot(paste0(complete.filename, '.correct.gv'))
         graph = graph.adjacency(readdot)
         scite.tree.raw = get.adjacency(graph, sparse = FALSE)
-        scite.tree = matrix(0, ncol = ncol(scite.tree.raw) - 1, nrow = ncol(scite.tree.raw) - 1)
+        scite.tree = matrix(0,
+                            ncol = ncol(scite.tree.raw) - 1,
+                            nrow = ncol(scite.tree.raw) - 1)
         for (i in 1:nrow(scite.tree)) {
             for(j in 1:ncol(scite.tree)) {
                 if (scite.tree.raw[as.character(i), as.character(j)] == 1) {
-                    scite.tree[i,j] = 1
+                    scite.tree[i, j] = 1
                 }
             }
         }
@@ -163,8 +199,7 @@ for(sample in 1:nrow(best.score)) {
     }
 }
 
-save(best.score, file='RData/best.score.RData')
-
+save(best.score, file = 'RData/best.score.RData')
 
 
 create.data.frame <- function(dataset) {
@@ -177,19 +212,26 @@ create.data.frame <- function(dataset) {
 
 
                 this.exp.algo = this.exp[[algo]]
-                results = rbind(results, c(sample,
+                results =
+                    rbind(results,
+                          c(sample,
                             exp,
                             this.exp.algo[['reconstructions']][['result']][['sensitivity']],
                             this.exp.algo[['reconstructions']][['result']][['specificity']],
                             algo,
-                            paste0('MD_',sample)), stringsAsFactors = FALSE)
+                            paste0('MD_', sample)), stringsAsFactors = FALSE)
 
             }
         }
     }
 
 
-    colnames(results) = c('sample', 'exp', 'sensitivity', 'specificity', 'algorithm', 'source')
+    colnames(results) = c('sample',
+                          'exp',
+                          'sensitivity',
+                          'specificity',
+                          'algorithm',
+                          'source')
 
     results$sample = as.factor(results$sample)
     results$exp = as.factor(results$exp)
@@ -198,9 +240,10 @@ create.data.frame <- function(dataset) {
     results$algorithm = as.factor(results$algorithm)
     results$source = as.factor(results$source)
 
-    save(results, file=paste0('RData/results.missing.data.RData'))
+    save(results, file = paste0('RData/results.missing.data.RData'))
     return(results)
 }
+
 
 results.missing.data = create.data.frame(best.score)
 
@@ -217,22 +260,35 @@ reg$scite = 'no.reg'
 
 results.original.data = data.frame(x = NULL, stringsAsFactors = FALSE)
 
-for (algo in c('caprese', 'capri', 'prim', 'edmonds', 'gabow', 'prim', 'chowliu', 'scite')) {
+algorithms = c('caprese',
+               'capri',
+               'prim',
+               'edmonds',
+               'gabow',
+               'prim',
+               'chowliu',
+               'scite')
+for (algo in algorithms) {
     this.reg = reg[[algo]]
-    sensitivity = experiments.single.cells.medium.scite.stats[['sensitivity']][[algo]][[this.reg]][[1,4]][['values']][1:10]
-    specificity = experiments.single.cells.medium.scite.stats[['specificity']][[algo]][[this.reg]][[1,4]][['values']][1:10]
+    sensitivity =
+        experiments.single.cells.medium.scite.stats[['sensitivity']][[algo]][[this.reg]][[1, 4]][['values']][1:10]
+    specificity =
+        experiments.single.cells.medium.scite.stats[['specificity']][[algo]][[this.reg]][[1, 4]][['values']][1:10]
     for (i in 1:10) {
-        results.original.data = rbind(results.original.data, c(0,
-            i,
-            sensitivity[[i]],
-            specificity[[i]],
-            algo,
-            'EXP2'), stringsAsFactors = FALSE)
+        results.original.data =
+            rbind(results.original.data,
+                  c(0,
+                    i,
+                    sensitivity[[i]],
+                    specificity[[i]],
+                    algo,
+                    'EXP2'),
+                  stringsAsFactors = FALSE)
     }
-    
 }
 
-colnames(results.original.data) = c('sample', 'exp', 'sensitivity', 'specificity', 'algorithm', 'source')
+colnames(results.original.data) =
+    c('sample', 'exp', 'sensitivity', 'specificity', 'algorithm', 'source')
 
 results.original.data$sample = as.factor(results.original.data$sample)
 results.original.data$exp = as.factor(results.original.data$exp)
@@ -241,30 +297,32 @@ results.original.data$specificity = as.numeric(results.original.data$specificity
 results.original.data$algorithm = as.factor(results.original.data$algorithm)
 results.original.data$source = as.factor(results.original.data$source)
 
-save(results.original.data, file='RData/results.original.data.RData')
+save(results.original.data, file = 'RData/results.original.data.RData')
 
 
 complete.results = rbind(results.original.data, results.missing.data)
 save(complete.results, file = 'RData/complete.results.RData')
 
 experiment.names = c('EXP2' = 'Original dataset',
-    'MD_1' = 'Missing data 10%',                           
-    'MD_2' = 'Missing data 20%',
-    'MD_3' = 'Missing data 30%',
-    'MD_4' = 'Missing data 40%')
+                     'MD_1' = 'Missing data 10%',
+                     'MD_2' = 'Missing data 20%',
+                     'MD_3' = 'Missing data 30%',
+                     'MD_4' = 'Missing data 40%')
 
 experiment.palette = c('EXP2' = 'red',
-    'MD_1' = '#fa9fb5',                           
-    'MD_2' = '#f768a1',
-    'MD_3' = '#dd3497',
-    'MD_4' = '#ae017e')
+                       'MD_1' = '#fa9fb5',
+                       'MD_2' = '#f768a1',
+                       'MD_3' = '#dd3497',
+                       'MD_4' = '#ae017e')
 
 description = c('sensitivity' = 'Sensitivity',
     'specificity' = 'Specificity')
 
 library(ggplot2)
 
-p = ggplot(complete.results, aes(x = algorithm, y = sensitivity, fill = source)) +
+p = ggplot(complete.results, aes(x = algorithm,
+                                 y = sensitivity,
+                                 fill = source)) +
     scale_fill_manual(values = experiment.palette, labels = experiment.names) +
     ylab(paste0('Sensitivity (n = 11)')) +
     geom_boxplot(outlier.size = 0) +
@@ -276,7 +334,9 @@ dev.copy2pdf(file = 'plot/sensitivity.pdf')
 dev.off()
 
 
-p = ggplot(complete.results, aes(x = algorithm, y = specificity, fill = source)) +
+p = ggplot(complete.results, aes(x = algorithm,
+                                 y = specificity,
+                                 fill = source)) +
     scale_fill_manual(values = experiment.palette, labels = experiment.names) +
     ylab(paste0('Specificity (n = 11)')) +
     geom_boxplot(outlier.size = 0) +
@@ -287,4 +347,4 @@ print(p)
 dev.copy2pdf(file = 'plot/specificity.pdf')
 dev.off()
 
-
+### end of file -- find.score.R
