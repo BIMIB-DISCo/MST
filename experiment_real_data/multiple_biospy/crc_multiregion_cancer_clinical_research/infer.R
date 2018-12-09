@@ -1,3 +1,19 @@
+##############################################################################
+###
+### MST
+###
+### Infer
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
+
+#### WTF!!!!  MA 20181209
+
 install.packages('/Volumes/DATA/Work/Software/Github/TRONCO_2.4.2.tar.gz')
 
 library(RColorBrewer)
@@ -15,12 +31,11 @@ if (!SKIPDATA) {
     install.packages("rJava", dependencies = T, repo = "http://cran.us.r-project.org")
     library(xlsx)
 
-    y = read.xlsx(file, sheetIndex = 1)[1:208, ] #All events
-    # y = read.xlsx(file, sheetIndex = 3)[1:18, ] # clean
+    y = read.xlsx(file, sheetIndex = 1)[1:208, ] # All events
+    ## y = read.xlsx(file, sheetIndex = 3)[1:18, ] # clean
     types = as.vector(unique(y$Mutation))
-        
-    to.TRONCO = function(t)
-    {
+    
+    to.TRONCO = function(t) {
         d = y[y$Mutation == t, ]
         d = d[, c('Gene', 'P1', 'P2', 'P3', 'P4', 'M1', 'M2', 'M3')]
         rownames(d) = d$Gene
@@ -30,30 +45,35 @@ if (!SKIPDATA) {
     }    
 
     data = NULL
-    for(i in 1:length(types))
-    {
+    for(i in 1:length(types)) {
         tmp = to.TRONCO(types[i])
         
         data$genotypes = cbind(data$genotypes, tmp$genotypes)
         data$annotations = rbind(data$annotations, tmp$annotations)
-        colnames(data$genotypes) = paste('G', 1:ncol(data$genotypes), sep='')
-        rownames(data$annotations) = paste('G', 1:nrow(data$annotations), sep='')
+        colnames(data$genotypes) = paste('G', 1:ncol(data$genotypes), sep = '')
+        rownames(data$annotations) = paste('G', 1:nrow(data$annotations), sep = '')
         data$types = rbind(data$types, tmp$types)
     }
-    
     
     data$types[, 1] = colorRampPalette(brewer.pal(8, "Accent"))(nrow(data$types))
     data = enforce.numeric(data)
     save(data, file = "MAF.Rdata")
 }
+
+
 if (SKIPDATA) { load("MAF.Rdata") }
 
 
-if(DOPLOT)
-{
-    dev.new(height=22)
-    source('/Volumes/DATA/Work/Software/Github/TRONCO/R/visualization.R', chdir = F)
-    oncoprint(data, sample.id = T,  genes.cluster = T,  font.column = 9, cellwidth = 10, font.row = 8, annotate.consolidate.events = F)
+if (DOPLOT) {
+    dev.new(height = 22)
+    source('/Volumes/DATA/Work/Software/Github/TRONCO/R/visualization.R', chdir = F) # WTF!!!
+    oncoprint(data,
+              sample.id = T,
+              genes.cluster = T,
+              font.column = 9,
+              cellwidth = 10,
+              font.row = 8,
+              annotate.consolidate.events = F)
     dev.copy2pdf(file = 'data-pat1.pdf')
 }
 
@@ -61,12 +81,12 @@ if(DOPLOT)
 data$genotypes = rbind(data$genotypes, rep(0, ncol(data$genotypes)))
 consolidate.data(data)
 
-# CHOWLIU si impalla
-# ALGO = c("EDMONDS", "GABOW", "PRIM", "CAPRI", "CAPRESE")
+## CHOWLIU si impalla
+## ALGO = c("EDMONDS", "GABOW", "PRIM", "CAPRI", "CAPRESE")
+
 ALGO = c("EDMONDS", "PRIM", "CAPRI",  "CHOWLIU", "CAPRESE")
 
-
-infer = function(x, y, ann, ...) {
+infer <- function(x, y, ann, ...) {
     if (y == "PRIM") 
         m = tronco.mst.prim(x, nboot = NBOOT)
     if (y == "EDMONDS") 
@@ -80,14 +100,14 @@ infer = function(x, y, ann, ...) {
     if (y == "CAPRI") 
         m = tronco.capri(x, nboot = NBOOT)
 
-    if(DOPLOT)
-    {
+    if (DOPLOT) {
         tronco.plot(m, ...)
-        dev.copy2pdf(file = paste("model-", ann, "-", 
-            y, ".pdf", sep = ""))
+        dev.copy2pdf(file = paste("model-", ann, "-", y, ".pdf",
+                                  sep = ""))
     }
-    
-    save(m, file=paste(y, '-', ann, '.Rdata', sep =''))
+    save(m, file = paste(y, '-', ann, '.Rdata', sep =''))
 }
 
 sapply(ALGO, FUN = infer, x = data, ann = "clean")
+
+### end of file -- infer.R

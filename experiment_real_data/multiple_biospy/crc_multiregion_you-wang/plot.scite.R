@@ -1,4 +1,18 @@
-# load library
+##############################################################################
+###
+### MST
+###
+### Plot SCITE
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
+
+## load library
 library(igraph)
 library(bnlearn)
 library(Rgraphviz)
@@ -22,7 +36,6 @@ geno = keysToNames(ind, geno)
 names$ind = colnames(geno)
 
 
-
 for (name in c('complete', 'ind')) {
     filename = paste0('scite_output/datasets/', name, '_ml0')
     read = readLines(paste0(filename, '.gv'))
@@ -36,7 +49,7 @@ for (name in c('complete', 'ind')) {
     for (i in 1:nrow(scite.tree)) {
         for(j in 1:ncol(scite.tree)) {
             if (scite.tree.raw[as.character(i), as.character(j)] == 1) {
-                scite.tree[i,j] = 1
+                scite.tree[i, j] = 1
             }
         }
     }
@@ -56,3 +69,5 @@ for (name in c('complete', 'ind')) {
     dev.off()
 
 }
+
+### end of file -- plot.scite.R
