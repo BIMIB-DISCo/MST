@@ -1,17 +1,18 @@
-##################################################################################
-#                                                                                #
-# MST                                                                            #
-#                                                                                #
-##################################################################################
-# Copyright (c) 2015, Giulio Caravagna, Luca De Sano, Daniele Ramazzotti         #
-# email: tronco@disco.unimib.it                                                  #
-# All rights reserved. This program and the accompanying materials               #
-# are made available under the terms of the GNU GPL v3.0                         #
-# which accompanies this distribution                                            #
-#                                                                                #
-##################################################################################
+##############################################################################
+###
+### MST
+###
+### Reconstruct Random Main 20
+###
+##############################################################################
+### Copyright (c) 2015-2018, The TRONCO Team (www.troncopackage.org)
+### email: tronco@disco.unimib.it
+### All rights reserved. This program and the accompanying materials
+### are made available under the terms of the GNU GPL v3.0
+### which accompanies this distribution
+##############################################################################
 
-# source the needed script
+## Source the needed script
 
 library(parallel)
 
@@ -29,7 +30,14 @@ if (available.cores > 8) {
     cores = 1
 }
 
-# generate dataset for single cells low
+
+## Generate dataset for single cells low
+
 cat('result single cells 20\n')
-result.random.single.cells.20.nodes = expand.input(dataset.random.single.cells.20.nodes, seed, cores)
-save(result.random.single.cells.20.nodes, file="RData/result.random.single.cells.20.nodes.RData")
+result.random.single.cells.20.nodes =
+    expand.input(dataset.random.single.cells.20.nodes, seed, cores)
+save(result.random.single.cells.20.nodes,
+     file = "RData/result.random.single.cells.20.nodes.RData")
+
+
+### end of file -- reconstruct.random.main.20.R
